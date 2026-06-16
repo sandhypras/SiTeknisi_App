@@ -59,7 +59,7 @@ class AuthLoadingNotifier extends Notifier<bool> {
 
 class LoginErrorNotifier extends Notifier<bool> {
   @override
-  bool build() => true;
+  bool build() => false;
 
   void setError(bool value) {
     state = value;

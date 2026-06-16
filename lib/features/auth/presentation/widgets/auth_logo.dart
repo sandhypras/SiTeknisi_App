@@ -41,10 +41,14 @@ class AuthLogo extends StatelessWidget {
             ],
           ),
           padding: EdgeInsets.all(resolvedCardSize * 0.14),
-          child: Image.asset(
-            AppAssets.siteknisiLogo,
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
+          clipBehavior: Clip.antiAlias,
+          child: Transform.scale(
+            scale: resolvedCardSize <= 96 ? 2.9 : 2.35,
+            child: Image.asset(
+              AppAssets.siteknisiLogo,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+            ),
           ),
         ),
         if (showText) ...[
