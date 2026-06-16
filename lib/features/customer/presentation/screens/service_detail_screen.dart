@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
@@ -32,13 +33,7 @@ class ServiceDetailScreen extends ConsumerWidget {
         child: PrimaryButton(
           label: 'Request Service',
           icon: Icons.add_task_rounded,
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Mock request service. API belum terhubung.'),
-              ),
-            );
-          },
+          onPressed: () => context.go('/customer/request/${service.id}'),
         ),
       ),
       body: SafeArea(

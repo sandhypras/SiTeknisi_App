@@ -10,9 +10,15 @@ import '../../features/customer/presentation/screens/customer_home_screen.dart';
 import '../../features/customer/presentation/screens/customer_activity_screen.dart';
 import '../../features/customer/presentation/screens/customer_messages_screen.dart';
 import '../../features/customer/presentation/screens/customer_profile_screen.dart';
+import '../../features/customer/presentation/screens/booking/create_service_request_screen.dart';
+import '../../features/customer/presentation/screens/booking/invoice_screen.dart';
+import '../../features/customer/presentation/screens/booking/payment_screen.dart';
+import '../../features/customer/presentation/screens/booking/review_screen.dart';
+import '../../features/customer/presentation/screens/booking/technician_offers_screen.dart';
 import '../../features/customer/presentation/screens/search_service_screen.dart';
 import '../../features/customer/presentation/screens/service_categories_screen.dart';
 import '../../features/customer/presentation/screens/service_detail_screen.dart';
+import '../../features/technician/presentation/screens/technician_screens.dart';
 
 class AppRoutes {
   const AppRoutes._();
@@ -28,6 +34,15 @@ class AppRoutes {
   static const customerCategories = '/customer/categories';
   static const customerSearch = '/customer/search';
   static const customerProfile = '/customer/profile';
+  static const customerOffers = '/customer/offers';
+  static const customerPayment = '/customer/payment';
+  static const customerInvoice = '/customer/invoice';
+  static const customerReview = '/customer/review';
+  static const technicianJoin = '/technician/join';
+  static const technicianDashboard = '/technician/dashboard';
+  static const technicianRequests = '/technician/requests';
+  static const technicianJobs = '/technician/jobs';
+  static const technicianEarnings = '/technician/earnings';
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -84,6 +99,48 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/customer/services/:id',
         builder: (context, state) =>
             ServiceDetailScreen(serviceId: state.pathParameters['id'] ?? ''),
+      ),
+      GoRoute(
+        path: '/customer/request/:serviceId',
+        builder: (context, state) => CreateServiceRequestScreen(
+          serviceId: state.pathParameters['serviceId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.customerOffers,
+        builder: (context, state) => const TechnicianOffersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.customerPayment,
+        builder: (context, state) => const PaymentScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.customerInvoice,
+        builder: (context, state) => const InvoiceScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.customerReview,
+        builder: (context, state) => const ReviewScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.technicianJoin,
+        builder: (context, state) => const JoinTechnicianScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.technicianDashboard,
+        builder: (context, state) => const TechnicianDashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.technicianRequests,
+        builder: (context, state) => const TechnicianRequestsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.technicianJobs,
+        builder: (context, state) => const TechnicianJobsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.technicianEarnings,
+        builder: (context, state) => const TechnicianEarningsScreen(),
       ),
     ],
   );

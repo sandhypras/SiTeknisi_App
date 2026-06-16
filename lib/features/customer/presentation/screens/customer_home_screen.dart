@@ -389,15 +389,7 @@ class _JoinTechnicianBanner extends StatelessWidget {
                   foregroundColor: AppColors.primaryDark,
                   minimumSize: const Size(180, 48),
                 ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Form pendaftaran teknisi akan dibuat pada modul berikutnya.',
-                      ),
-                    ),
-                  );
-                },
+                onPressed: () => context.go(AppRoutes.technicianJoin),
                 iconAlignment: IconAlignment.end,
                 icon: const Icon(Icons.arrow_forward_rounded),
                 label: const Text('Daftar Sekarang'),
