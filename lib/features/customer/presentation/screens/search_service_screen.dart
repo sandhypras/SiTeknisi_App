@@ -46,7 +46,7 @@ class _SearchServiceScreenState extends ConsumerState<SearchServiceScreen> {
     }).toList();
 
     return CustomerShell(
-      currentIndex: 1,
+      currentIndex: 2,
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),

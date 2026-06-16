@@ -24,7 +24,7 @@ class ServiceCategoriesScreen extends ConsumerWidget {
         .toList();
 
     return CustomerShell(
-      currentIndex: 2,
+      currentIndex: 1,
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
