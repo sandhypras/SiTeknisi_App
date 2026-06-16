@@ -66,10 +66,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               const Center(
                 child: AuthLogo(
-                  size: 34,
-                  cardSize: 78,
+                  size: 58,
+                  cardWidth: 146,
+                  cardSize: 76,
                   showText: false,
-                  logoMode: AuthLogoMode.mark,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),

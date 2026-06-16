@@ -13,28 +13,34 @@ class AuthLogo extends StatelessWidget {
     this.size = 64,
     this.showText = true,
     this.cardSize,
+    this.cardWidth,
     this.logoMode = AuthLogoMode.full,
   });
 
   final double size;
   final bool showText;
   final double? cardSize;
+  final double? cardWidth;
   final AuthLogoMode logoMode;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final resolvedCardSize = cardSize ?? size;
+    final resolvedCardWidth = cardWidth ?? resolvedCardSize;
+    final shortestSide = resolvedCardWidth < resolvedCardSize
+        ? resolvedCardWidth
+        : resolvedCardSize;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: resolvedCardSize,
+          width: resolvedCardWidth,
           height: resolvedCardSize,
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(resolvedCardSize * 0.18),
+            borderRadius: BorderRadius.circular(shortestSide * 0.18),
             border: Border.all(color: const Color(0xFFC9CEE3), width: 1.5),
             boxShadow: [
               BoxShadow(
@@ -44,7 +50,7 @@ class AuthLogo extends StatelessWidget {
               ),
             ],
           ),
-          padding: EdgeInsets.all(resolvedCardSize * 0.14),
+          padding: EdgeInsets.all(shortestSide * 0.14),
           clipBehavior: Clip.antiAlias,
           child: logoMode == AuthLogoMode.mark
               ? Icon(
@@ -52,13 +58,10 @@ class AuthLogo extends StatelessWidget {
                   size: size,
                   color: AppColors.primary,
                 )
-              : Transform.scale(
-                  scale: 2.2,
-                  child: Image.asset(
-                    AppAssets.siteknisiLogo,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
-                  ),
+              : Image.asset(
+                  AppAssets.siteknisiLogoCropped,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
                 ),
         ),
         if (showText) ...[

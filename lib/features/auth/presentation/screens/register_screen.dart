@@ -167,10 +167,10 @@ class _RegisterHeader extends StatelessWidget {
       child: Row(
         children: [
           const AuthLogo(
-            size: 30,
-            cardSize: 64,
+            size: 44,
+            cardWidth: 112,
+            cardSize: 58,
             showText: false,
-            logoMode: AuthLogoMode.mark,
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
