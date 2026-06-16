@@ -157,98 +157,117 @@ class _LoginHeroBand extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      height: 154,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: AppRadius.extraLarge,
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0F4FD9), AppColors.primary],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.22),
-            blurRadius: 28,
-            offset: const Offset(0, 16),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned.fill(child: CustomPaint(painter: _LoginPatternPainter())),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: AppSpacing.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface.withValues(alpha: 0.16),
-                          borderRadius: AppRadius.pill,
-                          border: Border.all(
-                            color: AppColors.surface.withValues(alpha: 0.24),
-                          ),
-                        ),
-                        child: Text(
-                          'SiTeknisi Verified',
-                          style: textTheme.labelSmall?.copyWith(
-                            color: AppColors.surface,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'Servis elektronik jadi lebih pasti.',
-                        style: textTheme.titleLarge?.copyWith(
-                          color: AppColors.surface,
-                          fontWeight: FontWeight.w900,
-                          height: 1.18,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Teknisi terverifikasi, penawaran transparan, invoice otomatis.',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AppColors.surface.withValues(alpha: 0.84),
-                          height: 1.35,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Container(
-                  width: 78,
-                  height: 92,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface.withValues(alpha: 0.14),
-                    borderRadius: AppRadius.large,
-                    border: Border.all(
-                      color: AppColors.surface.withValues(alpha: 0.22),
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.handyman_rounded,
-                    color: AppColors.surface,
-                    size: 42,
-                  ),
-                ),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 360;
+
+        return Container(
+          constraints: const BoxConstraints(minHeight: 172),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.extraLarge,
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF0F4FD9), AppColors.primary],
             ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.22),
+                blurRadius: 28,
+                offset: const Offset(0, 16),
+              ),
+            ],
           ),
-        ],
-      ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: CustomPaint(painter: _LoginPatternPainter()),
+              ),
+              Padding(
+                padding: EdgeInsets.all(
+                  isNarrow ? AppSpacing.md : AppSpacing.lg,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface.withValues(alpha: 0.16),
+                              borderRadius: AppRadius.pill,
+                              border: Border.all(
+                                color: AppColors.surface.withValues(
+                                  alpha: 0.24,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'SiTeknisi Verified',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: textTheme.labelSmall?.copyWith(
+                                color: AppColors.surface,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            'Servis elektronik jadi lebih pasti.',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.titleMedium?.copyWith(
+                              color: AppColors.surface,
+                              fontWeight: FontWeight.w900,
+                              height: 1.18,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            'Teknisi terverifikasi, penawaran transparan, invoice otomatis.',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: AppColors.surface.withValues(alpha: 0.86),
+                              height: 1.25,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: isNarrow ? AppSpacing.sm : AppSpacing.md),
+                    Container(
+                      width: isNarrow ? 64 : 78,
+                      height: isNarrow ? 76 : 92,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface.withValues(alpha: 0.14),
+                        borderRadius: AppRadius.large,
+                        border: Border.all(
+                          color: AppColors.surface.withValues(alpha: 0.22),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.handyman_rounded,
+                        color: AppColors.surface,
+                        size: isNarrow ? 34 : 42,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
