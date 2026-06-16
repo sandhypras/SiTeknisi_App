@@ -115,8 +115,9 @@ class LoginScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
               const _SecurityNotice(),
               const SizedBox(height: AppSpacing.sm),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
                     'Belum punya akun?',

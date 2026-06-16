@@ -14,6 +14,7 @@ class OnboardingVisual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      width: 320,
       height: 246,
       child: switch (kind) {
         AuthIllustrationKind.technician => const _TechnicianVisual(),

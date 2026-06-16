@@ -35,69 +35,59 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFAF8FF),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.screenPadding),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => context.go(AppRoutes.login),
-                  child: const Text('Lewati'),
-                ),
-              ),
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: items.length,
-                  onPageChanged: (index) {
-                    setState(() => _currentIndex = index);
-                  },
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    return _OnboardingPage(item: item);
-                  },
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompactHeight = constraints.maxHeight < 720;
+
+            return Padding(
+              padding: const EdgeInsets.all(AppSpacing.screenPadding),
+              child: Column(
                 children: [
-                  for (var index = 0; index < items.length; index++)
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xxs,
-                      ),
-                      width: _currentIndex == index ? 24 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _currentIndex == index
-                            ? AppColors.primary
-                            : AppColors.border,
-                        borderRadius: AppRadius.pill,
-                      ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => context.go(AppRoutes.login),
+                      child: const Text('Lewati'),
                     ),
+                  ),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: items.length,
+                      onPageChanged: (index) {
+                        setState(() => _currentIndex = index);
+                      },
+                      itemBuilder: (context, index) {
+                        return _OnboardingPage(item: items[index]);
+                      },
+                    ),
+                  ),
+                  _PageDots(count: items.length, currentIndex: _currentIndex),
+                  SizedBox(
+                    height: isCompactHeight ? AppSpacing.md : AppSpacing.xl,
+                  ),
+                  PrimaryButton(
+                    label: isLastPage ? 'Mulai Sekarang' : 'Lanjut',
+                    icon: Icons.arrow_forward_rounded,
+                    onPressed: () {
+                      if (isLastPage) {
+                        context.go(AppRoutes.login);
+                        return;
+                      }
+
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 260),
+                        curve: Curves.easeOut,
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: isCompactHeight ? AppSpacing.xs : AppSpacing.md,
+                  ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.xl),
-              PrimaryButton(
-                label: isLastPage ? 'Mulai Sekarang' : 'Lanjut',
-                icon: Icons.arrow_forward_rounded,
-                onPressed: () {
-                  if (isLastPage) {
-                    context.go(AppRoutes.login);
-                    return;
-                  }
-
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 260),
-                    curve: Curves.easeOut,
-                  );
-                },
-              ),
-              const SizedBox(height: AppSpacing.md),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -118,48 +108,102 @@ class _OnboardingPage extends StatelessWidget {
       _ => AuthIllustrationKind.technician,
     };
 
-    return Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompactHeight = constraints.maxHeight < 510;
+        final visualScale = isCompactHeight ? 0.82 : 1.0;
+        final sectionGap = isCompactHeight ? AppSpacing.lg : AppSpacing.xxl;
+
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 246 * visualScale,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: OnboardingVisual(kind: kind),
+                    ),
+                  ),
+                  SizedBox(height: sectionGap),
+                  Text(
+                    item.title,
+                    textAlign: TextAlign.center,
+                    style: textTheme.headlineLarge?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                      height: 1.16,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    item.description,
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                      height: 1.55,
+                    ),
+                  ),
+                  if (item.icon == 'compare') ...[
+                    const SizedBox(height: AppSpacing.md),
+                    const Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        _FeaturePill(
+                          icon: Icons.price_check_rounded,
+                          label: 'Harga Jelas',
+                        ),
+                        _FeaturePill(
+                          icon: Icons.star_rounded,
+                          label: 'Rating Terlihat',
+                        ),
+                        _FeaturePill(
+                          icon: Icons.touch_app_rounded,
+                          label: 'Pilih Sendiri',
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PageDots extends StatelessWidget {
+  const _PageDots({required this.count, required this.currentIndex});
+
+  final int count;
+  final int currentIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        OnboardingVisual(kind: kind),
-        const SizedBox(height: AppSpacing.xxl),
-        Text(
-          item.title,
-          textAlign: TextAlign.center,
-          style: textTheme.headlineLarge?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w900,
-            height: 1.16,
+        for (var index = 0; index < count; index++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+            width: currentIndex == index ? 24 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: currentIndex == index
+                  ? AppColors.primary
+                  : AppColors.border,
+              borderRadius: AppRadius.pill,
+            ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          item.description,
-          textAlign: TextAlign.center,
-          style: textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-            height: 1.55,
-          ),
-        ),
-        if (item.icon == 'compare') ...[
-          const SizedBox(height: AppSpacing.md),
-          const Wrap(
-            alignment: WrapAlignment.center,
-            spacing: AppSpacing.xs,
-            runSpacing: AppSpacing.xs,
-            children: [
-              _FeaturePill(
-                icon: Icons.price_check_rounded,
-                label: 'Harga Jelas',
-              ),
-              _FeaturePill(icon: Icons.star_rounded, label: 'Rating Terlihat'),
-              _FeaturePill(
-                icon: Icons.touch_app_rounded,
-                label: 'Pilih Sendiri',
-              ),
-            ],
-          ),
-        ],
       ],
     );
   }

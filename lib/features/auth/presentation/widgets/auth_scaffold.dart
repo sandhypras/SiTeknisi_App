@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 
 class AuthScaffold extends StatelessWidget {
@@ -18,20 +19,38 @@ class AuthScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    final isKeyboardVisible = bottomInset > 0;
+
     return Scaffold(
       appBar: appBar,
       backgroundColor: backgroundColor,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.screenPadding),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.screenPadding,
+            AppSpacing.screenPadding,
+            AppSpacing.screenPadding,
+            AppSpacing.screenPadding + (bottomInset > 0 ? AppSpacing.xl : 0),
+          ),
           children: children,
         ),
       ),
       bottomNavigationBar: bottom == null
           ? null
-          : SafeArea(
-              minimum: const EdgeInsets.all(AppSpacing.screenPadding),
-              child: bottom!,
+          : AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: isKeyboardVisible
+                  ? const SizedBox.shrink()
+                  : ColoredBox(
+                      color: backgroundColor ?? AppColors.background,
+                      child: SafeArea(
+                        minimum: const EdgeInsets.all(AppSpacing.screenPadding),
+                        child: bottom!,
+                      ),
+                    ),
             ),
     );
   }
