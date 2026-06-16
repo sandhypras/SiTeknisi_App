@@ -176,10 +176,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.read(authLoadingProvider.notifier).setLoading(true);
     await Future<void>.delayed(const Duration(milliseconds: 700));
     ref.read(authLoadingProvider.notifier).setLoading(false);
-    ref.read(loginErrorProvider.notifier).setError(true);
+    ref.read(loginErrorProvider.notifier).setError(false);
 
     if (context.mounted) {
       FocusScope.of(context).unfocus();
+      context.go(AppRoutes.customerHome);
     }
   }
 }
