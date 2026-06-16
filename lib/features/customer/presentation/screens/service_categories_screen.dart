@@ -24,7 +24,6 @@ class ServiceCategoriesScreen extends ConsumerWidget {
         .toList();
 
     return CustomerShell(
-      currentIndex: 1,
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
@@ -32,10 +31,21 @@ class ServiceCategoriesScreen extends ConsumerWidget {
             CustomerHeader(
               title: 'Kategori Layanan',
               subtitle: 'Pilih jenis perangkat dan temukan layanan terbaik.',
-              action: IconButton.filledTonal(
-                onPressed: () => context.go(AppRoutes.customerSearch),
-                icon: const Icon(Icons.search_rounded),
-                tooltip: 'Cari layanan',
+              action: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton.filledTonal(
+                    onPressed: () => context.go(AppRoutes.customerSearch),
+                    icon: const Icon(Icons.search_rounded),
+                    tooltip: 'Cari layanan',
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  IconButton(
+                    onPressed: () => context.go(AppRoutes.customerHome),
+                    icon: const Icon(Icons.close_rounded),
+                    tooltip: 'Tutup',
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),

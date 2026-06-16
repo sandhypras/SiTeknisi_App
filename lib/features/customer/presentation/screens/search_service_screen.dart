@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/empty_state.dart';
@@ -46,14 +47,18 @@ class _SearchServiceScreenState extends ConsumerState<SearchServiceScreen> {
     }).toList();
 
     return CustomerShell(
-      currentIndex: 2,
       child: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: [
-            const CustomerHeader(
+            CustomerHeader(
               title: 'Cari Layanan',
               subtitle: 'Temukan servis sesuai masalah perangkat Anda.',
+              action: IconButton(
+                onPressed: () => context.go(AppRoutes.customerHome),
+                icon: const Icon(Icons.close_rounded),
+                tooltip: 'Tutup',
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             shared.SearchBar(

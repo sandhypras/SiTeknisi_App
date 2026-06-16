@@ -146,7 +146,11 @@ class _BrandHeader extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Belum ada notifikasi baru.')),
+                  );
+                },
                 icon: const Icon(Icons.notifications_none_rounded, size: 30),
                 tooltip: 'Notifikasi',
               ),
@@ -258,7 +262,7 @@ class _TrackingCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => context.go(AppRoutes.customerActivity),
                   borderRadius: AppRadius.pill,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -385,7 +389,15 @@ class _JoinTechnicianBanner extends StatelessWidget {
                   foregroundColor: AppColors.primaryDark,
                   minimumSize: const Size(180, 48),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Form pendaftaran teknisi akan dibuat pada modul berikutnya.',
+                      ),
+                    ),
+                  );
+                },
                 iconAlignment: IconAlignment.end,
                 icon: const Icon(Icons.arrow_forward_rounded),
                 label: const Text('Daftar Sekarang'),

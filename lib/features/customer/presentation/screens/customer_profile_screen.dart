@@ -64,7 +64,10 @@ class CustomerProfileScreen extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => _showMockMessage(
+                      context,
+                      'Edit profil belum terhubung API.',
+                    ),
                     icon: const Icon(Icons.edit_rounded),
                     tooltip: 'Edit profil',
                   ),
@@ -106,25 +109,26 @@ class CustomerProfileScreen extends StatelessWidget {
               icon: Icons.location_on_outlined,
               title: 'Alamat Tersimpan',
               subtitle: 'Rumah, kantor, dan lokasi servis',
-              onTap: () {},
+              onTap: () => _showMockMessage(context, 'Alamat tersimpan dummy.'),
             ),
             _ProfileMenuTile(
               icon: Icons.payment_rounded,
               title: 'Metode Pembayaran',
               subtitle: 'Midtrans, transfer, dan riwayat pembayaran',
-              onTap: () {},
+              onTap: () =>
+                  _showMockMessage(context, 'Metode pembayaran belum aktif.'),
             ),
             _ProfileMenuTile(
               icon: Icons.history_rounded,
               title: 'Riwayat Booking',
               subtitle: 'Lihat status servis dan invoice',
-              onTap: () {},
+              onTap: () => context.go(AppRoutes.customerActivity),
             ),
             _ProfileMenuTile(
               icon: Icons.support_agent_rounded,
               title: 'Bantuan',
               subtitle: 'FAQ dan pusat bantuan SiTeknisi',
-              onTap: () {},
+              onTap: () => _showMockMessage(context, 'Pusat bantuan dummy.'),
             ),
             const SizedBox(height: AppSpacing.lg),
             OutlinedButton.icon(
@@ -136,6 +140,12 @@ class CustomerProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showMockMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
