@@ -5,17 +5,21 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 
+enum AuthLogoMode { full, mark }
+
 class AuthLogo extends StatelessWidget {
   const AuthLogo({
     super.key,
     this.size = 64,
     this.showText = true,
     this.cardSize,
+    this.logoMode = AuthLogoMode.full,
   });
 
   final double size;
   final bool showText;
   final double? cardSize;
+  final AuthLogoMode logoMode;
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +46,20 @@ class AuthLogo extends StatelessWidget {
           ),
           padding: EdgeInsets.all(resolvedCardSize * 0.14),
           clipBehavior: Clip.antiAlias,
-          child: Transform.scale(
-            scale: resolvedCardSize <= 96 ? 2.9 : 2.35,
-            child: Image.asset(
-              AppAssets.siteknisiLogo,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
-            ),
-          ),
+          child: logoMode == AuthLogoMode.mark
+              ? Icon(
+                  Icons.handyman_rounded,
+                  size: size,
+                  color: AppColors.primary,
+                )
+              : Transform.scale(
+                  scale: 2.2,
+                  child: Image.asset(
+                    AppAssets.siteknisiLogo,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
+                  ),
+                ),
         ),
         if (showText) ...[
           const SizedBox(height: AppSpacing.lg),

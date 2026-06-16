@@ -65,7 +65,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Center(
-                child: AuthLogo(size: 62, cardSize: 78, showText: false),
+                child: AuthLogo(
+                  size: 34,
+                  cardSize: 78,
+                  showText: false,
+                  logoMode: AuthLogoMode.mark,
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
