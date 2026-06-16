@@ -59,7 +59,7 @@ class AuthLogo extends StatelessWidget {
                   color: AppColors.primary,
                 )
               : Image.asset(
-                  AppAssets.siteknisiLogoCropped,
+                  AppAssets.siteknisiLogo,
                   fit: BoxFit.contain,
                   filterQuality: FilterQuality.high,
                 ),
