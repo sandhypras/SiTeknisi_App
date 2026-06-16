@@ -53,10 +53,17 @@ class AuthLogo extends StatelessWidget {
           padding: EdgeInsets.all(shortestSide * 0.14),
           clipBehavior: Clip.antiAlias,
           child: logoMode == AuthLogoMode.mark
-              ? Icon(
-                  Icons.handyman_rounded,
-                  size: size,
-                  color: AppColors.primary,
+              ? ClipRect(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: 0.34,
+                    child: Image.asset(
+                      AppAssets.siteknisiLogo,
+                      height: size,
+                      fit: BoxFit.fitHeight,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ),
                 )
               : Image.asset(
                   AppAssets.siteknisiLogo,
