@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
+import '../../features/admin/presentation/screens/admin_login_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
@@ -64,11 +67,13 @@ class AppRoutes {
   static const technicianCompletedJobs = '/technician/completed-jobs';
   static const technicianBankAccount = '/technician/bank-account';
   static const technicianProfile = '/technician/profile';
+  static const adminLogin = '/admin/login';
+  static const adminDashboard = '/admin/dashboard';
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: kIsWeb ? AppRoutes.adminLogin : AppRoutes.splash,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -240,6 +245,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.technicianProfile,
         builder: (context, state) => const TechnicianProfileScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminLogin,
+        builder: (context, state) => const AdminLoginScreen(),
+      ),
+      GoRoute(
+        path: '/admin',
+        redirect: (context, state) => AppRoutes.adminLogin,
+      ),
+      GoRoute(
+        path: '/admin/:section',
+        builder: (context, state) => AdminDashboardScreen(
+          section: state.pathParameters['section'] ?? 'dashboard',
+        ),
       ),
     ],
   );
