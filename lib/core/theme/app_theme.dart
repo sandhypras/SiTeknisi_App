@@ -176,6 +176,135 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
       ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.large),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+        showDragHandle: true,
+      ),
+    );
+  }
+
+  static ThemeData get dark {
+    const background = Color(0xFF0B1220);
+    const surface = Color(0xFF111827);
+    const surfaceMuted = Color(0xFF1F2937);
+    const textPrimary = Color(0xFFF8FAFC);
+    const textSecondary = Color(0xFFCBD5E1);
+    const border = Color(0xFF334155);
+
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.dark,
+        ).copyWith(
+          primary: const Color(0xFF60A5FA),
+          onPrimary: background,
+          secondary: AppColors.secondary,
+          surface: surface,
+          onSurface: textPrimary,
+          outline: border,
+          outlineVariant: border,
+          error: AppColors.error,
+        );
+    final textTheme = AppTypography.textTheme.apply(
+      bodyColor: textPrimary,
+      displayColor: textPrimary,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      fontFamily: AppTypography.fontFamily,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: background,
+      textTheme: textTheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: background,
+        foregroundColor: textPrimary,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        titleTextStyle: textTheme.titleLarge,
+      ),
+      cardTheme: CardThemeData(
+        color: surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.large,
+          side: const BorderSide(color: border),
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        height: AppSpacing.bottomNavHeight,
+        backgroundColor: surface,
+        indicatorColor: AppColors.primary,
+        labelTextStyle: WidgetStatePropertyAll(textTheme.labelMedium),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(AppSpacing.buttonHeight),
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
+          textStyle: textTheme.labelLarge,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(AppSpacing.buttonHeight),
+          foregroundColor: textPrimary,
+          side: const BorderSide(color: border),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: surface,
+        hintStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
+        labelStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
+        border: OutlineInputBorder(
+          borderRadius: AppRadius.medium,
+          borderSide: const BorderSide(color: border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: AppRadius.medium,
+          borderSide: const BorderSide(color: border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: AppRadius.medium,
+          borderSide: const BorderSide(color: Color(0xFF60A5FA), width: 1.5),
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: surfaceMuted,
+        selectedColor: AppColors.primaryDark,
+        labelStyle: textTheme.labelMedium,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.pill),
+        side: BorderSide.none,
+      ),
+      dividerTheme: const DividerThemeData(color: border),
+      dialogTheme: DialogThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.large),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        showDragHandle: true,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: surfaceMuted,
+        contentTextStyle: textTheme.bodyMedium,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
+      ),
     );
   }
 }

@@ -21,7 +21,7 @@ class PaymentScreen extends StatelessWidget {
         child: PrimaryButton(
           label: 'Bayar Sekarang',
           icon: Icons.payment_rounded,
-          onPressed: () => context.go(AppRoutes.customerInvoice),
+          onPressed: () => context.go(AppRoutes.customerPaymentSuccess),
         ),
       ),
       body: ListView(

@@ -1,4 +1,5 @@
 export 'custom_text_field.dart';
+export 'custom_search_bar.dart';
 export 'empty_state.dart';
 export 'error_state.dart';
 export 'invoice_card.dart';

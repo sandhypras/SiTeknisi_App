@@ -31,7 +31,7 @@ class CreateServiceRequestScreen extends ConsumerWidget {
         child: PrimaryButton(
           label: 'Kirim Request',
           icon: Icons.send_rounded,
-          onPressed: () => context.go(AppRoutes.customerOffers),
+          onPressed: () => context.go(AppRoutes.customerRequestSuccess),
         ),
       ),
       body: ListView(
@@ -75,10 +75,15 @@ class CreateServiceRequestScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          const CustomTextField(
+          CustomTextField(
             label: 'Lokasi Servis',
             hintText: 'Jl. Merdeka No. 12, Bandung',
-            prefixIcon: Icon(Icons.location_on_outlined),
+            prefixIcon: const Icon(Icons.location_on_outlined),
+            suffixIcon: IconButton(
+              tooltip: 'Pilih lokasi',
+              onPressed: () => context.push(AppRoutes.customerLocation),
+              icon: const Icon(Icons.map_outlined),
+            ),
             textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: AppSpacing.md),

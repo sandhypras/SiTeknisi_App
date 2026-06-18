@@ -22,7 +22,7 @@ class JoinTechnicianScreen extends StatelessWidget {
         child: PrimaryButton(
           label: 'Kirim Pengajuan',
           icon: Icons.verified_user_rounded,
-          onPressed: () => context.go(AppRoutes.technicianDashboard),
+          onPressed: () => context.go(AppRoutes.technicianApplication),
         ),
       ),
       body: ListView(
@@ -235,15 +235,9 @@ class _RequestCard extends StatelessWidget {
             Text(location),
             const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
-              label: 'Kirim Offer Rp 175.000',
+              label: 'Lihat Request',
               icon: Icons.local_offer_rounded,
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Offer berhasil dikirim dummy.'),
-                  ),
-                );
-              },
+              onPressed: () => context.go(AppRoutes.technicianRequestDetail),
             ),
           ],
         ),

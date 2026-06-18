@@ -14,7 +14,16 @@ class TechnicianOffersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Penawaran Teknisi')),
+      appBar: AppBar(
+        title: const Text('Penawaran Teknisi'),
+        actions: [
+          IconButton(
+            tooltip: 'Bandingkan offer',
+            onPressed: () => context.push(AppRoutes.customerOfferComparison),
+            icon: const Icon(Icons.compare_arrows_rounded),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.screenPadding),
         children: const [
@@ -125,7 +134,7 @@ class _OfferCard extends StatelessWidget {
                   PrimaryButton(
                     label: 'Pilih',
                     fullWidth: false,
-                    onPressed: () => context.go(AppRoutes.customerPayment),
+                    onPressed: () => context.go(AppRoutes.customerOfferDetail),
                   ),
                 ],
               ),
