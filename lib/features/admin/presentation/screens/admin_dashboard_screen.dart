@@ -41,7 +41,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       drawer: compact ? Drawer(child: _Sidebar(selected: _section)) : null,
       body: Row(
         children: [
-          if (!compact) SizedBox(width: 260, child: _Sidebar(selected: _section)),
+          if (!compact)
+            SizedBox(width: 260, child: _Sidebar(selected: _section)),
           Expanded(
             child: Column(
               children: [
@@ -87,14 +88,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _NotificationItem(Icons.engineering_outlined,
-                '2 pengajuan teknisi menunggu review'),
+            _NotificationItem(
+              Icons.engineering_outlined,
+              '2 pengajuan teknisi menunggu review',
+            ),
             Divider(),
             _NotificationItem(
-                Icons.payments_outlined, '1 pembayaran masih pending'),
+              Icons.payments_outlined,
+              '1 pembayaran masih pending',
+            ),
             Divider(),
             _NotificationItem(
-                Icons.event_note_outlined, '12 booking dibuat hari ini'),
+              Icons.event_note_outlined,
+              '12 booking dibuat hari ini',
+            ),
           ],
         ),
         actions: [
@@ -139,14 +146,21 @@ class _Sidebar extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('SiTeknisi',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 17)),
-                        Text('Operations Console',
-                            style: TextStyle(
-                                color: Color(0xFF8FA6C1), fontSize: 11)),
+                        Text(
+                          'SiTeknisi',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 17,
+                          ),
+                        ),
+                        Text(
+                          'Operations Console',
+                          style: TextStyle(
+                            color: Color(0xFF8FA6C1),
+                            fontSize: 11,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -159,11 +173,14 @@ class _Sidebar extends StatelessWidget {
                 children: [
                   const Padding(
                     padding: EdgeInsets.fromLTRB(12, 0, 12, 10),
-                    child: Text('MENU UTAMA',
-                        style: TextStyle(
-                            color: Color(0xFF6F88A5),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700)),
+                    child: Text(
+                      'MENU UTAMA',
+                      style: TextStyle(
+                        color: Color(0xFF6F88A5),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                   for (final item in _AdminDashboardScreenState._items)
                     Padding(
@@ -172,20 +189,27 @@ class _Sidebar extends StatelessWidget {
                         selected: item.id == selected,
                         selectedTileColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        leading: Icon(item.icon,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        leading: Icon(
+                          item.icon,
+                          color: item.id == selected
+                              ? Colors.white
+                              : const Color(0xFFA8BAD0),
+                        ),
+                        title: Text(
+                          item.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
                             color: item.id == selected
                                 ? Colors.white
-                                : const Color(0xFFA8BAD0)),
-                        title: Text(item.label,
-                            style: TextStyle(
-                              color: item.id == selected
-                                  ? Colors.white
-                                  : const Color(0xFFD5E0EC),
-                              fontWeight: item.id == selected
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                            )),
+                                : const Color(0xFFD5E0EC),
+                            fontWeight: item.id == selected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
                         onTap: () {
                           context.go('/admin/${item.id}');
                           if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
@@ -204,15 +228,22 @@ class _Sidebar extends StatelessWidget {
                 backgroundColor: Color(0xFF233E5F),
                 child: Text('SA', style: TextStyle(color: Colors.white)),
               ),
-              title: const Text('Sandhy Admin',
-                  style: TextStyle(color: Colors.white, fontSize: 13)),
-              subtitle: const Text('Super Admin',
-                  style: TextStyle(color: Color(0xFF8FA6C1), fontSize: 11)),
+              title: const Text(
+                'Sandhy Admin',
+                style: TextStyle(color: Colors.white, fontSize: 13),
+              ),
+              subtitle: const Text(
+                'Super Admin',
+                style: TextStyle(color: Color(0xFF8FA6C1), fontSize: 11),
+              ),
               trailing: IconButton(
                 tooltip: 'Keluar',
                 onPressed: () => context.go(AppRoutes.adminLogin),
-                icon: const Icon(Icons.logout,
-                    color: Color(0xFFA8BAD0), size: 20),
+                icon: const Icon(
+                  Icons.logout,
+                  color: Color(0xFFA8BAD0),
+                  size: 20,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -249,8 +280,10 @@ class _TopBar extends StatelessWidget {
               ),
             ),
           const Expanded(
-            child: Text('Pusat Operasional',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            child: Text(
+              'Pusat Operasional',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
           ),
           if (!compact)
             SizedBox(
@@ -258,9 +291,13 @@ class _TopBar extends StatelessWidget {
               child: TextField(
                 onSubmitted: (value) {
                   if (value.trim().isNotEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Gunakan pencarian pada halaman untuk "$value".'),
-                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Gunakan pencarian pada halaman untuk "$value".',
+                        ),
+                      ),
+                    );
                   }
                 },
                 decoration: const InputDecoration(
@@ -330,8 +367,7 @@ const _configs = <String, _CrudConfig>{
       _Field('experience', 'Pengalaman'),
       _Field('submitted', 'Tanggal pengajuan'),
       _Field('bank', 'Rekening'),
-      _Field('status', 'Status',
-          options: ['Menunggu', 'Disetujui', 'Ditolak']),
+      _Field('status', 'Status', options: ['Menunggu', 'Disetujui', 'Ditolak']),
     ],
     columns: ['name', 'expertise', 'experience', 'submitted', 'status'],
     statuses: ['Semua', 'Menunggu', 'Disetujui', 'Ditolak'],
@@ -360,13 +396,17 @@ const _configs = <String, _CrudConfig>{
       _Field('technician', 'Teknisi'),
       _Field('service', 'Layanan'),
       _Field('payment', 'Pembayaran', options: ['Pending', 'Lunas', 'Gagal']),
-      _Field('status', 'Status', options: [
-        'Menunggu',
-        'Menuju Lokasi',
-        'Dikerjakan',
-        'Selesai',
-        'Dibatalkan'
-      ]),
+      _Field(
+        'status',
+        'Status',
+        options: [
+          'Menunggu',
+          'Menuju Lokasi',
+          'Dikerjakan',
+          'Selesai',
+          'Dibatalkan',
+        ],
+      ),
     ],
     columns: ['customer', 'technician', 'service', 'payment', 'status'],
     statuses: ['Semua', 'Menunggu', 'Dikerjakan', 'Selesai', 'Dibatalkan'],
@@ -426,9 +466,12 @@ class _CrudPageState extends State<_CrudPage> {
   List<AdminRecord> get filteredRecords {
     final query = _searchController.text.toLowerCase().trim();
     return widget.store.records(widget.section).where((record) {
-      final matchesQuery = query.isEmpty ||
+      final matchesQuery =
+          query.isEmpty ||
           record.id.toLowerCase().contains(query) ||
-          record.values.values.any((value) => value.toLowerCase().contains(query));
+          record.values.values.any(
+            (value) => value.toLowerCase().contains(query),
+          );
       final matchesStatus =
           _status == 'Semua' || record.values['status'] == _status;
       return matchesQuery && matchesStatus;
@@ -483,10 +526,15 @@ class _CrudPageState extends State<_CrudPage> {
                     initialValue: _status,
                     decoration: const InputDecoration(labelText: 'Status'),
                     items: config.statuses
-                        .map((value) => DropdownMenuItem(
-                            value: value, child: Text(value)))
+                        .map(
+                          (value) => DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          ),
+                        )
                         .toList(),
-                    onChanged: (value) => setState(() => _status = value ?? 'Semua'),
+                    onChanged: (value) =>
+                        setState(() => _status = value ?? 'Semua'),
                   ),
                 ),
                 OutlinedButton.icon(
@@ -523,16 +571,18 @@ class _CrudPageState extends State<_CrudPage> {
   Future<void> _openForm([AdminRecord? record]) async {
     final controllers = {
       for (final field in config.fields)
-        field.key: TextEditingController(text: record?.values[field.key] ?? '')
+        field.key: TextEditingController(text: record?.values[field.key] ?? ''),
     };
     final formKey = GlobalKey<FormState>();
     final result = await showDialog<Map<String, String>>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text(record == null
-            ? 'Tambah ${config.singular}'
-            : 'Edit ${config.singular}'),
+        title: Text(
+          record == null
+              ? 'Tambah ${config.singular}'
+              : 'Edit ${config.singular}',
+        ),
         content: SizedBox(
           width: 520,
           child: Form(
@@ -546,20 +596,27 @@ class _CrudPageState extends State<_CrudPage> {
                       TextFormField(
                         controller: controllers[field.key],
                         decoration: InputDecoration(labelText: field.label),
-                        validator: (value) => value == null || value.trim().isEmpty
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
                             ? '${field.label} wajib diisi'
                             : null,
                       )
                     else
                       DropdownButtonFormField<String>(
-                        initialValue: field.options!.contains(
-                                controllers[field.key]!.text)
+                        initialValue:
+                            field.options!.contains(
+                              controllers[field.key]!.text,
+                            )
                             ? controllers[field.key]!.text
                             : field.options!.first,
                         decoration: InputDecoration(labelText: field.label),
                         items: field.options!
-                            .map((value) => DropdownMenuItem(
-                                value: value, child: Text(value)))
+                            .map(
+                              (value) => DropdownMenuItem(
+                                value: value,
+                                child: Text(value),
+                              ),
+                            )
                             .toList(),
                         onChanged: (value) =>
                             controllers[field.key]!.text = value ?? '',
@@ -573,8 +630,9 @@ class _CrudPageState extends State<_CrudPage> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
           FilledButton(
             onPressed: () {
               for (final field in config.fields) {
@@ -586,7 +644,7 @@ class _CrudPageState extends State<_CrudPage> {
               if (formKey.currentState!.validate()) {
                 Navigator.pop(context, {
                   for (final entry in controllers.entries)
-                    entry.key: entry.value.text.trim()
+                    entry.key: entry.value.text.trim(),
                 });
               }
             },
@@ -604,34 +662,49 @@ class _CrudPageState extends State<_CrudPage> {
     } else {
       widget.store.update(widget.section, record.id, result);
     }
-    _notify(record == null ? 'Data berhasil ditambahkan' : 'Data berhasil diperbarui');
+    _notify(
+      record == null ? 'Data berhasil ditambahkan' : 'Data berhasil diperbarui',
+    );
   }
 
   void _showDetail(AdminRecord record) {
+    final isTechnician = widget.section == 'technicians';
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(children: [
-          const Icon(Icons.description_outlined, color: AppColors.primary),
-          const SizedBox(width: 12),
-          Expanded(child: Text('${config.singular} ${record.id}')),
-        ]),
+        title: Row(
+          children: [
+            const Icon(Icons.description_outlined, color: AppColors.primary),
+            const SizedBox(width: 12),
+            Expanded(child: Text('${config.singular} ${record.id}')),
+          ],
+        ),
         content: SizedBox(
-          width: 520,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final field in config.fields)
-                _DetailRow(
+          width: isTechnician ? 780 : 520,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isTechnician) ...[
+                  _TechnicianDocuments(record: record),
+                  const SizedBox(height: 22),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                ],
+                for (final field in config.fields)
+                  _DetailRow(
                     label: field.label,
-                    value: record.values[field.key] ?? '-'),
-            ],
+                    value: record.values[field.key] ?? '-',
+                  ),
+              ],
+            ),
           ),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Tutup')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
           FilledButton.icon(
             onPressed: () {
               Navigator.pop(context);
@@ -654,8 +727,9 @@ class _CrudPageState extends State<_CrudPage> {
         content: Text('Data ${record.id} akan dihapus dari daftar.'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Batal')),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
             onPressed: () => Navigator.pop(context, true),
@@ -677,10 +751,12 @@ class _CrudPageState extends State<_CrudPage> {
   void _notify(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text(message),
-        action: SnackBarAction(label: 'Tutup', onPressed: () {}),
-      ));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          action: SnackBarAction(label: 'Tutup', onPressed: () {}),
+        ),
+      );
   }
 }
 
@@ -713,97 +789,194 @@ class _DataPanel extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Row(children: [
-              Expanded(child: Text(title,
-                  style: Theme.of(context).textTheme.titleMedium)),
-              Text('${records.length} data',
-                  style: const TextStyle(color: AppColors.textMuted)),
-            ]),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                Text(
+                  '${records.length} data',
+                  style: const TextStyle(color: AppColors.textMuted),
+                ),
+              ],
+            ),
           ),
           const Divider(height: 1),
           if (records.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 64),
-              child: Column(children: [
-                Icon(Icons.search_off_outlined,
-                    size: 48, color: AppColors.textMuted),
-                SizedBox(height: 12),
-                Text('Data tidak ditemukan'),
-                SizedBox(height: 4),
-                Text('Ubah kata pencarian atau filter status.',
-                    style: TextStyle(color: AppColors.textMuted)),
-              ]),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.search_off_outlined,
+                    size: 48,
+                    color: AppColors.textMuted,
+                  ),
+                  SizedBox(height: 12),
+                  Text('Data tidak ditemukan'),
+                  SizedBox(height: 4),
+                  Text(
+                    'Ubah kata pencarian atau filter status.',
+                    style: TextStyle(color: AppColors.textMuted),
+                  ),
+                ],
+              ),
             )
           else
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
+                columnSpacing: 28,
+                horizontalMargin: 20,
+                headingRowHeight: 54,
+                dataRowMinHeight: 64,
+                dataRowMaxHeight: 72,
                 headingRowColor: WidgetStatePropertyAll(
-                    Theme.of(context).colorScheme.surfaceContainerLowest),
+                  Theme.of(context).colorScheme.surfaceContainerLowest,
+                ),
                 columns: [
-                  const DataColumn(label: Text('ID')),
+                  const DataColumn(label: Text('ID', softWrap: false)),
                   for (final key in config.columns)
-                    DataColumn(label: Text(_labelFor(config, key))),
-                  const DataColumn(label: Text('Aksi')),
+                    DataColumn(
+                      label: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: _columnWidth(key),
+                        ),
+                        child: Text(
+                          _labelFor(config, key),
+                          softWrap: false,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                    ),
+                  const DataColumn(
+                    label: SizedBox(
+                      width: 220,
+                      child: Text('Aksi', softWrap: false),
+                    ),
+                  ),
                 ],
                 rows: [
                   for (final record in records)
-                    DataRow(cells: [
-                      DataCell(SelectableText(record.id,
-                          style: const TextStyle(fontWeight: FontWeight.w600))),
-                      for (final key in config.columns)
-                        DataCell(key == 'status'
-                            ? _TableStatus(label: record.values[key] ?? '-')
-                            : Text(record.values[key] ?? '-')),
-                      DataCell(Row(mainAxisSize: MainAxisSize.min, children: [
-                        IconButton(
-                            tooltip: 'Lihat detail',
-                            onPressed: () => onView(record),
-                            icon: const Icon(Icons.visibility_outlined)),
-                        if (onApprove != null &&
-                            record.values['status'] == 'Menunggu') ...[
-                          IconButton(
-                              tooltip: 'Setujui',
-                              onPressed: () => onApprove!(record),
-                              icon: const Icon(Icons.check_circle_outline,
-                                  color: AppColors.success)),
-                          IconButton(
-                              tooltip: 'Tolak',
-                              onPressed: () => onReject!(record),
-                              icon: const Icon(Icons.cancel_outlined,
-                                  color: AppColors.error)),
-                        ],
-                        IconButton(
-                            tooltip: 'Edit',
-                            onPressed: () => onEdit(record),
-                            icon: const Icon(Icons.edit_outlined)),
-                        IconButton(
-                            tooltip: 'Hapus',
-                            onPressed: () => onDelete(record),
-                            icon: const Icon(Icons.delete_outline,
-                                color: AppColors.error)),
-                      ])),
-                    ]),
+                    DataRow(
+                      cells: [
+                        DataCell(
+                          SelectableText(
+                            record.id,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        for (final key in config.columns)
+                          DataCell(
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minWidth: _columnWidth(key),
+                                maxWidth: _columnWidth(key) + 70,
+                              ),
+                              child: key == 'status'
+                                  ? Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: _TableStatus(
+                                        label: record.values[key] ?? '-',
+                                      ),
+                                    )
+                                  : Text(
+                                      record.values[key] ?? '-',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                            ),
+                          ),
+                        DataCell(
+                          SizedBox(
+                            width: 220,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  tooltip: 'Lihat detail',
+                                  onPressed: () => onView(record),
+                                  icon: const Icon(Icons.visibility_outlined),
+                                ),
+                                if (onApprove != null &&
+                                    record.values['status'] == 'Menunggu') ...[
+                                  IconButton(
+                                    tooltip: 'Setujui',
+                                    onPressed: () => onApprove!(record),
+                                    icon: const Icon(
+                                      Icons.check_circle_outline,
+                                      color: AppColors.success,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Tolak',
+                                    onPressed: () => onReject!(record),
+                                    icon: const Icon(
+                                      Icons.cancel_outlined,
+                                      color: AppColors.error,
+                                    ),
+                                  ),
+                                ],
+                                IconButton(
+                                  tooltip: 'Edit',
+                                  onPressed: () => onEdit(record),
+                                  icon: const Icon(Icons.edit_outlined),
+                                ),
+                                IconButton(
+                                  tooltip: 'Hapus',
+                                  onPressed: () => onDelete(record),
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    color: AppColors.error,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              Text('Menampilkan ${records.length} data',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Menampilkan ${records.length} data',
                   style: const TextStyle(
-                      color: AppColors.textMuted, fontSize: 12)),
-            ]),
+                    color: AppColors.textMuted,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  static String _labelFor(_CrudConfig config, String key) => config.fields
-      .firstWhere((field) => field.key == key)
-      .label;
+  static String _labelFor(_CrudConfig config, String key) =>
+      config.fields.firstWhere((field) => field.key == key).label;
+
+  static double _columnWidth(String key) => switch (key) {
+    'name' || 'customer' || 'technician' => 150,
+    'contact' || 'description' || 'bank' => 190,
+    'expertise' || 'service' => 140,
+    'joined' || 'submitted' || 'created' => 125,
+    'status' || 'payment' || 'role' => 105,
+    'experience' || 'method' => 110,
+    'amount' || 'commission' || 'total' => 115,
+    'booking' => 145,
+    _ => 100,
+  };
 }
 
 class _DashboardOverview extends StatelessWidget {
@@ -819,8 +992,10 @@ class _DashboardOverview extends StatelessWidget {
         .length;
     final activeBookings = store
         .records('bookings')
-        .where((record) => !['Selesai', 'Dibatalkan']
-            .contains(record.values['status']))
+        .where(
+          (record) =>
+              !['Selesai', 'Dibatalkan'].contains(record.values['status']),
+        )
         .length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -830,35 +1005,57 @@ class _DashboardOverview extends StatelessWidget {
           subtitle: 'Ringkasan operasional SiTeknisi hari ini.',
         ),
         const SizedBox(height: 28),
-        LayoutBuilder(builder: (context, constraints) {
-          final columns = constraints.maxWidth >= 1100
-              ? 4
-              : constraints.maxWidth >= 650
-                  ? 2
-                  : 1;
-          return GridView.count(
-            crossAxisCount: columns,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: columns == 1 ? 3 : 2.05,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _KpiCard('Total Pengguna', '${store.records('users').length}',
-                  'Kelola data', Icons.people_outline, AppColors.primary,
-                  () => context.go('/admin/users')),
-              _KpiCard('Booking Aktif', '$activeBookings', 'Pantau progres',
-                  Icons.event_note_outlined, AppColors.secondary,
-                  () => context.go('/admin/bookings')),
-              _KpiCard('Menunggu Verifikasi', '$pending', 'Perlu ditinjau',
-                  Icons.verified_user_outlined, AppColors.warning,
-                  () => context.go('/admin/technicians')),
-              _KpiCard('Pembayaran', '${store.records('payments').length}',
-                  'Audit transaksi', Icons.account_balance_wallet_outlined,
-                  AppColors.success, () => context.go('/admin/payments')),
-            ],
-          );
-        }),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = constraints.maxWidth >= 1100
+                ? 4
+                : constraints.maxWidth >= 650
+                ? 2
+                : 1;
+            return GridView.count(
+              crossAxisCount: columns,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: columns == 1 ? 3 : 2.05,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _KpiCard(
+                  'Total Pengguna',
+                  '${store.records('users').length}',
+                  'Kelola data',
+                  Icons.people_outline,
+                  AppColors.primary,
+                  () => context.go('/admin/users'),
+                ),
+                _KpiCard(
+                  'Booking Aktif',
+                  '$activeBookings',
+                  'Pantau progres',
+                  Icons.event_note_outlined,
+                  AppColors.secondary,
+                  () => context.go('/admin/bookings'),
+                ),
+                _KpiCard(
+                  'Menunggu Verifikasi',
+                  '$pending',
+                  'Perlu ditinjau',
+                  Icons.verified_user_outlined,
+                  AppColors.warning,
+                  () => context.go('/admin/technicians'),
+                ),
+                _KpiCard(
+                  'Pembayaran',
+                  '${store.records('payments').length}',
+                  'Audit transaksi',
+                  Icons.account_balance_wallet_outlined,
+                  AppColors.success,
+                  () => context.go('/admin/payments'),
+                ),
+              ],
+            );
+          },
+        ),
         const SizedBox(height: 24),
         Card(
           child: Padding(
@@ -866,28 +1063,42 @@ class _DashboardOverview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  Expanded(child: Text('Aksi Cepat',
-                      style: Theme.of(context).textTheme.titleMedium)),
-                  TextButton(
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Aksi Cepat',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    TextButton(
                       onPressed: () => context.go('/admin/reports'),
-                      child: const Text('Lihat laporan')),
-                ]),
+                      child: const Text('Lihat laporan'),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 16),
-                Wrap(spacing: 12, runSpacing: 12, children: [
-                  FilledButton.icon(
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    FilledButton.icon(
                       onPressed: () => context.go('/admin/technicians'),
                       icon: const Icon(Icons.fact_check_outlined),
-                      label: const Text('Review Teknisi')),
-                  OutlinedButton.icon(
+                      label: const Text('Review Teknisi'),
+                    ),
+                    OutlinedButton.icon(
                       onPressed: () => context.go('/admin/bookings'),
                       icon: const Icon(Icons.event_note_outlined),
-                      label: const Text('Pantau Booking')),
-                  OutlinedButton.icon(
+                      label: const Text('Pantau Booking'),
+                    ),
+                    OutlinedButton.icon(
                       onPressed: () => context.go('/admin/services'),
                       icon: const Icon(Icons.add_business_outlined),
-                      label: const Text('Kelola Layanan')),
-                ]),
+                      label: const Text('Kelola Layanan'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -899,7 +1110,13 @@ class _DashboardOverview extends StatelessWidget {
 
 class _KpiCard extends StatelessWidget {
   const _KpiCard(
-      this.label, this.value, this.detail, this.icon, this.color, this.onTap);
+    this.label,
+    this.value,
+    this.detail,
+    this.icon,
+    this.color,
+    this.onTap,
+  );
 
   final String label;
   final String value;
@@ -916,36 +1133,50 @@ class _KpiCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Row(children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
                   color: color.withValues(alpha: .12),
-                  borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: color),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.textSecondary)),
-                  Text(value,
+                      style: const TextStyle(color: AppColors.textSecondary),
+                    ),
+                    Text(
+                      value,
                       style: const TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.w700)),
-                  Text(detail,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      detail,
                       style: TextStyle(
-                          color: color, fontSize: 12, fontWeight: FontWeight.w600)),
-                ],
+                        color: color,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: AppColors.textMuted),
-          ]),
+              const Icon(Icons.chevron_right, color: AppColors.textMuted),
+            ],
+          ),
         ),
       ),
     );
@@ -964,49 +1195,64 @@ class _ReportsPageState extends State<_ReportsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const _PageHeading(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _PageHeading(
           title: 'Laporan',
-          subtitle: 'Analisis performa marketplace dan permintaan layanan.'),
-      const SizedBox(height: 24),
-      Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(children: [
-            SizedBox(
-              width: 220,
-              child: DropdownButtonFormField<String>(
-                initialValue: _range,
-                decoration: const InputDecoration(labelText: 'Periode'),
-                items: ['7 hari terakhir', '30 hari terakhir', 'Tahun ini']
-                    .map((value) => DropdownMenuItem(
-                        value: value, child: Text(value)))
-                    .toList(),
-                onChanged: (value) => setState(() => _range = value ?? _range),
-              ),
-            ),
-            const SizedBox(width: 12),
-            FilledButton.icon(
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Laporan $_range diperbarui'))),
-                icon: const Icon(Icons.refresh),
-                label: const Text('Terapkan')),
-          ]),
+          subtitle: 'Analisis performa marketplace dan permintaan layanan.',
         ),
-      ),
-      const SizedBox(height: 16),
-      LayoutBuilder(builder: (context, constraints) {
-        return GridView.count(
-          crossAxisCount: constraints.maxWidth > 850 ? 2 : 1,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.8,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: const [_BarChartCard(), _ServiceDemandCard()],
-        );
-      }),
-    ]);
+        const SizedBox(height: 24),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 220,
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _range,
+                    decoration: const InputDecoration(labelText: 'Periode'),
+                    items: ['7 hari terakhir', '30 hari terakhir', 'Tahun ini']
+                        .map(
+                          (value) => DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) =>
+                        setState(() => _range = value ?? _range),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Laporan $_range diperbarui')),
+                  ),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Terapkan'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return GridView.count(
+              crossAxisCount: constraints.maxWidth > 850 ? 2 : 1,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.8,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: const [_BarChartCard(), _ServiceDemandCard()],
+            );
+          },
+        ),
+      ],
+    );
   }
 }
 
@@ -1019,13 +1265,17 @@ class _BarChartCard extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Booking Mingguan',
-              style: Theme.of(context).textTheme.titleMedium),
-          const Spacer(),
-          Expanded(
-            flex: 4,
-            child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Booking Mingguan',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const Spacer(),
+            Expanded(
+              flex: 4,
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   for (final height in heights)
@@ -1037,16 +1287,20 @@ class _BarChartCard extends StatelessWidget {
                           child: Container(
                             height: height,
                             decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(6))),
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(6),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                ]),
-          ),
-        ]),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1061,25 +1315,32 @@ class _ServiceDemandCard extends StatelessWidget {
       ('Servis AC', .82),
       ('Laptop', .66),
       ('Mesin Cuci', .54),
-      ('Televisi', .39)
+      ('Televisi', .39),
     ];
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Permintaan Layanan',
-              style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 24),
-          for (final item in data) ...[
-            Row(children: [
-              Expanded(child: Text(item.$1)),
-              Text('${(item.$2 * 100).round()}%')
-            ]),
-            const SizedBox(height: 7),
-            LinearProgressIndicator(value: item.$2, minHeight: 8),
-            const SizedBox(height: 17),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Permintaan Layanan',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 24),
+            for (final item in data) ...[
+              Row(
+                children: [
+                  Expanded(child: Text(item.$1)),
+                  Text('${(item.$2 * 100).round()}%'),
+                ],
+              ),
+              const SizedBox(height: 7),
+              LinearProgressIndicator(value: item.$2, minHeight: 8),
+              const SizedBox(height: 17),
+            ],
           ],
-        ]),
+        ),
       ),
     );
   }
@@ -1108,62 +1369,82 @@ class _SettingsPageState extends State<_SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const _PageHeading(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _PageHeading(
           title: 'Pengaturan',
-          subtitle: 'Konfigurasi dasar platform dan profil administrator.'),
-      const SizedBox(height: 24),
-      Card(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 680),
-            child: Form(
-              key: _formKey,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('Konfigurasi Platform',
-                    style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: _commission,
-                  decoration: const InputDecoration(
-                      labelText: 'Komisi platform', suffixText: '%'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    final number = double.tryParse(value ?? '');
-                    if (number == null || number < 0 || number > 100) {
-                      return 'Masukkan nilai 0 sampai 100';
-                    }
-                    return null;
-                  },
+          subtitle: 'Konfigurasi dasar platform dan profil administrator.',
+        ),
+        const SizedBox(height: 24),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 680),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Konfigurasi Platform',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _commission,
+                      decoration: const InputDecoration(
+                        labelText: 'Komisi platform',
+                        suffixText: '%',
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        final number = double.tryParse(value ?? '');
+                        if (number == null || number < 0 || number > 100) {
+                          return 'Masukkan nilai 0 sampai 100';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _name,
+                      decoration: const InputDecoration(
+                        labelText: 'Nama admin',
+                      ),
+                      validator: _required,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _email,
+                      decoration: const InputDecoration(
+                        labelText: 'Email dukungan',
+                      ),
+                      validator: _required,
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton.icon(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Pengaturan berhasil disimpan'),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.save_outlined),
+                      label: const Text('Simpan Pengaturan'),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                    controller: _name,
-                    decoration: const InputDecoration(labelText: 'Nama admin'),
-                    validator: _required),
-                const SizedBox(height: 16),
-                TextFormField(
-                    controller: _email,
-                    decoration: const InputDecoration(labelText: 'Email dukungan'),
-                    validator: _required),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Pengaturan berhasil disimpan')));
-                    }
-                  },
-                  icon: const Icon(Icons.save_outlined),
-                  label: const Text('Simpan Pengaturan'),
-                ),
-              ]),
+              ),
             ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   static String? _required(String? value) =>
@@ -1185,24 +1466,175 @@ class _PageHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Expanded(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: Theme.of(context).textTheme.headlineLarge),
-          const SizedBox(height: 6),
-          Text(subtitle,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: AppColors.textSecondary)),
-        ]),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 620;
+        final heading = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: Theme.of(context).textTheme.headlineLarge),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
+        );
+        final action = actionLabel == null
+            ? null
+            : FilledButton.icon(
+                onPressed: onAction,
+                icon: const Icon(Icons.add),
+                label: Text(actionLabel!, softWrap: false),
+              );
+        if (compact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              heading,
+              if (action != null) ...[const SizedBox(height: 16), action],
+            ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: heading),
+            if (action != null) ...[const SizedBox(width: 24), action],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _TechnicianDocuments extends StatelessWidget {
+  const _TechnicianDocuments({required this.record});
+
+  final AdminRecord record;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.badge_outlined, color: AppColors.primary),
+            const SizedBox(width: 10),
+            Text(
+              'Dokumen Verifikasi',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxWidth < 620;
+            final profile = _DocumentPreview(
+              title: 'Foto Profil',
+              imageUrl: record.values['profilePhotoUrl'],
+              icon: Icons.person_outline,
+              aspectRatio: 1,
+            );
+            final ktp = _DocumentPreview(
+              title: 'Foto KTP',
+              imageUrl: record.values['ktpPhotoUrl'],
+              icon: Icons.credit_card_outlined,
+              aspectRatio: 1.58,
+            );
+            if (compact) {
+              return Column(
+                children: [profile, const SizedBox(height: 14), ktp],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 2, child: profile),
+                const SizedBox(width: 16),
+                Expanded(flex: 3, child: ktp),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _DocumentPreview extends StatelessWidget {
+  const _DocumentPreview({
+    required this.title,
+    required this.imageUrl,
+    required this.icon,
+    required this.aspectRatio,
+  });
+
+  final String title;
+  final String? imageUrl;
+  final IconData icon;
+  final double aspectRatio;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasImage = imageUrl != null && imageUrl!.trim().isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        AspectRatio(
+          aspectRatio: aspectRatio,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                border: Border.all(color: AppColors.border),
+              ),
+              child: hasImage
+                  ? Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) =>
+                          _DocumentPlaceholder(icon: icon),
+                    )
+                  : _DocumentPlaceholder(icon: icon),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DocumentPlaceholder extends StatelessWidget {
+  const _DocumentPlaceholder({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 42, color: AppColors.textMuted),
+          const SizedBox(height: 8),
+          const Text(
+            'Belum ada gambar',
+            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+          ),
+        ],
       ),
-      if (actionLabel != null)
-        FilledButton.icon(
-            onPressed: onAction,
-            icon: const Icon(Icons.add),
-            label: Text(actionLabel!)),
-    ]);
+    );
   }
 }
 
@@ -1214,30 +1646,47 @@ class _TableStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final warning = ['Menunggu', 'Pending', 'Draft'].contains(label);
-    final success = ['Aktif', 'Lunas', 'Terbit', 'Disetujui', 'Selesai']
-        .contains(label);
-    final error = ['Gagal', 'Ditolak', 'Dibatalkan', 'Nonaktif'].contains(label);
+    final success = [
+      'Aktif',
+      'Lunas',
+      'Terbit',
+      'Disetujui',
+      'Selesai',
+    ].contains(label);
+    final error = [
+      'Gagal',
+      'Ditolak',
+      'Dibatalkan',
+      'Nonaktif',
+    ].contains(label);
     final color = warning
         ? AppColors.warningText
         : success
-            ? AppColors.successText
-            : error
-                ? AppColors.errorText
-                : AppColors.infoText;
+        ? AppColors.successText
+        : error
+        ? AppColors.errorText
+        : AppColors.infoText;
     final background = warning
         ? AppColors.warningContainer
         : success
-            ? AppColors.successContainer
-            : error
-                ? AppColors.errorContainer
-                : AppColors.infoContainer;
+        ? AppColors.successContainer
+        : error
+        ? AppColors.errorContainer
+        : AppColors.infoContainer;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-          color: background, borderRadius: BorderRadius.circular(999)),
-      child: Text(label,
-          style: TextStyle(
-              color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
@@ -1252,15 +1701,24 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
             width: 150,
-            child: Text(label,
-                style: const TextStyle(color: AppColors.textSecondary))),
-        Expanded(
-            child: Text(value,
-                style: const TextStyle(fontWeight: FontWeight.w600))),
-      ]),
+            child: Text(
+              label,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1272,12 +1730,13 @@ class _NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        contentPadding: EdgeInsets.zero,
-        leading: CircleAvatar(
-            backgroundColor: AppColors.primaryLight,
-            child: Icon(icon, color: AppColors.primary)),
-        title: Text(text),
-      );
+    contentPadding: EdgeInsets.zero,
+    leading: CircleAvatar(
+      backgroundColor: AppColors.primaryLight,
+      child: Icon(icon, color: AppColors.primary),
+    ),
+    title: Text(text),
+  );
 }
 
 class _Field {
