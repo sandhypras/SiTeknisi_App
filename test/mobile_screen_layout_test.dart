@@ -5,8 +5,12 @@ import 'package:siteknisi_apps/features/customer/presentation/screens/customer_h
 import 'package:siteknisi_apps/features/technician/presentation/screens/technician_screens.dart';
 
 void main() {
-  Future<void> pumpMobileScreen(WidgetTester tester, Widget screen) async {
-    tester.view.physicalSize = const Size(390, 844);
+  Future<void> pumpMobileScreen(
+    WidgetTester tester,
+    Widget screen, {
+    Size size = const Size(390, 844),
+  }) async {
+    tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -18,7 +22,11 @@ void main() {
   testWidgets('customer home has no layout overflow on Android viewport', (
     tester,
   ) async {
-    await pumpMobileScreen(tester, const CustomerHomeScreen());
+    await pumpMobileScreen(
+      tester,
+      const CustomerHomeScreen(),
+      size: const Size(360, 800),
+    );
 
     expect(find.text('Kategori Layanan'), findsOneWidget);
     expect(tester.takeException(), isNull);

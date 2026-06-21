@@ -112,7 +112,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   SizedBox(
-                    height: 176,
+                    height: 190,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: technicians.length,
@@ -472,7 +472,7 @@ class _FeaturedTechnicianCard extends StatelessWidget {
                   child: SafeImage(
                     assetPath: technician.imageAsset,
                     width: double.infinity,
-                    height: 84,
+                    height: 82,
                     fallbackIcon: Icons.person_rounded,
                   ),
                 ),
