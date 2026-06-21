@@ -280,12 +280,12 @@ class _JoinTechnicianBanner extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push(AppRoutes.technicianJoin),
         child: Ink(
-          height: 252,
+          height: 264,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(AppAssets.joinTechnicianBanner),
               fit: BoxFit.cover,
-              alignment: Alignment.center,
+              alignment: Alignment.centerRight,
             ),
           ),
           child: Container(
@@ -294,16 +294,16 @@ class _JoinTechnicianBanner extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   const Color(0xFF082F5B).withValues(alpha: 0.98),
-                  const Color(0xFF0B4F8A).withValues(alpha: 0.88),
+                  const Color(0xFF0B4F8A).withValues(alpha: 0.78),
                   Colors.transparent,
                 ],
-                stops: const [0, 0.54, 1],
+                stops: const [0, 0.46, 0.78],
               ),
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
-                widthFactor: 0.62,
+                widthFactor: 0.56,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
