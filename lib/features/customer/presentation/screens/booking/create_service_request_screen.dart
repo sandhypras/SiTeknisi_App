@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,18 +11,29 @@ import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/primary_button.dart';
+import '../../../../../shared/widgets/image_upload_field.dart';
+import '../../../../../shared/widgets/safe_image.dart';
 import '../../../data/customer_dummy_data.dart';
 
-class CreateServiceRequestScreen extends ConsumerWidget {
+class CreateServiceRequestScreen extends ConsumerStatefulWidget {
   const CreateServiceRequestScreen({required this.serviceId, super.key});
 
   final String serviceId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CreateServiceRequestScreen> createState() =>
+      _CreateServiceRequestScreenState();
+}
+
+class _CreateServiceRequestScreenState
+    extends ConsumerState<CreateServiceRequestScreen> {
+  Uint8List? _damagePhoto;
+
+  @override
+  Widget build(BuildContext context) {
     final services = ref.watch(customerServicesProvider);
     final service = services.firstWhere(
-      (item) => item.id == serviceId,
+      (item) => item.id == widget.serviceId,
       orElse: () => services.first,
     );
     final textTheme = Theme.of(context).textTheme;
@@ -66,14 +79,14 @@ class CreateServiceRequestScreen extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: AppRadius.pill,
+                ClipRRect(
+                  borderRadius: AppRadius.medium,
+                  child: SafeImage(
+                    assetPath: service.imageAsset,
+                    width: 64,
+                    height: 64,
+                    fallbackIcon: service.icon,
                   ),
-                  child: Icon(service.icon, color: AppColors.surface),
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
@@ -122,40 +135,12 @@ class CreateServiceRequestScreen extends ConsumerWidget {
             textInputAction: TextInputAction.done,
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text('Foto Kerusakan', style: textTheme.titleMedium),
-          const SizedBox(height: AppSpacing.sm),
-          Container(
-            height: 128,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: AppRadius.large,
-              border: Border.all(color: AppColors.border),
-            ),
-            child: InkWell(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Upload foto masih dummy.')),
-                );
-              },
-              borderRadius: AppRadius.large,
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    color: AppColors.primary,
-                    size: 34,
-                  ),
-                  SizedBox(height: AppSpacing.xs),
-                  Text('Tambah Foto Kerusakan'),
-                  SizedBox(height: AppSpacing.xxs),
-                  Text(
-                    'JPG atau PNG, maksimal 5 MB',
-                    style: TextStyle(color: AppColors.textMuted, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
+          ImageUploadField(
+            title: 'Foto Kerusakan',
+            description:
+                'Tambahkan foto yang jelas agar teknisi dapat memberi estimasi lebih akurat.',
+            bytes: _damagePhoto,
+            onSelected: (bytes) => setState(() => _damagePhoto = bytes),
           ),
           const SizedBox(height: AppSpacing.md),
           Container(

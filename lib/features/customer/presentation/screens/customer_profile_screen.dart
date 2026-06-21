@@ -64,10 +64,7 @@ class CustomerProfileScreen extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => _showMockMessage(
-                      context,
-                      'Edit profil belum terhubung API.',
-                    ),
+                    onPressed: () => _showEditProfileDialog(context),
                     icon: const Icon(Icons.edit_rounded),
                     tooltip: 'Edit profil',
                   ),
@@ -109,26 +106,31 @@ class CustomerProfileScreen extends StatelessWidget {
               icon: Icons.location_on_outlined,
               title: 'Alamat Tersimpan',
               subtitle: 'Rumah, kantor, dan lokasi servis',
-              onTap: () => _showMockMessage(context, 'Alamat tersimpan dummy.'),
+              onTap: () => context.push(AppRoutes.customerLocation),
             ),
             _ProfileMenuTile(
               icon: Icons.payment_rounded,
               title: 'Metode Pembayaran',
               subtitle: 'Midtrans, transfer, dan riwayat pembayaran',
-              onTap: () =>
-                  _showMockMessage(context, 'Metode pembayaran belum aktif.'),
+              onTap: () => _showPaymentMethods(context),
             ),
             _ProfileMenuTile(
               icon: Icons.history_rounded,
               title: 'Riwayat Booking',
               subtitle: 'Lihat status servis dan invoice',
-              onTap: () => context.go(AppRoutes.customerActivity),
+              onTap: () => context.push(AppRoutes.customerBookingHistory),
+            ),
+            _ProfileMenuTile(
+              icon: Icons.receipt_long_outlined,
+              title: 'Riwayat Invoice',
+              subtitle: 'Invoice otomatis dari transaksi selesai',
+              onTap: () => context.push(AppRoutes.customerInvoiceHistory),
             ),
             _ProfileMenuTile(
               icon: Icons.support_agent_rounded,
               title: 'Bantuan',
               subtitle: 'FAQ dan pusat bantuan SiTeknisi',
-              onTap: () => _showMockMessage(context, 'Pusat bantuan dummy.'),
+              onTap: () => _showHelpCenter(context),
             ),
             const SizedBox(height: AppSpacing.lg),
             OutlinedButton.icon(
@@ -142,10 +144,117 @@ class CustomerProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showMockMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  Future<void> _showEditProfileDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Edit Profil'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(decoration: InputDecoration(labelText: 'Nama lengkap')),
+            SizedBox(height: AppSpacing.sm),
+            TextField(
+              decoration: InputDecoration(labelText: 'Nomor WhatsApp'),
+              keyboardType: TextInputType.phone,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Profil berhasil diperbarui.')),
+              );
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPaymentMethods(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Metode Pembayaran',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+              ),
+              SizedBox(height: AppSpacing.md),
+              ListTile(
+                leading: Icon(Icons.qr_code_rounded),
+                title: Text('QRIS'),
+                subtitle: Text('Pembayaran instan melalui Midtrans'),
+              ),
+              ListTile(
+                leading: Icon(Icons.account_balance_rounded),
+                title: Text('Virtual Account'),
+                subtitle: Text('BCA, BNI, BRI, dan Mandiri'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showHelpCenter(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Pusat Bantuan',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              const ListTile(
+                leading: Icon(Icons.help_outline_rounded),
+                title: Text('Cara membuat permintaan servis'),
+              ),
+              const ListTile(
+                leading: Icon(Icons.shield_outlined),
+                title: Text('Keamanan pembayaran dan garansi'),
+              ),
+              const ListTile(
+                leading: Icon(Icons.support_agent_rounded),
+                title: Text('Hubungi dukungan SiTeknisi'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

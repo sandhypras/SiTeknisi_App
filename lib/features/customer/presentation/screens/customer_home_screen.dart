@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/safe_image.dart';
+import '../../../../shared/widgets/slogan_banner.dart';
 import '../../data/customer_dummy_data.dart';
 import '../widgets/customer_shell.dart';
 
@@ -17,6 +18,7 @@ class CustomerHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(customerCategoriesProvider);
+    final technicians = ref.watch(featuredTechniciansProvider);
     final textTheme = Theme.of(context).textTheme;
 
     return CustomerShell(
@@ -52,6 +54,12 @@ class CustomerHomeScreen extends ConsumerWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.lg),
+                  _HomeSearchBar(
+                    onTap: () => context.go(AppRoutes.customerSearch),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  const _SloganHero(),
                   const SizedBox(height: AppSpacing.xl),
                   const _TrackingCard(),
                   const SizedBox(height: AppSpacing.xl),
@@ -86,7 +94,36 @@ class CustomerHomeScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  const _JoinTechnicianBanner(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Teknisi Pilihan',
+                          style: textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => context.go(AppRoutes.customerOffers),
+                        child: const Text('Lihat Penawaran'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(
+                    height: 176,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: technicians.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(width: AppSpacing.sm),
+                      itemBuilder: (context, index) => _FeaturedTechnicianCard(
+                        technician: technicians[index],
+                        onTap: () => context.go(AppRoutes.customerOffers),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
                     'Riwayat Terakhir',
@@ -102,6 +139,62 @@ class CustomerHomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _HomeSearchBar extends StatelessWidget {
+  const _HomeSearchBar({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: AppRadius.large,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.large,
+        child: Container(
+          height: 54,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.border),
+            borderRadius: AppRadius.large,
+          ),
+          child: const Row(
+            children: [
+              Icon(Icons.search_rounded, color: AppColors.primary),
+              SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Cari servis printer, komputer, laptop...',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: AppColors.textMuted),
+                ),
+              ),
+              Icon(Icons.tune_rounded, color: AppColors.textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SloganHero extends StatelessWidget {
+  const _SloganHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return SloganBanner(
+      imageAsset: AppAssets.customerServicePromo,
+      title: 'Elektronik pulih, aktivitas kembali utuh.',
+      subtitle: 'Teknisi tepercaya untuk perangkat yang menemani harimu.',
+      buttonLabel: 'Temukan Teknisi',
+      onPressed: () => context.go(AppRoutes.customerSearch),
     );
   }
 }
@@ -217,7 +310,9 @@ class _TrackingCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xxs,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -236,7 +331,6 @@ class _TrackingCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Spacer(),
                     Text(
                       '10:30 AM',
                       style: textTheme.titleMedium?.copyWith(
@@ -265,22 +359,26 @@ class _TrackingCard extends StatelessWidget {
                 InkWell(
                   onTap: () => context.go(AppRoutes.customerTracking),
                   borderRadius: AppRadius.pill,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Lacak Pesanan',
-                        style: textTheme.titleMedium?.copyWith(
-                          color: AppColors.primaryDark,
-                          fontWeight: FontWeight.w900,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Lacak Pesanan',
+                          style: textTheme.titleMedium?.copyWith(
+                            color: AppColors.primaryDark,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.primaryDark,
-                      ),
-                    ],
+                        const SizedBox(width: AppSpacing.xs),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          color: AppColors.primaryDark,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -341,69 +439,84 @@ class _HomeCategoryItem extends StatelessWidget {
   }
 }
 
-class _JoinTechnicianBanner extends StatelessWidget {
-  const _JoinTechnicianBanner();
+class _FeaturedTechnicianCard extends StatelessWidget {
+  const _FeaturedTechnicianCard({
+    required this.technician,
+    required this.onTap,
+  });
+
+  final FeaturedTechnician technician;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Container(
-      height: 190,
-      clipBehavior: Clip.antiAlias,
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0B55D9),
+    return SizedBox(
+      width: 150,
+      child: Material(
+        color: AppColors.surface,
         borderRadius: AppRadius.large,
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            bottom: -28,
-            child: Icon(
-              Icons.handyman_rounded,
-              size: 138,
-              color: AppColors.surface.withValues(alpha: 0.18),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: AppRadius.large,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.border),
+              borderRadius: AppRadius.large,
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Ingin Jadi Teknisi?',
-                style: textTheme.titleLarge?.copyWith(
-                  color: AppColors.surface,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              SizedBox(
-                width: 250,
-                child: Text(
-                  'Bergabunglah dengan kami dan dapatkan penghasilan tambahan.',
-                  style: textTheme.titleMedium?.copyWith(
-                    color: AppColors.surface,
-                    fontWeight: FontWeight.w500,
-                    height: 1.45,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: AppRadius.medium,
+                  child: SafeImage(
+                    assetPath: technician.imageAsset,
+                    width: double.infinity,
+                    height: 84,
+                    fallbackIcon: Icons.person_rounded,
                   ),
                 ),
-              ),
-              const Spacer(),
-              FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.surface,
-                  foregroundColor: AppColors.primaryDark,
-                  minimumSize: const Size(180, 48),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  technician.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
-                onPressed: () => context.go(AppRoutes.technicianJoin),
-                iconAlignment: IconAlignment.end,
-                icon: const Icon(Icons.arrow_forward_rounded),
-                label: const Text('Daftar Sekarang'),
-              ),
-            ],
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  technician.specialization,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.star_rounded,
+                      size: 16,
+                      color: AppColors.warning,
+                    ),
+                    const SizedBox(width: AppSpacing.xxs),
+                    Text(
+                      technician.rating.toStringAsFixed(1),
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.verified_rounded,
+                      size: 17,
+                      color: AppColors.primary,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }

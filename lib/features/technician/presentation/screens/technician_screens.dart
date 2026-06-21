@@ -9,6 +9,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../../shared/widgets/slogan_banner.dart';
 import '../../../../shared/widgets/status_chip.dart';
 import '../../../../shared/widgets/safe_image.dart';
 import '../../../../shared/utils/whatsapp_launcher.dart';
@@ -71,9 +72,14 @@ class TechnicianDashboardScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: [
-            const _TechnicianHeader(
+            _TechnicianHeader(
               title: 'Dashboard Teknisi',
               subtitle: 'Halo, Andi. Ada request baru di sekitar Anda.',
+              trailing: IconButton.filledTonal(
+                onPressed: () => context.push(AppRoutes.technicianProfile),
+                icon: const Icon(Icons.person_rounded),
+                tooltip: 'Profil teknisi',
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             const MobileFlowStepper(
@@ -82,6 +88,14 @@ class TechnicianDashboardScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             const _AvailabilityCard(),
+            const SizedBox(height: AppSpacing.lg),
+            SloganBanner(
+              imageAsset: AppAssets.technicianEarningsPromo,
+              title: 'Keahlian yang dipercaya, pekerjaan yang berarti.',
+              subtitle: 'Tetap terhubung dan bantu perangkat kembali bekerja.',
+              buttonLabel: 'Lihat Aktivitas',
+              onPressed: () => context.go(AppRoutes.technicianEarnings),
+            ),
             const SizedBox(height: AppSpacing.lg),
             Row(
               children: const [
@@ -132,6 +146,7 @@ class TechnicianRequestsScreen extends StatelessWidget {
             SizedBox(height: AppSpacing.sm),
             _RequestCard(
               title: 'Servis Komputer Lambat',
+              imageAsset: AppAssets.computer,
               location: 'Antapani • 4,2 km',
             ),
           ],
@@ -259,10 +274,12 @@ class TechnicianEarningsScreen extends StatelessWidget {
 class _RequestCard extends StatelessWidget {
   const _RequestCard({
     this.title = 'Servis Laptop Tidak Menyala',
+    this.imageAsset = AppAssets.laptop,
     this.location = 'Dago • 2,1 km',
   });
 
   final String title;
+  final String imageAsset;
   final String location;
 
   @override
@@ -273,6 +290,16 @@ class _RequestCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ClipRRect(
+              borderRadius: AppRadius.medium,
+              child: SafeImage(
+                assetPath: imageAsset,
+                width: double.infinity,
+                height: 132,
+                fallbackIcon: Icons.home_repair_service_rounded,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
             const StatusChip.warning(label: 'Permintaan terbuka'),
             const SizedBox(height: AppSpacing.sm),
             Text(title, style: Theme.of(context).textTheme.titleLarge),
@@ -335,31 +362,57 @@ class _RequestCard extends StatelessWidget {
 }
 
 class _TechnicianHeader extends StatelessWidget {
-  const _TechnicianHeader({required this.title, required this.subtitle});
+  const _TechnicianHeader({
+    required this.title,
+    required this.subtitle,
+    this.trailing,
+  });
 
   final String title;
   final String subtitle;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                subtitle,
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(subtitle, style: const TextStyle(color: AppColors.textSecondary)),
+        if (trailing != null) ...[
+          const SizedBox(width: AppSpacing.sm),
+          trailing!,
+        ],
       ],
     );
   }
 }
 
-class _AvailabilityCard extends StatelessWidget {
+class _AvailabilityCard extends StatefulWidget {
   const _AvailabilityCard();
+
+  @override
+  State<_AvailabilityCard> createState() => _AvailabilityCardState();
+}
+
+class _AvailabilityCardState extends State<_AvailabilityCard> {
+  bool _isOnline = true;
 
   @override
   Widget build(BuildContext context) {
@@ -370,34 +423,41 @@ class _AvailabilityCard extends StatelessWidget {
         borderRadius: AppRadius.large,
         border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
       ),
-      child: const Row(
+      child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: AppColors.success,
-            foregroundColor: Colors.white,
-            child: Icon(Icons.wifi_tethering_rounded),
+            backgroundColor: _isOnline ? AppColors.success : AppColors.disabled,
+            foregroundColor: AppColors.surface,
+            child: Icon(
+              _isOnline ? Icons.wifi_tethering_rounded : Icons.wifi_off_rounded,
+            ),
           ),
-          SizedBox(width: AppSpacing.md),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Anda sedang online',
-                  style: TextStyle(
+                  _isOnline ? 'Anda sedang online' : 'Anda sedang offline',
+                  style: const TextStyle(
                     color: AppColors.successText,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                SizedBox(height: AppSpacing.xxs),
+                const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  'Permintaan baru akan muncul secara otomatis.',
-                  style: TextStyle(color: AppColors.successText),
+                  _isOnline
+                      ? 'Permintaan baru akan muncul secara otomatis.'
+                      : 'Aktifkan status untuk menerima permintaan.',
+                  style: const TextStyle(color: AppColors.successText),
                 ),
               ],
             ),
           ),
-          Icon(Icons.toggle_on_rounded, size: 42, color: AppColors.successText),
+          Switch(
+            value: _isOnline,
+            onChanged: (value) => setState(() => _isOnline = value),
+          ),
         ],
       ),
     );

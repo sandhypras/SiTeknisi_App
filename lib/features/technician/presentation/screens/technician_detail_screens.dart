@@ -3,13 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../shared/widgets/image_upload_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/widgets/safe_image.dart';
 import '../providers/technician_image_provider.dart';
 
 class TechnicianApplicationFormScreen extends StatelessWidget {
@@ -230,19 +233,125 @@ class TechnicianBankAccountScreen extends StatelessWidget {
   );
 }
 
-class TechnicianProfileScreen extends StatelessWidget {
+class TechnicianProfileScreen extends ConsumerWidget {
   const TechnicianProfileScreen({super.key});
   @override
-  Widget build(BuildContext context) => const _SimpleTechList(
-    title: 'Technician Profile',
-    items: [
-      'Andi Kurniawan · Verified',
-      'Keahlian: Printer, Komputer & Laptop',
-      'Rating: 4.9 · 184 pekerjaan',
-      'Bank Account',
-      'Keluar dari mode Teknisi',
-    ],
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileBytes = ref.watch(technicianImageProvider).profileBytes;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profil Teknisi')),
+      body: ListView(
+        padding: const EdgeInsets.all(AppSpacing.screenPadding),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: AppRadius.extraLarge,
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: AppRadius.large,
+                  child: SafeImage(
+                    bytes: profileBytes,
+                    assetPath: AppAssets.technicianAndi,
+                    width: 84,
+                    height: 84,
+                    fallbackIcon: Icons.person_rounded,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Andi Kurniawan',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      const StatusChip.success(
+                        label: 'Terverifikasi',
+                        icon: Icons.verified_rounded,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      const Text('4.9 rating - 184 pekerjaan'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Text('Keahlian', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: AppSpacing.sm),
+          const Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              Chip(label: Text('Printer')),
+              Chip(label: Text('Komputer')),
+              Chip(label: Text('Laptop')),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _TechnicianProfileMenu(
+            icon: Icons.account_balance_outlined,
+            title: 'Rekening Bank',
+            subtitle: 'Kelola rekening pencairan dana',
+            onTap: () => context.push(AppRoutes.technicianBankAccount),
+          ),
+          _TechnicianProfileMenu(
+            icon: Icons.task_alt_rounded,
+            title: 'Pekerjaan Selesai',
+            subtitle: 'Lihat riwayat dan pendapatan pekerjaan',
+            onTap: () => context.push(AppRoutes.technicianCompletedJobs),
+          ),
+          _TechnicianProfileMenu(
+            icon: Icons.photo_camera_back_outlined,
+            title: 'Perbarui Foto Profil',
+            subtitle: 'Foto ini tampil pada penawaran pelanggan',
+            onTap: () => context.push(AppRoutes.technicianUploadProfile),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          OutlinedButton.icon(
+            onPressed: () => context.go(AppRoutes.customerHome),
+            icon: const Icon(Icons.swap_horiz_rounded),
+            label: const Text('Beralih ke Mode Customer'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TechnicianProfileMenu extends StatelessWidget {
+  const _TechnicianProfileMenu({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        onTap: onTap,
+        leading: Icon(icon, color: AppColors.primary),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.chevron_right_rounded),
+      ),
+    );
+  }
 }
 
 class _TechForm extends StatelessWidget {

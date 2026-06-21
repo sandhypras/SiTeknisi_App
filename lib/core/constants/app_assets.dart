@@ -10,4 +10,9 @@ class AppAssets {
   static const technicianBudi = 'assets/images/technicians/budi.jpg';
   static const technicianRina = 'assets/images/technicians/rina.jpg';
   static const technicianAndi = 'assets/images/technicians/andi.jpg';
+
+  static const customerServicePromo =
+      'assets/images/promotions/customer_service_promo.jpg';
+  static const technicianEarningsPromo =
+      'assets/images/promotions/technician_earnings_promo.jpg';
 }
