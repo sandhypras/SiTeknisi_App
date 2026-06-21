@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/widgets/safe_image.dart';
 import '../../../../shared/utils/whatsapp_launcher.dart';
 import '../widgets/customer_shell.dart';
 import '../widgets/customer_widgets.dart';
@@ -167,11 +168,11 @@ class _HistoryTile extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
           borderRadius: AppRadius.medium,
-          child: Image.asset(
-            imageAsset,
+          child: SafeImage(
+            assetPath: imageAsset,
             width: 48,
             height: 48,
-            fit: BoxFit.cover,
+            fallbackIcon: Icons.home_repair_service_rounded,
           ),
         ),
         title: Text(title, style: textTheme.titleMedium),

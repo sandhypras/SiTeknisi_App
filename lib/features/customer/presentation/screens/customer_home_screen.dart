@@ -7,6 +7,7 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/safe_image.dart';
 import '../../data/customer_dummy_data.dart';
 import '../widgets/customer_shell.dart';
 
@@ -316,7 +317,12 @@ class _HomeCategoryItem extends StatelessWidget {
                 borderRadius: AppRadius.large,
               ),
               clipBehavior: Clip.antiAlias,
-              child: Image.asset(category.imageAsset, fit: BoxFit.cover),
+              child: SafeImage(
+                assetPath: category.imageAsset,
+                width: 64,
+                height: 64,
+                fallbackIcon: Icons.home_repair_service_rounded,
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(

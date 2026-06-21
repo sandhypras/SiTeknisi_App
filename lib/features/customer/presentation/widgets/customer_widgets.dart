@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/widgets/safe_image.dart';
 import '../../data/customer_dummy_data.dart';
 
 class CustomerHeader extends StatelessWidget {
@@ -142,11 +143,11 @@ class CustomerServiceTile extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: AppRadius.large,
-                child: Image.asset(
-                  service.imageAsset,
+                child: SafeImage(
+                  assetPath: service.imageAsset,
                   width: 72,
                   height: 72,
-                  fit: BoxFit.cover,
+                  fallbackIcon: service.icon,
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -289,11 +290,11 @@ class _CategoryImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: AppRadius.large,
-      child: Image.asset(
-        category.imageAsset,
+      child: SafeImage(
+        assetPath: category.imageAsset,
         width: 64,
         height: 64,
-        fit: BoxFit.cover,
+        fallbackIcon: category.icon,
       ),
     );
   }

@@ -106,11 +106,11 @@ class _RequestSummary extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: AppRadius.medium,
-            child: Image.asset(
-              AppAssets.laptop,
+            child: const SafeImage(
+              assetPath: AppAssets.laptop,
               width: 64,
               height: 64,
-              fit: BoxFit.cover,
+              fallbackIcon: Icons.laptop_rounded,
             ),
           ),
           SizedBox(width: AppSpacing.md),

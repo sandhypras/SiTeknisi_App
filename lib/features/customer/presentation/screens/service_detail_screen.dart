@@ -7,6 +7,7 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/widgets/safe_image.dart';
 import '../../../../shared/widgets/technician_card.dart';
 import '../../data/customer_dummy_data.dart';
 
@@ -55,11 +56,11 @@ class ServiceDetailScreen extends ConsumerWidget {
                 children: [
                   ClipRRect(
                     borderRadius: AppRadius.large,
-                    child: Image.asset(
-                      service.imageAsset,
+                    child: SafeImage(
+                      assetPath: service.imageAsset,
                       width: double.infinity,
                       height: 180,
-                      fit: BoxFit.cover,
+                      fallbackIcon: service.icon,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),

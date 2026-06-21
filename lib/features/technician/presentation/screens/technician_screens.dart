@@ -10,6 +10,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/widgets/safe_image.dart';
 import '../../../../shared/utils/whatsapp_launcher.dart';
 import '../widgets/technician_shell.dart';
 
@@ -178,11 +179,11 @@ class TechnicianJobsScreen extends StatelessWidget {
                     const SizedBox(height: AppSpacing.md),
                     ClipRRect(
                       borderRadius: AppRadius.large,
-                      child: Image.asset(
-                        AppAssets.laptop,
+                      child: const SafeImage(
+                        assetPath: AppAssets.laptop,
                         width: double.infinity,
                         height: 150,
-                        fit: BoxFit.cover,
+                        fallbackIcon: Icons.laptop_rounded,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),

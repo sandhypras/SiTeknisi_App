@@ -444,11 +444,11 @@ class _ComparisonTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: AppRadius.medium,
-            child: Image.asset(
-              imageAsset ?? AppAssets.technicianAndi,
+            child: SafeImage(
+              assetPath: imageAsset ?? AppAssets.technicianAndi,
               width: 52,
               height: 52,
-              fit: BoxFit.cover,
+              fallbackIcon: Icons.person_rounded,
             ),
           ),
           const SizedBox(width: AppSpacing.md),
