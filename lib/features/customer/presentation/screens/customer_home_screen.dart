@@ -280,7 +280,7 @@ class _JoinTechnicianBanner extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push(AppRoutes.technicianJoin),
         child: Ink(
-          height: 264,
+          height: 190,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(AppAssets.joinTechnicianBanner),
@@ -289,29 +289,32 @@ class _JoinTechnicianBanner extends StatelessWidget {
             ),
           ),
           child: Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   const Color(0xFF082F5B).withValues(alpha: 0.98),
-                  const Color(0xFF0B4F8A).withValues(alpha: 0.78),
+                  const Color(0xFF0B4F8A).withValues(alpha: 0.7),
                   Colors.transparent,
                 ],
-                stops: const [0, 0.46, 0.78],
+                stops: const [0, 0.45, 0.72],
               ),
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
-                widthFactor: 0.56,
+                widthFactor: 0.58,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xs,
-                        vertical: AppSpacing.xxs,
+                        horizontal: 7,
+                        vertical: 3,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.secondary,
@@ -321,16 +324,17 @@ class _JoinTechnicianBanner extends StatelessWidget {
                         'Mitra SiTeknisi',
                         style: TextStyle(
                           color: AppColors.surface,
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xs),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       'Bergabung Jadi Teknisi',
                       maxLines: 2,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: AppColors.surface,
                         fontWeight: FontWeight.w900,
                       ),
@@ -341,18 +345,19 @@ class _JoinTechnicianBanner extends StatelessWidget {
                       maxLines: 2,
                       style: TextStyle(
                         color: AppColors.primaryLight,
-                        fontSize: 12,
+                        fontSize: 11,
+                        height: 1.25,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.xs),
                     FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        minimumSize: const Size(0, 38),
+                        minimumSize: const Size(0, 34),
                         backgroundColor: AppColors.surface,
                         foregroundColor: AppColors.primaryDark,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       onPressed: () => context.push(AppRoutes.technicianJoin),
                       icon: const Icon(Icons.arrow_forward_rounded, size: 17),
