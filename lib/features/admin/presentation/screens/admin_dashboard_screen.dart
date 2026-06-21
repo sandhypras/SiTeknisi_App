@@ -375,16 +375,26 @@ const _configs = <String, _CrudConfig>{
   ),
   'services': _CrudConfig(
     title: 'Manajemen Layanan',
-    subtitle: 'Atur kategori layanan yang tampil di marketplace.',
+    subtitle: 'Tambah, ubah, dan atur layanan yang tampil di marketplace.',
     singular: 'Layanan',
     fields: [
       _Field('name', 'Nama layanan'),
-      _Field('description', 'Deskripsi'),
-      _Field('technicians', 'Jumlah teknisi'),
-      _Field('created', 'Tanggal dibuat'),
+      _Field(
+        'category',
+        'Kategori perangkat',
+        options: ['Printer', 'Komputer', 'Laptop'],
+      ),
+      _Field('description', 'Deskripsi layanan', maxLines: 3),
+      _Field('basePrice', 'Harga mulai', prefixText: 'Rp '),
+      _Field('estimatedTime', 'Estimasi pengerjaan'),
+      _Field(
+        'imageUrl',
+        'URL atau path gambar',
+        helperText: 'Contoh: assets/images/categories/printer.jpg',
+      ),
       _Field('status', 'Status', options: ['Aktif', 'Nonaktif']),
     ],
-    columns: ['name', 'description', 'technicians', 'created', 'status'],
+    columns: ['name', 'category', 'basePrice', 'estimatedTime', 'status'],
     statuses: ['Semua', 'Aktif', 'Nonaktif'],
   ),
   'bookings': _CrudConfig(
@@ -595,7 +605,13 @@ class _CrudPageState extends State<_CrudPage> {
                     if (field.options == null)
                       TextFormField(
                         controller: controllers[field.key],
-                        decoration: InputDecoration(labelText: field.label),
+                        minLines: field.maxLines == 1 ? 1 : field.maxLines,
+                        maxLines: field.maxLines,
+                        decoration: InputDecoration(
+                          labelText: field.label,
+                          helperText: field.helperText,
+                          prefixText: field.prefixText,
+                        ),
                         validator: (value) =>
                             value == null || value.trim().isEmpty
                             ? '${field.label} wajib diisi'
@@ -1740,10 +1756,20 @@ class _NotificationItem extends StatelessWidget {
 }
 
 class _Field {
-  const _Field(this.key, this.label, {this.options});
+  const _Field(
+    this.key,
+    this.label, {
+    this.options,
+    this.maxLines = 1,
+    this.helperText,
+    this.prefixText,
+  });
   final String key;
   final String label;
   final List<String>? options;
+  final int maxLines;
+  final String? helperText;
+  final String? prefixText;
 }
 
 class _NavItem {
