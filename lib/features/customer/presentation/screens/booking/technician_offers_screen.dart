@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/router/app_router.dart';
@@ -9,13 +12,17 @@ import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../shared/widgets/primary_button.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/status_chip.dart';
+import '../../../../../shared/widgets/safe_image.dart';
 import '../../../../../shared/utils/whatsapp_launcher.dart';
+import '../../../../technician/presentation/providers/technician_image_provider.dart';
 
-class TechnicianOffersScreen extends StatelessWidget {
+class TechnicianOffersScreen extends ConsumerWidget {
   const TechnicianOffersScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final technicianImages = ref.watch(technicianImageProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Penawaran Teknisi'),
@@ -49,12 +56,14 @@ class TechnicianOffersScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           const _RequestSummary(),
           const SizedBox(height: AppSpacing.lg),
-          const _OfferCard(
+          _OfferCard(
             name: 'Andi Kurniawan',
             rating: '4.9',
             price: 'Rp 175.000',
             eta: 'Datang 30 menit',
             imageAsset: AppAssets.technicianAndi,
+            profileBytes: technicianImages.profileBytes,
+            offerBytes: technicianImages.offerBytes,
             phoneNumber: '6281234567890',
             recommended: true,
           ),
@@ -135,6 +144,8 @@ class _OfferCard extends StatelessWidget {
     required this.eta,
     required this.imageAsset,
     required this.phoneNumber,
+    this.profileBytes,
+    this.offerBytes,
     this.recommended = false,
   });
 
@@ -142,8 +153,10 @@ class _OfferCard extends StatelessWidget {
   final String rating;
   final String price;
   final String eta;
-  final String imageAsset;
+  final String? imageAsset;
   final String phoneNumber;
+  final Uint8List? profileBytes;
+  final Uint8List? offerBytes;
   final bool recommended;
 
   @override
@@ -160,11 +173,12 @@ class _OfferCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: AppRadius.large,
-                  child: Image.asset(
-                    imageAsset,
+                  child: SafeImage(
+                    bytes: profileBytes,
+                    assetPath: imageAsset,
                     width: 64,
                     height: 64,
-                    fit: BoxFit.cover,
+                    fallbackIcon: Icons.person_rounded,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -194,6 +208,25 @@ class _OfferCard extends StatelessWidget {
                 _OfferMeta(icon: Icons.schedule_rounded, label: eta),
               ],
             ),
+            if (offerBytes != null && offerBytes!.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              ClipRRect(
+                borderRadius: AppRadius.medium,
+                child: SafeImage(
+                  bytes: offerBytes,
+                  width: double.infinity,
+                  height: 150,
+                  fallbackIcon: Icons.build_rounded,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Foto pendukung dari teknisi',
+                style: textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
             Container(
               padding: const EdgeInsets.all(AppSpacing.md),

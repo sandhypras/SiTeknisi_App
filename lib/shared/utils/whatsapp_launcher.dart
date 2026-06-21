@@ -9,10 +9,8 @@ Future<void> openWhatsApp(
   final normalizedNumber = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
   final uri = Uri.https('wa.me', '/$normalizedNumber', {'text': message});
 
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-    return;
-  }
+  final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+  if (launched) return;
 
   if (!context.mounted) return;
   ScaffoldMessenger.of(context).showSnackBar(

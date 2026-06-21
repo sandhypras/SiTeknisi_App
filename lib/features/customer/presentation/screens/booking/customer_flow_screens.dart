@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/router/app_router.dart';
@@ -9,7 +12,9 @@ import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../shared/widgets/primary_button.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/status_chip.dart';
+import '../../../../../shared/widgets/safe_image.dart';
 import '../../../../../shared/utils/whatsapp_launcher.dart';
+import '../../../../technician/presentation/providers/technician_image_provider.dart';
 
 class LocationPickerScreen extends StatelessWidget {
   const LocationPickerScreen({super.key});
@@ -60,64 +65,82 @@ class RequestSuccessScreen extends StatelessWidget {
   );
 }
 
-class OfferDetailScreen extends StatelessWidget {
+class OfferDetailScreen extends ConsumerWidget {
   const OfferDetailScreen({super.key});
   @override
-  Widget build(BuildContext context) => _FlowScaffold(
-    title: 'Detail Penawaran',
-    bottom: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        PrimaryButton(
-          label: 'Pilih Penawaran',
-          onPressed: () => context.go(AppRoutes.customerPayment),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () => openWhatsApp(
-              context,
-              phoneNumber: '6281234567890',
-              message:
-                  'Halo Pak Andi, saya ingin mengonfirmasi penawaran servis laptop Rp 175.000 dari SiTeknisi.',
-            ),
-            icon: const Icon(Icons.chat_rounded),
-            label: const Text('Hubungi Teknisi via WhatsApp'),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final technicianImages = ref.watch(technicianImageProvider);
+
+    return _FlowScaffold(
+      title: 'Detail Penawaran',
+      bottom: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          PrimaryButton(
+            label: 'Pilih Penawaran',
+            onPressed: () => context.go(AppRoutes.customerPayment),
           ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => openWhatsApp(
+                context,
+                phoneNumber: '6281234567890',
+                message:
+                    'Halo Pak Andi, saya ingin mengonfirmasi penawaran servis laptop Rp 175.000 dari SiTeknisi.',
+              ),
+              icon: const Icon(Icons.chat_rounded),
+              label: const Text('Hubungi Teknisi via WhatsApp'),
+            ),
+          ),
+        ],
+      ),
+      children: [
+        const MobileFlowStepper(
+          steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
+          currentStep: 1,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _HeroSummary(
+          imageAsset: AppAssets.technicianAndi,
+          imageBytes: technicianImages.profileBytes,
+          title: 'Andi Kurniawan',
+          subtitle: 'Teknisi Laptop - Rating 4,9',
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        const _DetailCard(
+          title: 'Penawaran Harga',
+          rows: {
+            'Jasa servis': 'Rp 150.000',
+            'Transport': 'Rp 25.000',
+            'Total': 'Rp 175.000',
+          },
+        ),
+        if (technicianImages.offerBytes != null) ...[
+          ClipRRect(
+            borderRadius: AppRadius.large,
+            child: SafeImage(
+              bytes: technicianImages.offerBytes,
+              width: double.infinity,
+              height: 190,
+              fallbackIcon: Icons.build_rounded,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          const Text('Foto pendukung penawaran dari teknisi'),
+          const SizedBox(height: AppSpacing.md),
+        ],
+        const _DetailCard(
+          title: 'Catatan Teknisi',
+          rows: {
+            'Catatan':
+                'Saya dapat tiba dalam 30 menit. Harga sparepart akan dikonfirmasi setelah pengecekan.',
+          },
         ),
       ],
-    ),
-    children: const [
-      MobileFlowStepper(
-        steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
-        currentStep: 1,
-      ),
-      SizedBox(height: AppSpacing.lg),
-      _HeroSummary(
-        imageAsset: AppAssets.technicianAndi,
-        title: 'Andi Kurniawan',
-        subtitle: 'Teknisi Laptop - Rating 4,9',
-      ),
-      SizedBox(height: AppSpacing.lg),
-      _DetailCard(
-        title: 'Penawaran Harga',
-        rows: {
-          'Jasa servis': 'Rp 150.000',
-          'Transport': 'Rp 25.000',
-          'Total': 'Rp 175.000',
-        },
-      ),
-      SizedBox(height: AppSpacing.md),
-      _DetailCard(
-        title: 'Catatan Teknisi',
-        rows: {
-          'Catatan':
-              'Saya dapat tiba dalam 30 menit. Harga sparepart akan dikonfirmasi setelah pengecekan.',
-        },
-      ),
-    ],
-  );
+    );
+  }
 }
 
 class OfferComparisonScreen extends StatelessWidget {
@@ -331,8 +354,10 @@ class _HeroSummary extends StatelessWidget {
     required this.imageAsset,
     required this.title,
     required this.subtitle,
+    this.imageBytes,
   });
   final String imageAsset;
+  final Uint8List? imageBytes;
   final String title;
   final String subtitle;
   @override
@@ -346,11 +371,11 @@ class _HeroSummary extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: AppRadius.medium,
-          child: Image.asset(
-            imageAsset,
+          child: SafeImage(
+            bytes: imageBytes,
+            assetPath: imageAsset,
             width: 72,
             height: 72,
-            fit: BoxFit.cover,
           ),
         ),
         const SizedBox(width: AppSpacing.md),

@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import 'status_chip.dart';
+import 'safe_image.dart';
 
 class OfferCard extends StatelessWidget {
   const OfferCard({
@@ -54,18 +55,11 @@ class OfferCard extends StatelessWidget {
                     borderRadius: AppRadius.medium,
                     child: SizedBox.square(
                       dimension: 52,
-                      child: avatarAsset != null
-                          ? Image.asset(avatarAsset!, fit: BoxFit.cover)
-                          : avatarUrl != null
-                          ? Image.network(avatarUrl!, fit: BoxFit.cover)
-                          : ColoredBox(
-                              color: AppColors.primaryLight,
-                              child: Center(
-                                child: Text(
-                                  technicianName.characters.first.toUpperCase(),
-                                ),
-                              ),
-                            ),
+                      child: SafeImage(
+                        assetPath: avatarAsset,
+                        imageUrl: avatarUrl,
+                        fallbackIcon: Icons.person_rounded,
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),

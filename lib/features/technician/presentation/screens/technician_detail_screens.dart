@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/mobile_flow_stepper.dart';
+import '../../../../shared/widgets/image_upload_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../providers/technician_image_provider.dart';
 
 class TechnicianApplicationFormScreen extends StatelessWidget {
   const TechnicianApplicationFormScreen({super.key});
@@ -30,48 +32,43 @@ class TechnicianApplicationFormScreen extends StatelessWidget {
   );
 }
 
-class TechnicianUploadDocumentScreen extends StatelessWidget {
+class TechnicianUploadDocumentScreen extends ConsumerWidget {
   const TechnicianUploadDocumentScreen({required this.profilePhoto, super.key});
   final bool profilePhoto;
   @override
-  Widget build(BuildContext context) => _TechForm(
-    title: profilePhoto ? 'Upload Foto Profil' : 'Upload KTP',
-    button: profilePhoto ? 'Lanjut Data Bank' : 'Lanjut Foto Profil',
-    flowStep: profilePhoto ? 2 : 1,
-    onPressed: () => context.go(
-      profilePhoto
-          ? AppRoutes.technicianBankInfo
-          : AppRoutes.technicianUploadProfile,
-    ),
-    children: [
-      Container(
-        height: 260,
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: AppRadius.large,
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              profilePhoto
-                  ? Icons.account_circle_outlined
-                  : Icons.badge_outlined,
-              size: 72,
-              color: AppColors.primary,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              profilePhoto
-                  ? 'Ambil atau upload foto profil'
-                  : 'Upload foto KTP yang jelas',
-            ),
-          ],
-        ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final images = ref.watch(technicianImageProvider);
+    final selectedBytes = profilePhoto ? images.profileBytes : images.ktpBytes;
+
+    return _TechForm(
+      title: profilePhoto ? 'Upload Foto Profil' : 'Upload KTP',
+      button: profilePhoto ? 'Lanjut Data Bank' : 'Lanjut Foto Profil',
+      flowStep: profilePhoto ? 2 : 1,
+      onPressed: () => context.go(
+        profilePhoto
+            ? AppRoutes.technicianBankInfo
+            : AppRoutes.technicianUploadProfile,
       ),
-    ],
-  );
+      children: [
+        ImageUploadField(
+          title: profilePhoto ? 'Foto Profil Teknisi' : 'Foto KTP',
+          description: profilePhoto
+              ? 'Foto ini akan tampil pada penawaran dan dapat dilihat pelanggan.'
+              : 'Foto KTP hanya digunakan admin untuk proses verifikasi.',
+          bytes: selectedBytes,
+          aspectRatio: profilePhoto ? 1 : 16 / 10,
+          onSelected: (bytes) {
+            final controller = ref.read(technicianImageProvider.notifier);
+            if (profilePhoto) {
+              controller.setProfile(bytes);
+            } else {
+              controller.setKtp(bytes);
+            }
+          },
+        ),
+      ],
+    );
+  }
 }
 
 class TechnicianBankInformationScreen extends StatelessWidget {
@@ -153,36 +150,49 @@ class TechnicianRequestDetailScreen extends StatelessWidget {
   );
 }
 
-class TechnicianCreateOfferScreen extends StatelessWidget {
+class TechnicianCreateOfferScreen extends ConsumerWidget {
   const TechnicianCreateOfferScreen({super.key});
   @override
-  Widget build(BuildContext context) => _TechForm(
-    title: 'Create Offer',
-    button: 'Kirim Offer',
-    onPressed: () => context.go(AppRoutes.technicianRequests),
-    children: const [
-      CustomTextField(
-        label: 'Harga Penawaran',
-        hintText: 'Rp 175.000',
-        prefixIcon: Icon(Icons.payments_outlined),
-      ),
-      SizedBox(height: AppSpacing.md),
-      CustomTextField(
-        label: 'Catatan Penawaran',
-        hintText: 'Jelaskan estimasi dan cakupan jasa',
-        maxLines: 4,
-      ),
-      SizedBox(height: AppSpacing.md),
-      _InfoCard(
-        title: 'Estimasi Pendapatan',
-        lines: [
-          'Total offer: Rp 175.000',
-          'Komisi platform 10%: Rp 17.500',
-          'Pendapatan Anda: Rp 157.500',
-        ],
-      ),
-    ],
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final offerBytes = ref.watch(technicianImageProvider).offerBytes;
+
+    return _TechForm(
+      title: 'Create Offer',
+      button: 'Kirim Offer',
+      onPressed: () => context.go(AppRoutes.technicianRequests),
+      children: [
+        const CustomTextField(
+          label: 'Harga Penawaran',
+          hintText: 'Rp 175.000',
+          prefixIcon: Icon(Icons.payments_outlined),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const CustomTextField(
+          label: 'Catatan Penawaran',
+          hintText: 'Jelaskan estimasi dan cakupan jasa',
+          maxLines: 4,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ImageUploadField(
+          title: 'Foto Pendukung Penawaran',
+          description:
+              'Tambahkan foto hasil pemeriksaan atau komponen agar pelanggan memahami penawaran.',
+          bytes: offerBytes,
+          onSelected: (bytes) =>
+              ref.read(technicianImageProvider.notifier).setOffer(bytes),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        const _InfoCard(
+          title: 'Estimasi Pendapatan',
+          lines: [
+            'Total offer: Rp 175.000',
+            'Komisi platform 10%: Rp 17.500',
+            'Pendapatan Anda: Rp 157.500',
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 class TechnicianCompletedJobsScreen extends StatelessWidget {

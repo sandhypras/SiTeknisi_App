@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import 'safe_image.dart';
 
 class ServiceCard extends StatelessWidget {
   const ServiceCard({
@@ -83,14 +84,16 @@ class _ServiceVisual extends StatelessWidget {
         color: AppColors.primaryLight,
         child: SizedBox.square(
           dimension: 52,
-          child: imageAsset != null
-              ? Image.asset(imageAsset!, fit: BoxFit.cover)
-              : imageUrl == null
-              ? Icon(
+          child: imageAsset != null || imageUrl != null
+              ? SafeImage(
+                  assetPath: imageAsset,
+                  imageUrl: imageUrl,
+                  fallbackIcon: icon ?? Icons.home_repair_service_rounded,
+                )
+              : Icon(
                   icon ?? Icons.home_repair_service_rounded,
                   color: AppColors.primary,
-                )
-              : Image.network(imageUrl!, fit: BoxFit.cover),
+                ),
         ),
       ),
     );
