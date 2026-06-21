@@ -73,47 +73,51 @@ class TechnicianDashboardScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: [
             _TechnicianHeader(
-              title: 'Dashboard Teknisi',
-              subtitle: 'Halo, Andi. Ada request baru di sekitar Anda.',
-              trailing: IconButton.filledTonal(
+              title: 'Selamat pagi, Andi',
+              subtitle: 'Siap membantu perangkat kembali bekerja?',
+              trailing: _TechnicianAvatarButton(
                 onPressed: () => context.push(AppRoutes.technicianProfile),
-                icon: const Icon(Icons.person_rounded),
-                tooltip: 'Profil teknisi',
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const MobileFlowStepper(
-              steps: ['Permintaan', 'Penawaran', 'Aktif', 'Selesai'],
-              currentStep: 0,
-            ),
-            const SizedBox(height: AppSpacing.lg),
             const _AvailabilityCard(),
+            const SizedBox(height: AppSpacing.md),
+            _PerformanceCard(
+              onTap: () => context.go(AppRoutes.technicianEarnings),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _DashboardQuickActions(
+              onRequests: () => context.go(AppRoutes.technicianRequests),
+              onJobs: () => context.go(AppRoutes.technicianJobs),
+              onEarnings: () => context.go(AppRoutes.technicianEarnings),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Permintaan Terdekat',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.go(AppRoutes.technicianRequests),
+                  child: const Text('Lihat Semua'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            const _RequestCard(),
             const SizedBox(height: AppSpacing.lg),
             SloganBanner(
               imageAsset: AppAssets.technicianEarningsPromo,
               title: 'Keahlian yang dipercaya, pekerjaan yang berarti.',
-              subtitle: 'Tetap terhubung dan bantu perangkat kembali bekerja.',
-              buttonLabel: 'Lihat Aktivitas',
+              subtitle: 'Jaga kualitas servis dan bangun reputasi terbaik.',
+              buttonLabel: 'Lihat Performa',
               onPressed: () => context.go(AppRoutes.technicianEarnings),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            Row(
-              children: const [
-                Expanded(
-                  child: _MetricCard(value: '12', label: 'Permintaan'),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _MetricCard(value: '8', label: 'Selesai'),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _MetricCard(value: 'Rp 1,8 jt', label: 'Pendapatan'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            const _RequestCard(),
           ],
         ),
       ),
@@ -404,6 +408,39 @@ class _TechnicianHeader extends StatelessWidget {
   }
 }
 
+class _TechnicianAvatarButton extends StatelessWidget {
+  const _TechnicianAvatarButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Buka profil teknisi',
+      child: Material(
+        color: AppColors.primaryLight,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onPressed,
+          child: const Padding(
+            padding: EdgeInsets.all(3),
+            child: ClipOval(
+              child: SafeImage(
+                assetPath: AppAssets.technicianAndi,
+                width: 48,
+                height: 48,
+                fallbackIcon: Icons.person_rounded,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _AvailabilityCard extends StatefulWidget {
   const _AvailabilityCard();
 
@@ -464,23 +501,214 @@ class _AvailabilityCardState extends State<_AvailabilityCard> {
   }
 }
 
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({required this.value, required this.label});
+class _PerformanceCard extends StatelessWidget {
+  const _PerformanceCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.primaryDark,
+        borderRadius: AppRadius.extraLarge,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.22),
+            blurRadius: 20,
+            offset: const Offset(0, 9),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Pendapatan Bulan Ini',
+                      style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      'Rp 1.850.000',
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: 'Lihat pendapatan',
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.surface,
+                  backgroundColor: Colors.white.withValues(alpha: 0.13),
+                ),
+                onPressed: onTap,
+                icon: const Icon(Icons.arrow_forward_rounded),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          const Row(
+            children: [
+              Expanded(
+                child: _PerformanceMetric(value: '12', label: 'Permintaan'),
+              ),
+              _PerformanceDivider(),
+              Expanded(
+                child: _PerformanceMetric(value: '3', label: 'Job Aktif'),
+              ),
+              _PerformanceDivider(),
+              Expanded(
+                child: _PerformanceMetric(value: '8', label: 'Selesai'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PerformanceMetric extends StatelessWidget {
+  const _PerformanceMetric({required this.value, required this.label});
+
   final String value;
   final String label;
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: AppColors.surface,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: AppColors.primaryLight, fontSize: 11),
+        ),
+      ],
+    );
+  }
+}
+
+class _PerformanceDivider extends StatelessWidget {
+  const _PerformanceDivider();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      width: 1,
+      height: 38,
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      color: Colors.white.withValues(alpha: 0.2),
+    );
+  }
+}
+
+class _DashboardQuickActions extends StatelessWidget {
+  const _DashboardQuickActions({
+    required this.onRequests,
+    required this.onJobs,
+    required this.onEarnings,
+  });
+
+  final VoidCallback onRequests;
+  final VoidCallback onJobs;
+  final VoidCallback onEarnings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
         borderRadius: AppRadius.large,
       ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _QuickAction(
+              icon: Icons.inbox_outlined,
+              label: 'Request',
+              onTap: onRequests,
+            ),
+          ),
+          Expanded(
+            child: _QuickAction(
+              icon: Icons.build_circle_outlined,
+              label: 'Job Aktif',
+              onTap: onJobs,
+            ),
+          ),
+          Expanded(
+            child: _QuickAction(
+              icon: Icons.account_balance_wallet_outlined,
+              label: 'Pendapatan',
+              onTap: onEarnings,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickAction extends StatelessWidget {
+  const _QuickAction({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
       child: Column(
         children: [
-          Text(value, style: Theme.of(context).textTheme.titleLarge),
-          Text(label),
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: AppRadius.medium,
+            ),
+            child: Icon(icon, color: AppColors.primary),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(
+              context,
+            ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
+          ),
         ],
       ),
     );

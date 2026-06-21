@@ -61,7 +61,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.lg),
                   const _SloganHero(),
                   const SizedBox(height: AppSpacing.xl),
-                  const _TrackingCard(),
+                  const _JoinTechnicianBanner(),
                   const SizedBox(height: AppSpacing.xl),
                   Row(
                     children: [
@@ -268,123 +268,102 @@ class _BrandHeader extends StatelessWidget {
   }
 }
 
-class _TrackingCard extends StatelessWidget {
-  const _TrackingCard();
+class _JoinTechnicianBanner extends StatelessWidget {
+  const _JoinTechnicianBanner();
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0F3FF),
-        borderRadius: AppRadius.large,
-        border: Border.all(color: const Color(0xFFC5CADF), width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: AppRadius.extraLarge,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => context.push(AppRoutes.technicianJoin),
+        child: Ink(
+          height: 252,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(AppAssets.joinTechnicianBanner),
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
           ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 56,
-            height: 56,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: AppRadius.pill,
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF082F5B).withValues(alpha: 0.98),
+                  const Color(0xFF0B4F8A).withValues(alpha: 0.88),
+                  Colors.transparent,
+                ],
+                stops: const [0, 0.54, 1],
+              ),
             ),
-            child: const Icon(
-              Icons.local_shipping_outlined,
-              color: AppColors.surface,
-              size: 30,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.xxs,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: 0.62,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
+                        horizontal: AppSpacing.xs,
                         vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF64748B),
+                        color: AppColors.secondary,
                         borderRadius: AppRadius.pill,
                       ),
-                      child: Text(
-                        'Berlangsung',
-                        style: textTheme.labelLarge?.copyWith(
+                      child: const Text(
+                        'Mitra SiTeknisi',
+                        style: TextStyle(
                           color: AppColors.surface,
+                          fontSize: 11,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
-                      '10:30 AM',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
+                      'Bergabung Jadi Teknisi',
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppColors.surface,
+                        fontWeight: FontWeight.w900,
                       ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    const Text(
+                      'Ubah keahlian Anda menjadi peluang kerja.',
+                      maxLines: 2,
+                      style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 38),
+                        backgroundColor: AppColors.surface,
+                        foregroundColor: AppColors.primaryDark,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                        ),
+                      ),
+                      onPressed: () => context.push(AppRoutes.technicianJoin),
+                      icon: const Icon(Icons.arrow_forward_rounded, size: 17),
+                      label: const Text('Daftar Sekarang'),
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  'Teknisi dalam perjalanan',
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  'Servis Laptop - Bpk. Andi',
-                  style: textTheme.titleMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                InkWell(
-                  onTap: () => context.go(AppRoutes.customerTracking),
-                  borderRadius: AppRadius.pill,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Lacak Pesanan',
-                          style: textTheme.titleMedium?.copyWith(
-                            color: AppColors.primaryDark,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          color: AppColors.primaryDark,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

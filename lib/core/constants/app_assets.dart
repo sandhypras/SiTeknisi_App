@@ -15,4 +15,6 @@ class AppAssets {
       'assets/images/promotions/customer_service_promo.jpg';
   static const technicianEarningsPromo =
       'assets/images/promotions/technician_earnings_promo.jpg';
+  static const joinTechnicianBanner =
+      'assets/images/banners/join_technician_banner.jpg';
 }

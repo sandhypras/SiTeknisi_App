@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:siteknisi_apps/features/customer/presentation/screens/customer_home_screen.dart';
 import 'package:siteknisi_apps/features/customer/presentation/screens/customer_profile_screen.dart';
 import 'package:siteknisi_apps/features/technician/presentation/screens/technician_screens.dart';
+import 'package:siteknisi_apps/features/technician/presentation/screens/technician_detail_screens.dart';
 
 void main() {
   Future<void> pumpMobileScreen(
@@ -36,7 +37,7 @@ void main() {
   testWidgets('technician dashboard has no layout overflow', (tester) async {
     await pumpMobileScreen(tester, const TechnicianDashboardScreen());
 
-    expect(find.text('Dashboard Teknisi'), findsOneWidget);
+    expect(find.text('Selamat pagi, Andi'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -58,6 +59,24 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Keluar dari akun'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('technician profile remains tidy on narrow Android viewport', (
+    tester,
+  ) async {
+    await pumpMobileScreen(
+      tester,
+      const TechnicianProfileScreen(),
+      size: const Size(360, 800),
+    );
+
+    expect(find.text('Andi Kurniawan'), findsOneWidget);
+    expect(find.text('Profil profesional 90%'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Beralih ke Mode Customer'), 420);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Identitas terverifikasi'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
