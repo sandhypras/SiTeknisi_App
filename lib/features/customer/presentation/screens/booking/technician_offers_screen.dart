@@ -127,7 +127,7 @@ class _OfferCard extends StatelessWidget {
                       price,
                       style: textTheme.headlineLarge?.copyWith(
                         color: AppColors.primary,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),

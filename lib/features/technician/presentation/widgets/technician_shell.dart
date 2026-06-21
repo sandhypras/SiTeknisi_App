@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 
 class TechnicianShell extends StatelessWidget {
   const TechnicianShell({
@@ -20,8 +19,6 @@ class TechnicianShell extends StatelessWidget {
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
-        backgroundColor: AppColors.surface,
-        indicatorColor: AppColors.primary,
         onDestinationSelected: (index) {
           switch (index) {
             case 0:
@@ -37,28 +34,22 @@ class TechnicianShell extends StatelessWidget {
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(
-              Icons.dashboard_rounded,
-              color: AppColors.surface,
-            ),
+            selectedIcon: Icon(Icons.dashboard_rounded),
             label: 'Dashboard',
           ),
           NavigationDestination(
             icon: Icon(Icons.inbox_outlined),
-            selectedIcon: Icon(Icons.inbox_rounded, color: AppColors.surface),
+            selectedIcon: Icon(Icons.inbox_rounded),
             label: 'Request',
           ),
           NavigationDestination(
             icon: Icon(Icons.build_outlined),
-            selectedIcon: Icon(Icons.build_rounded, color: AppColors.surface),
+            selectedIcon: Icon(Icons.build_rounded),
             label: 'Job',
           ),
           NavigationDestination(
             icon: Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: Icon(
-              Icons.account_balance_wallet_rounded,
-              color: AppColors.surface,
-            ),
+            selectedIcon: Icon(Icons.account_balance_wallet_rounded),
             label: 'Earning',
           ),
         ],

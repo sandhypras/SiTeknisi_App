@@ -23,6 +23,9 @@ class AppTheme {
           secondaryContainer: AppColors.secondaryLight,
           onSecondaryContainer: AppColors.secondaryDark,
           surface: AppColors.surface,
+          surfaceContainerLowest: AppColors.surface,
+          surfaceContainerLow: AppColors.surfaceElevated,
+          surfaceContainer: AppColors.surfaceMuted,
           onSurface: AppColors.textPrimary,
           error: AppColors.error,
           onError: AppColors.surface,
@@ -47,13 +50,18 @@ class AppTheme {
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textPrimary,
-        titleTextStyle: textTheme.titleLarge,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+        ),
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: AppSpacing.bottomNavHeight,
         backgroundColor: AppColors.surface,
         indicatorColor: AppColors.primaryLight,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: AppColors.shadow,
+        elevation: 8,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final color = states.contains(WidgetState.selected)
               ? AppColors.primary
@@ -76,6 +84,7 @@ class AppTheme {
           disabledForegroundColor: AppColors.textMuted,
           elevation: 0,
           textStyle: textTheme.labelLarge,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
         ),
       ),
@@ -87,6 +96,7 @@ class AppTheme {
           disabledBackgroundColor: AppColors.disabled,
           disabledForegroundColor: AppColors.textMuted,
           textStyle: textTheme.labelLarge,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
         ),
       ),
@@ -96,6 +106,7 @@ class AppTheme {
           foregroundColor: AppColors.textPrimary,
           side: const BorderSide(color: AppColors.border),
           textStyle: textTheme.labelLarge,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
         ),
       ),
@@ -103,15 +114,17 @@ class AppTheme {
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
           textStyle: textTheme.labelLarge,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
+        isDense: true,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+          vertical: 14,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: AppColors.textMuted),
         labelStyle: textTheme.bodyMedium?.copyWith(
@@ -148,6 +161,7 @@ class AppTheme {
           borderRadius: AppRadius.large,
           side: const BorderSide(color: AppColors.border),
         ),
+        clipBehavior: Clip.antiAlias,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceMuted,
@@ -160,7 +174,7 @@ class AppTheme {
           color: AppColors.primary,
         ),
         shape: RoundedRectangleBorder(borderRadius: AppRadius.pill),
-        side: BorderSide.none,
+        side: const BorderSide(color: AppColors.border),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       ),
       dividerTheme: const DividerThemeData(

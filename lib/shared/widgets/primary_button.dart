@@ -23,7 +23,10 @@ class PrimaryButton extends StatelessWidget {
     final child = isLoading
         ? const SizedBox.square(
             dimension: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
           )
         : _ButtonContent(label: label, icon: icon);
 
@@ -47,7 +50,7 @@ class _ButtonContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (icon == null) {
-      return Text(label);
+      return Text(label, overflow: TextOverflow.ellipsis);
     }
 
     return Row(
@@ -56,7 +59,7 @@ class _ButtonContent extends StatelessWidget {
       children: [
         Icon(icon, size: 20),
         const SizedBox(width: AppSpacing.xs),
-        Text(label),
+        Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
       ],
     );
   }

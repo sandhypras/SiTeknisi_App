@@ -27,9 +27,12 @@ class ServiceCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
+      shadowColor: AppColors.shadow,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadius.large,
+        splashColor: AppColors.primaryLight.withValues(alpha: 0.46),
+        highlightColor: AppColors.primaryLight.withValues(alpha: 0.22),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.cardPadding),
           child: Row(
@@ -53,7 +56,11 @@ class ServiceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              trailing ?? const Icon(Icons.chevron_right_rounded),
+              trailing ??
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.textMuted,
+                  ),
             ],
           ),
         ),
@@ -73,7 +80,7 @@ class _ServiceVisual extends StatelessWidget {
     return ClipRRect(
       borderRadius: AppRadius.medium,
       child: ColoredBox(
-        color: AppColors.primaryLight,
+        color: AppColors.primaryLight.withValues(alpha: 0.68),
         child: SizedBox.square(
           dimension: 52,
           child: imageUrl == null

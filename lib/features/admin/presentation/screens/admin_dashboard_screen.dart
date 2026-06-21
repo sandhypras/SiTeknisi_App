@@ -38,7 +38,7 @@ class AdminDashboardScreen extends StatelessWidget {
       body: Row(
         children: [
           if (!compact)
-            SizedBox(width: 260, child: _Sidebar(selected: selected)),
+            SizedBox(width: 272, child: _Sidebar(selected: selected)),
           Expanded(
             child: Column(
               children: [
@@ -50,7 +50,10 @@ class AdminDashboardScreen extends StatelessWidget {
                       padding: EdgeInsets.all(compact ? 20 : 32),
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 1440),
-                        child: _AdminSection(section: selected),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: _AdminSection(section: selected),
+                        ),
                       ),
                     ),
                   ),
@@ -217,6 +220,13 @@ class _TopBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: const Border(bottom: BorderSide(color: AppColors.border)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -232,7 +242,7 @@ class _TopBar extends StatelessWidget {
           const Expanded(
             child: Text(
               'Pusat Operasional',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
           SizedBox(
@@ -625,7 +635,12 @@ class _PageHeading extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: Theme.of(context).textTheme.headlineLarge),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
               const SizedBox(height: 6),
               Text(
                 subtitle,
@@ -689,7 +704,7 @@ class _KpiCard extends StatelessWidget {
                     value,
                     style: const TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   Text(

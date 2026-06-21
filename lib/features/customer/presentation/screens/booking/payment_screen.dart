@@ -86,7 +86,7 @@ class _RowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      fontWeight: bold ? FontWeight.w900 : FontWeight.w500,
+      fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
     );
 
     return Padding(

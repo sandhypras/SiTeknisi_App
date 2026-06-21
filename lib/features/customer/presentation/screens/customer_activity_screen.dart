@@ -31,13 +31,13 @@ class CustomerActivityScreen extends StatelessWidget {
               'Riwayat Pesanan',
               style: Theme.of(
                 context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: AppSpacing.md),
             const _HistoryTile(
               icon: Icons.phone_android_rounded,
               title: 'Servis HP',
-              subtitle: 'Selesai · 12 Okt 2023',
+              subtitle: 'Selesai - 12 Okt 2023',
               chip: StatusChip.success(label: 'Selesai'),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -64,9 +64,16 @@ class _OngoingActivityCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F3FF),
+        color: AppColors.surface,
         borderRadius: AppRadius.large,
-        border: Border.all(color: const Color(0xFFC5CADF), width: 1.2),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.45),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +103,7 @@ class _OngoingActivityCard extends StatelessWidget {
                     Text(
                       'Teknisi dalam perjalanan',
                       style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                     Text(

@@ -70,7 +70,7 @@ class OfferDetailScreen extends StatelessWidget {
       _HeroSummary(
         icon: Icons.engineering_rounded,
         title: 'Andi Kurniawan',
-        subtitle: 'Teknisi AC · Rating 4.9',
+        subtitle: 'Teknisi AC - Rating 4.9',
       ),
       SizedBox(height: AppSpacing.lg),
       _DetailCard(
@@ -274,7 +274,7 @@ class _SuccessFlow extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
-              ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+              ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(message, textAlign: TextAlign.center),
@@ -300,8 +300,16 @@ class _HeroSummary extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(AppSpacing.lg),
     decoration: BoxDecoration(
-      color: AppColors.primaryLight,
+      color: AppColors.surface,
       borderRadius: AppRadius.large,
+      border: Border.all(color: AppColors.border),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.shadow.withValues(alpha: 0.35),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
+      ],
     ),
     child: Row(
       children: [
@@ -312,7 +320,12 @@ class _HeroSummary extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title, style: Theme.of(context).textTheme.titleLarge),
-              Text(subtitle),
+              Text(
+                subtitle,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
             ],
           ),
         ),
@@ -375,7 +388,7 @@ class _ComparisonTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name, style: Theme.of(context).textTheme.titleMedium),
-                Text('$rating ★ · $eta'),
+                Text('$rating star - $eta'),
               ],
             ),
           ),
@@ -387,7 +400,7 @@ class _ComparisonTile extends StatelessWidget {
                 price,
                 style: const TextStyle(
                   color: AppColors.primary,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],

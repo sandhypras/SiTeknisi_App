@@ -34,9 +34,12 @@ class TechnicianCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
+      shadowColor: AppColors.shadow,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadius.large,
+        splashColor: AppColors.primaryLight.withValues(alpha: 0.46),
+        highlightColor: AppColors.primaryLight.withValues(alpha: 0.22),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.cardPadding),
           child: Row(
@@ -49,7 +52,13 @@ class TechnicianCard extends StatelessWidget {
                     ? null
                     : NetworkImage(avatarUrl!),
                 child: avatarUrl == null
-                    ? Text(name.characters.first.toUpperCase())
+                    ? Text(
+                        name.characters.first.toUpperCase(),
+                        style: textTheme.titleMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      )
                     : null,
               ),
               const SizedBox(width: AppSpacing.md),
@@ -78,6 +87,8 @@ class TechnicianCard extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xxs),
                     Text(
                       specialization,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),

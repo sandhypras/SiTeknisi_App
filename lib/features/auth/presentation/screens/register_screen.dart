@@ -49,7 +49,7 @@ class RegisterScreen extends ConsumerWidget {
               Text(
                 'Informasi Akun',
                 style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
@@ -181,7 +181,7 @@ class _RegisterHeader extends StatelessWidget {
                   'Mulai servis tanpa ribet',
                   style: textTheme.titleLarge?.copyWith(
                     color: AppColors.surface,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                     height: 1.18,
                   ),
                 ),
@@ -284,7 +284,7 @@ class _RoleOption extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: textTheme.labelMedium?.copyWith(
                 color: selected ? AppColors.primary : AppColors.textSecondary,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),

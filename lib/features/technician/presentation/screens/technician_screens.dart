@@ -16,7 +16,7 @@ class JoinTechnicianScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Join As Technician')),
+      appBar: AppBar(title: const Text('Daftar Teknisi')),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(AppSpacing.screenPadding),
         child: PrimaryButton(
@@ -83,7 +83,7 @@ class TechnicianDashboardScreen extends StatelessWidget {
                 ),
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  child: _MetricCard(value: 'Rp 1,8 jt', label: 'Earning'),
+                  child: _MetricCard(value: 'Rp 1,8 jt', label: 'Pendapatan'),
                 ),
               ],
             ),
@@ -108,7 +108,7 @@ class TechnicianRequestsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: const [
             _TechnicianHeader(
-              title: 'Incoming Requests',
+              title: 'Request Masuk',
               subtitle: 'Pilih request dan kirim penawaran harga.',
             ),
             SizedBox(height: AppSpacing.lg),
@@ -116,7 +116,7 @@ class TechnicianRequestsScreen extends StatelessWidget {
             SizedBox(height: AppSpacing.sm),
             _RequestCard(
               title: 'Servis Mesin Cuci',
-              location: 'Antapani · 4.2 km',
+              location: 'Antapani - 4.2 km',
             ),
           ],
         ),
@@ -137,7 +137,7 @@ class TechnicianJobsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: [
             const _TechnicianHeader(
-              title: 'Active Jobs',
+              title: 'Pekerjaan Aktif',
               subtitle: 'Update status pekerjaan Anda.',
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -147,7 +147,7 @@ class TechnicianJobsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const StatusChip.info(label: 'On progress'),
+                    const StatusChip.info(label: 'Berjalan'),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       'Servis AC - Budi Santoso',
@@ -189,7 +189,7 @@ class TechnicianEarningsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: const [
             _TechnicianHeader(
-              title: 'Earnings',
+              title: 'Pendapatan',
               subtitle: 'Ringkasan pendapatan dan rekening teknisi.',
             ),
             SizedBox(height: AppSpacing.lg),
@@ -214,7 +214,7 @@ class TechnicianEarningsScreen extends StatelessWidget {
 class _RequestCard extends StatelessWidget {
   const _RequestCard({
     this.title = 'Servis AC Tidak Dingin',
-    this.location = 'Dago · 2.1 km',
+    this.location = 'Dago - 2.1 km',
   });
 
   final String title;
@@ -222,17 +222,41 @@ class _RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const StatusChip.warning(label: 'Open request'),
+            const StatusChip.warning(label: 'Request baru'),
             const SizedBox(height: AppSpacing.sm),
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              title,
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(height: AppSpacing.xs),
-            Text(location),
+            Row(
+              children: [
+                const Icon(
+                  Icons.place_rounded,
+                  size: 17,
+                  color: AppColors.textMuted,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Expanded(
+                  child: Text(
+                    location,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
               label: 'Lihat Request',
@@ -254,17 +278,23 @@ class _TechnicianHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+          style: textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: AppSpacing.xs),
-        Text(subtitle, style: const TextStyle(color: AppColors.textSecondary)),
+        Text(
+          subtitle,
+          style: textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
+            height: 1.45,
+          ),
+        ),
       ],
     );
   }
@@ -280,13 +310,37 @@ class _MetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: AppColors.surface,
         borderRadius: AppRadius.large,
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Text(value, style: Theme.of(context).textTheme.titleLarge),
-          Text(label),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(
+              context,
+            ).textTheme.labelMedium?.copyWith(color: AppColors.textSecondary),
+          ),
         ],
       ),
     );
@@ -308,8 +362,19 @@ class _HeroPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        gradient: const LinearGradient(
+          colors: [Color(0xFF164FD8), AppColors.primary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: AppRadius.large,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.22),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -350,10 +415,25 @@ class _UploadBox extends StatelessWidget {
     return Container(
       height: 96,
       decoration: BoxDecoration(
+        color: AppColors.surface,
         border: Border.all(color: AppColors.border),
         borderRadius: AppRadius.large,
       ),
-      child: Center(child: Text(label)),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.cloud_upload_outlined, color: AppColors.primary),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.labelLarge?.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

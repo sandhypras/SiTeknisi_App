@@ -71,7 +71,7 @@ class ServiceDetailScreen extends ConsumerWidget {
                     service.title,
                     style: textTheme.headlineLarge?.copyWith(
                       color: AppColors.surface,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
@@ -162,7 +162,7 @@ class _PriceCard extends StatelessWidget {
                     formatRupiah(service.basePrice),
                     style: textTheme.headlineLarge?.copyWith(
                       color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ],

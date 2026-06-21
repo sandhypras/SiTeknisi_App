@@ -13,7 +13,7 @@ class TechnicianApplicationFormScreen extends StatelessWidget {
   const TechnicianApplicationFormScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Application Form',
+    title: 'Form Pengajuan',
     button: 'Lanjut Upload KTP',
     onPressed: () => context.go(AppRoutes.technicianUploadKtp),
     children: const [
@@ -75,7 +75,7 @@ class TechnicianBankInformationScreen extends StatelessWidget {
   const TechnicianBankInformationScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Bank Information',
+    title: 'Informasi Bank',
     button: 'Kirim Pengajuan',
     onPressed: () => context.go(AppRoutes.technicianVerification),
     children: const [
@@ -109,7 +109,7 @@ class TechnicianVerificationStatusScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,
-              ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+              ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: AppSpacing.sm),
             const Text(
@@ -132,15 +132,15 @@ class TechnicianRequestDetailScreen extends StatelessWidget {
   const TechnicianRequestDetailScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Request Detail',
-    button: 'Buat Offer',
+    title: 'Detail Request',
+    button: 'Buat Penawaran',
     onPressed: () => context.go(AppRoutes.technicianCreateOffer),
     children: const [
       _InfoCard(
         title: 'Servis AC Tidak Dingin',
         lines: [
           'Customer: Budi Santoso',
-          'Lokasi: Dago · 2.1 km',
+          'Lokasi: Dago - 2.1 km',
           'Jadwal: Hari ini, 14:00',
           'Keluhan: AC menyala tetapi tidak dingin',
         ],
@@ -153,8 +153,8 @@ class TechnicianCreateOfferScreen extends StatelessWidget {
   const TechnicianCreateOfferScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Create Offer',
-    button: 'Kirim Offer',
+    title: 'Buat Penawaran',
+    button: 'Kirim Penawaran',
     onPressed: () => context.go(AppRoutes.technicianRequests),
     children: const [
       CustomTextField(
@@ -185,11 +185,11 @@ class TechnicianCompletedJobsScreen extends StatelessWidget {
   const TechnicianCompletedJobsScreen({super.key});
   @override
   Widget build(BuildContext context) => const _SimpleTechList(
-    title: 'Completed Jobs',
+    title: 'Pekerjaan Selesai',
     items: [
-      'Servis HP · Rp 150.000',
-      'Servis AC · Rp 175.000',
-      'Mesin Cuci · Rp 225.000',
+      'Servis HP - Rp 150.000',
+      'Servis AC - Rp 175.000',
+      'Mesin Cuci - Rp 225.000',
     ],
   );
 }
@@ -198,7 +198,7 @@ class TechnicianBankAccountScreen extends StatelessWidget {
   const TechnicianBankAccountScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Bank Account',
+    title: 'Rekening Bank',
     button: 'Simpan Rekening',
     onPressed: () => context.pop(),
     children: const [
@@ -220,12 +220,12 @@ class TechnicianProfileScreen extends StatelessWidget {
   const TechnicianProfileScreen({super.key});
   @override
   Widget build(BuildContext context) => const _SimpleTechList(
-    title: 'Technician Profile',
+    title: 'Profil Teknisi',
     items: [
-      'Andi Kurniawan · Verified',
+      'Andi Kurniawan - Terverifikasi',
       'Keahlian: AC & Elektronik Rumah',
-      'Rating: 4.9 · 184 pekerjaan',
-      'Bank Account',
+      'Rating: 4.9 - 184 pekerjaan',
+      'Rekening Bank',
       'Keluar dari mode Teknisi',
     ],
   );

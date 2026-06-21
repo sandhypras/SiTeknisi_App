@@ -78,7 +78,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 textAlign: TextAlign.center,
                 style: textTheme.headlineMedium?.copyWith(
                   color: AppColors.primary,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
@@ -262,7 +262,7 @@ class _LoginHeroBand extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: textTheme.titleMedium?.copyWith(
                               color: AppColors.surface,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w800,
                               height: 1.18,
                             ),
                           ),
@@ -376,7 +376,7 @@ class _TrustMetric extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: textTheme.labelMedium?.copyWith(
               color: AppColors.textPrimary,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w800,
             ),
           ),
           Text(

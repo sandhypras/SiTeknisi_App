@@ -51,6 +51,7 @@ class EmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
                 color: AppColors.textSecondary,
+                height: 1.45,
               ),
             ),
             if (actionLabel != null && onAction != null) ...[

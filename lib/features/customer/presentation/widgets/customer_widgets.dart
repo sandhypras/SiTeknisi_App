@@ -31,7 +31,7 @@ class CustomerHeader extends StatelessWidget {
               Text(
                 title,
                 style: textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                   height: 1.16,
                 ),
               ),
@@ -247,7 +247,7 @@ class ActiveBookingCard extends StatelessWidget {
                   'Servis Laptop Keyboard',
                   style: textTheme.titleLarge?.copyWith(
                     color: AppColors.surface,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),

@@ -38,9 +38,9 @@ class CustomerHomeScreen extends ConsumerWidget {
                   Text(
                     'Halo, Budi!',
                     style: textTheme.displayLarge?.copyWith(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w900,
-                      height: 1.12,
+                      fontSize: 29,
+                      fontWeight: FontWeight.w800,
+                      height: 1.16,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -60,7 +60,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                         child: Text(
                           'Kategori Layanan',
                           style: textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                       ),
@@ -72,8 +72,9 @@ class CustomerHomeScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
                     children: [
                       for (final category in categories.take(4))
                         _HomeCategoryItem(
@@ -90,7 +91,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                   Text(
                     'Riwayat Terakhir',
                     style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -119,15 +120,27 @@ class _BrandHeader extends StatelessWidget {
         AppSpacing.lg,
         AppSpacing.md,
       ),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFFC9CEE3))),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: const Border(bottom: BorderSide(color: AppColors.border)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             width: 56,
             height: 56,
-            color: AppColors.surface,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: AppRadius.medium,
+              border: Border.all(color: AppColors.border),
+            ),
             padding: const EdgeInsets.all(AppSpacing.xs),
             child: Image.asset(AppAssets.siteknisiLogo, fit: BoxFit.contain),
           ),
@@ -137,7 +150,7 @@ class _BrandHeader extends StatelessWidget {
               'SiTeknisi',
               style: textTheme.headlineLarge?.copyWith(
                 color: AppColors.primary,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w800,
                 fontSize: 29,
               ),
             ),
@@ -184,14 +197,14 @@ class _TrackingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F3FF),
+        color: AppColors.surface,
         borderRadius: AppRadius.large,
-        border: Border.all(color: const Color(0xFFC5CADF), width: 1.2),
+        border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
+            color: AppColors.shadow,
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -224,23 +237,22 @@ class _TrackingCard extends StatelessWidget {
                         vertical: AppSpacing.xxs,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF64748B),
+                        color: AppColors.primaryLight,
                         borderRadius: AppRadius.pill,
                       ),
                       child: Text(
                         'Berlangsung',
                         style: textTheme.labelLarge?.copyWith(
-                          color: AppColors.surface,
-                          fontWeight: FontWeight.w900,
+                          color: AppColors.primaryDark,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
                     const Spacer(),
                     Text(
                       '10:30 AM',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -249,7 +261,7 @@ class _TrackingCard extends StatelessWidget {
                 Text(
                   'Teknisi dalam perjalanan',
                   style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -271,7 +283,7 @@ class _TrackingCard extends StatelessWidget {
                         'Lacak Pesanan',
                         style: textTheme.titleMedium?.copyWith(
                           color: AppColors.primaryDark,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.xs),
@@ -324,7 +336,7 @@ class _HomeCategoryItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: textTheme.labelLarge?.copyWith(
                 color: AppColors.textPrimary,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
@@ -346,7 +358,11 @@ class _JoinTechnicianBanner extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: const Color(0xFF0B55D9),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF164FD8), AppColors.primary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: AppRadius.large,
       ),
       child: Stack(
@@ -367,7 +383,7 @@ class _JoinTechnicianBanner extends StatelessWidget {
                 'Ingin Jadi Teknisi?',
                 style: textTheme.titleLarge?.copyWith(
                   color: AppColors.surface,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -414,7 +430,14 @@ class _RecentHistoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppRadius.large,
-        border: Border.all(color: const Color(0xFFC5CADF), width: 1.2),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow.withValues(alpha: 0.45),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -438,12 +461,12 @@ class _RecentHistoryCard extends StatelessWidget {
                 Text(
                   'Servis HP',
                   style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  'Selesai · 12 Okt 2023',
+                  'Selesai - 12 Okt 2023',
                   style: textTheme.titleMedium?.copyWith(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,

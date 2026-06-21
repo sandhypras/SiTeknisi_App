@@ -62,7 +62,7 @@ class InvoiceScreen extends StatelessWidget {
                 Text(
                   'Pembayaran Berhasil',
                   style: textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
@@ -107,7 +107,7 @@ class _InvoiceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
-      fontWeight: bold ? FontWeight.w900 : FontWeight.w500,
+      fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
     );
 
     return Padding(

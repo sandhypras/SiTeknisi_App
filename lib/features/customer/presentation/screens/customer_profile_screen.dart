@@ -178,7 +178,7 @@ class _StatCard extends StatelessWidget {
             value,
             style: textTheme.titleLarge?.copyWith(
               color: AppColors.primary,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w800,
             ),
           ),
           Text(

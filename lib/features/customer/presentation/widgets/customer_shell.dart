@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 
 class CustomerShell extends StatelessWidget {
   const CustomerShell({required this.child, super.key, this.currentIndex});
@@ -18,8 +17,6 @@ class CustomerShell extends StatelessWidget {
           ? null
           : NavigationBar(
               selectedIndex: currentIndex!,
-              backgroundColor: AppColors.surface,
-              indicatorColor: AppColors.primary,
               onDestinationSelected: (index) {
                 switch (index) {
                   case 0:
@@ -35,34 +32,22 @@ class CustomerShell extends StatelessWidget {
               destinations: const [
                 NavigationDestination(
                   icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(
-                    Icons.home_rounded,
-                    color: AppColors.surface,
-                  ),
+                  selectedIcon: Icon(Icons.home_rounded),
                   label: 'Beranda',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.assignment_outlined),
-                  selectedIcon: Icon(
-                    Icons.assignment_rounded,
-                    color: AppColors.surface,
-                  ),
+                  selectedIcon: Icon(Icons.assignment_rounded),
                   label: 'Aktivitas',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.chat_bubble_outline_rounded),
-                  selectedIcon: Icon(
-                    Icons.chat_bubble_rounded,
-                    color: AppColors.surface,
-                  ),
+                  selectedIcon: Icon(Icons.chat_bubble_rounded),
                   label: 'Pesan',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.person_outline_rounded),
-                  selectedIcon: Icon(
-                    Icons.person_rounded,
-                    color: AppColors.surface,
-                  ),
+                  selectedIcon: Icon(Icons.person_rounded),
                   label: 'Profil',
                 ),
               ],
