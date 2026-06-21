@@ -75,7 +75,7 @@ class InvoiceScreen extends StatelessWidget {
                 const Divider(height: AppSpacing.xl),
                 const _InvoiceRow(label: 'Customer', value: 'Budi Santoso'),
                 const _InvoiceRow(label: 'Teknisi', value: 'Andi Kurniawan'),
-                const _InvoiceRow(label: 'Layanan', value: 'Servis AC'),
+                const _InvoiceRow(label: 'Layanan', value: 'Servis Laptop'),
                 const _InvoiceRow(label: 'Metode', value: 'QRIS Midtrans'),
                 const _InvoiceRow(label: 'Status', value: 'Paid'),
                 const Divider(height: AppSpacing.xl),

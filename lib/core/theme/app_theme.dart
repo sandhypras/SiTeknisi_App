@@ -332,7 +332,7 @@ TextField(
 Card(
   child: Padding(
     padding: EdgeInsets.all(AppSpacing.cardPadding),
-    child: Text('Servis AC', style: Theme.of(context).textTheme.titleLarge),
+    child: Text('Servis Laptop', style: Theme.of(context).textTheme.titleLarge),
   ),
 )
 */

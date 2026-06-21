@@ -1312,9 +1312,9 @@ class _ServiceDemandCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const data = [
-      ('Servis AC', .82),
+      ('Servis Laptop', .82),
       ('Laptop', .66),
-      ('Mesin Cuci', .54),
+      ('Komputer', .54),
       ('Televisi', .39),
     ];
     return Card(

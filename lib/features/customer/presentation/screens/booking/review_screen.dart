@@ -46,7 +46,7 @@ class ReviewScreen extends StatelessWidget {
                 Text('Andi Kurniawan', style: textTheme.titleLarge),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Servis AC selesai',
+                  'Servis Laptop selesai',
                   style: textTheme.bodyMedium?.copyWith(
                     color: AppColors.textSecondary,
                   ),

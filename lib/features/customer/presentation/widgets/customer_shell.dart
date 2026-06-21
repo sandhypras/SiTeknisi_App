@@ -27,7 +27,7 @@ class CustomerShell extends StatelessWidget {
                   case 1:
                     context.go(AppRoutes.customerActivity);
                   case 2:
-                    context.go(AppRoutes.customerMessages);
+                    context.go(AppRoutes.customerSearch);
                   case 3:
                     context.go(AppRoutes.customerProfile);
                 }
@@ -50,12 +50,12 @@ class CustomerShell extends StatelessWidget {
                   label: 'Aktivitas',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.chat_bubble_outline_rounded),
+                  icon: Icon(Icons.search_rounded),
                   selectedIcon: Icon(
-                    Icons.chat_bubble_rounded,
+                    Icons.search_rounded,
                     color: AppColors.surface,
                   ),
-                  label: 'Pesan',
+                  label: 'Cari',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.person_outline_rounded),

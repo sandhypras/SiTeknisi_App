@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_assets.dart';
+
 class CustomerServiceCategory {
   const CustomerServiceCategory({
     required this.id,
     required this.name,
     required this.description,
     required this.icon,
+    required this.imageAsset,
     required this.color,
     required this.serviceCount,
   });
@@ -15,6 +18,7 @@ class CustomerServiceCategory {
   final String name;
   final String description;
   final IconData icon;
+  final String imageAsset;
   final Color color;
   final int serviceCount;
 }
@@ -26,6 +30,7 @@ class CustomerService {
     required this.title,
     required this.description,
     required this.icon,
+    required this.imageAsset,
     required this.basePrice,
     required this.estimatedTime,
     required this.rating,
@@ -38,6 +43,7 @@ class CustomerService {
   final String title;
   final String description;
   final IconData icon;
+  final String imageAsset;
   final int basePrice;
   final String estimatedTime;
   final double rating;
@@ -52,6 +58,7 @@ class FeaturedTechnician {
     required this.rating,
     required this.completedJobs,
     required this.distance,
+    required this.imageAsset,
   });
 
   final String name;
@@ -59,6 +66,7 @@ class FeaturedTechnician {
   final double rating;
   final int completedJobs;
   final String distance;
+  final String imageAsset;
 }
 
 final customerCategoriesProvider = Provider<List<CustomerServiceCategory>>((
@@ -66,36 +74,31 @@ final customerCategoriesProvider = Provider<List<CustomerServiceCategory>>((
 ) {
   return const [
     CustomerServiceCategory(
-      id: 'ac',
-      name: 'AC',
-      description: 'AC tidak dingin, bocor, cuci AC',
-      icon: Icons.ac_unit_rounded,
+      id: 'printer',
+      name: 'Printer',
+      description: 'Tinta macet, hasil buram, paper jam',
+      icon: Icons.print_rounded,
+      imageAsset: AppAssets.printer,
       color: Color(0xFF2563EB),
       serviceCount: 10,
     ),
     CustomerServiceCategory(
-      id: 'washer',
-      name: 'Mesin Cuci',
-      description: 'Tidak berputar, bocor, pengering mati',
-      icon: Icons.local_laundry_service_rounded,
+      id: 'computer',
+      name: 'Komputer',
+      description: 'Tidak menyala, lambat, upgrade komponen',
+      icon: Icons.desktop_windows_rounded,
+      imageAsset: AppAssets.computer,
       color: Color(0xFFF97316),
       serviceCount: 8,
     ),
     CustomerServiceCategory(
-      id: 'tv',
-      name: 'TV',
-      description: 'TV mati, panel, backlight',
-      icon: Icons.tv_rounded,
+      id: 'laptop',
+      name: 'Laptop',
+      description: 'Layar, keyboard, baterai, overheat',
+      icon: Icons.laptop_mac_rounded,
+      imageAsset: AppAssets.laptop,
       color: Color(0xFF22C55E),
       serviceCount: 9,
-    ),
-    CustomerServiceCategory(
-      id: 'phone',
-      name: 'HP',
-      description: 'LCD, baterai, charging, kamera',
-      icon: Icons.phone_android_rounded,
-      color: Color(0xFFEAB308),
-      serviceCount: 18,
     ),
   ];
 });
@@ -103,62 +106,66 @@ final customerCategoriesProvider = Provider<List<CustomerServiceCategory>>((
 final customerServicesProvider = Provider<List<CustomerService>>((ref) {
   return const [
     CustomerService(
-      id: 'phone-lcd',
-      categoryId: 'phone',
-      title: 'Servis HP',
+      id: 'printer-repair',
+      categoryId: 'printer',
+      title: 'Servis Printer',
       description:
-          'Perbaikan layar retak, blank, shadow, atau touch screen tidak responsif.',
-      icon: Icons.phone_iphone_rounded,
+          'Perbaikan printer tidak menarik kertas, hasil buram, atau tidak terdeteksi.',
+      icon: Icons.print_rounded,
+      imageAsset: AppAssets.printer,
       basePrice: 150000,
       estimatedTime: '1-2 jam',
       rating: 4.9,
       completedJobs: 126,
       features: [
         'Diagnosa awal gratis',
-        'Kompatibel banyak tipe',
+        'Kompatibel banyak merek',
         'Garansi pengerjaan 7 hari',
       ],
     ),
     CustomerService(
-      id: 'phone-battery',
-      categoryId: 'phone',
-      title: 'Ganti Baterai HP',
+      id: 'printer-maintenance',
+      categoryId: 'printer',
+      title: 'Perawatan Printer',
       description:
-          'Baterai cepat habis, drop, menggembung, atau perangkat sering mati.',
-      icon: Icons.battery_charging_full_rounded,
+          'Pembersihan head, roller, jalur kertas, dan pengecekan kualitas cetak.',
+      icon: Icons.cleaning_services_rounded,
+      imageAsset: AppAssets.printer,
       basePrice: 120000,
       estimatedTime: '45 menit',
       rating: 4.8,
       completedJobs: 98,
       features: [
-        'Cek kesehatan baterai',
+        'Tes hasil cetak',
         'Estimasi harga transparan',
         'Teknisi datang ke lokasi',
       ],
     ),
     CustomerService(
-      id: 'ac-cleaning',
-      categoryId: 'ac',
-      title: 'Cuci AC',
+      id: 'computer-tuneup',
+      categoryId: 'computer',
+      title: 'Optimasi Komputer',
       description:
-          'Pembersihan unit indoor dan outdoor untuk AC lebih dingin dan sehat.',
-      icon: Icons.ac_unit_rounded,
+          'Pembersihan komponen, optimasi sistem, dan pengecekan performa komputer.',
+      icon: Icons.desktop_windows_rounded,
+      imageAsset: AppAssets.computer,
       basePrice: 90000,
       estimatedTime: '1 jam',
       rating: 4.7,
       completedJobs: 74,
       features: [
-        'Cek tekanan freon',
-        'Bersihkan filter dan evaporator',
+        'Cek suhu dan performa',
+        'Bersihkan komponen internal',
         'Invoice otomatis',
       ],
     ),
     CustomerService(
-      id: 'ac-repair',
-      categoryId: 'ac',
-      title: 'Servis AC Tidak Dingin',
-      description: 'Diagnosa AC tidak dingin, bocor, atau suara berisik.',
-      icon: Icons.mode_fan_off_rounded,
+      id: 'computer-repair',
+      categoryId: 'computer',
+      title: 'Komputer Tidak Menyala',
+      description: 'Diagnosa power supply, motherboard, RAM, atau penyimpanan.',
+      icon: Icons.memory_rounded,
+      imageAsset: AppAssets.computer,
       basePrice: 150000,
       estimatedTime: '1-2 jam',
       rating: 4.9,
@@ -166,29 +173,31 @@ final customerServicesProvider = Provider<List<CustomerService>>((ref) {
       features: ['Diagnosa kerusakan', 'Penawaran sparepart', 'Garansi jasa'],
     ),
     CustomerService(
-      id: 'tv-panel',
-      categoryId: 'tv',
-      title: 'Servis TV LED',
+      id: 'laptop-screen',
+      categoryId: 'laptop',
+      title: 'Servis Laptop',
       description:
-          'TV mati total, suara ada gambar hilang, panel garis, atau backlight.',
-      icon: Icons.live_tv_rounded,
+          'Laptop mati, layar bermasalah, keyboard rusak, atau cepat panas.',
+      icon: Icons.laptop_mac_rounded,
+      imageAsset: AppAssets.laptop,
       basePrice: 200000,
       estimatedTime: '1-3 hari',
       rating: 4.8,
       completedJobs: 61,
       features: [
-        'Diagnosa kerusakan panel',
+        'Diagnosa menyeluruh',
         'Penawaran sparepart',
         'Update status servis',
       ],
     ),
     CustomerService(
-      id: 'washer',
-      categoryId: 'washer',
-      title: 'Servis Mesin Cuci',
+      id: 'laptop-upgrade',
+      categoryId: 'laptop',
+      title: 'Upgrade Laptop',
       description:
-          'Mesin cuci tidak berputar, bocor, error display, atau pengering mati.',
-      icon: Icons.local_laundry_service_rounded,
+          'Upgrade RAM, SSD, thermal paste, dan optimasi performa laptop.',
+      icon: Icons.upgrade_rounded,
+      imageAsset: AppAssets.laptop,
       basePrice: 180000,
       estimatedTime: '1-2 hari',
       rating: 4.7,
@@ -202,10 +211,11 @@ final featuredTechniciansProvider = Provider<List<FeaturedTechnician>>((ref) {
   return const [
     FeaturedTechnician(
       name: 'Budi Santoso',
-      specialization: 'Smartphone & Tablet',
+      specialization: 'Printer & Perangkat Cetak',
       rating: 4.9,
       completedJobs: 184,
       distance: '1.8 km',
+      imageAsset: AppAssets.technicianBudi,
     ),
     FeaturedTechnician(
       name: 'Andi Kurniawan',
@@ -213,13 +223,15 @@ final featuredTechniciansProvider = Provider<List<FeaturedTechnician>>((ref) {
       rating: 4.8,
       completedJobs: 132,
       distance: '2.4 km',
+      imageAsset: AppAssets.technicianAndi,
     ),
     FeaturedTechnician(
       name: 'Rina Wijaya',
-      specialization: 'TV & Elektronik Rumah',
+      specialization: 'Laptop & Komputer',
       rating: 4.9,
       completedJobs: 96,
       distance: '3.1 km',
+      imageAsset: AppAssets.technicianRina,
     ),
   ];
 });

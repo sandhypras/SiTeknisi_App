@@ -98,7 +98,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               children: [
                 Text('Ringkasan Booking', style: textTheme.titleLarge),
                 const SizedBox(height: AppSpacing.md),
-                const _RowItem(label: 'Layanan', value: 'Servis AC'),
+                const _RowItem(label: 'Layanan', value: 'Servis Laptop'),
                 const _RowItem(label: 'Teknisi', value: 'Andi Kurniawan'),
                 const _RowItem(label: 'Jadwal', value: 'Hari ini, 14:00'),
                 const Divider(height: AppSpacing.xl),

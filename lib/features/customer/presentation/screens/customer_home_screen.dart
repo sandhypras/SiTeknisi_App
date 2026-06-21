@@ -254,7 +254,7 @@ class _TrackingCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Servis AC - Bpk. Andi',
+                  'Servis Laptop - Bpk. Andi',
                   style: textTheme.titleMedium?.copyWith(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
@@ -315,7 +315,8 @@ class _HomeCategoryItem extends StatelessWidget {
                 color: AppColors.primaryLight.withValues(alpha: 0.62),
                 borderRadius: AppRadius.large,
               ),
-              child: Icon(category.icon, color: AppColors.primary, size: 34),
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(category.imageAsset, fit: BoxFit.cover),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
@@ -436,7 +437,7 @@ class _RecentHistoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Servis HP',
+                  'Servis Printer',
                   style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w900,
                   ),

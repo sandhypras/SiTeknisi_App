@@ -11,7 +11,6 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/customer/presentation/screens/customer_home_screen.dart';
 import '../../features/customer/presentation/screens/customer_activity_screen.dart';
-import '../../features/customer/presentation/screens/customer_messages_screen.dart';
 import '../../features/customer/presentation/screens/customer_profile_screen.dart';
 import '../../features/customer/presentation/screens/booking/create_service_request_screen.dart';
 import '../../features/customer/presentation/screens/booking/customer_flow_screens.dart';
@@ -35,7 +34,6 @@ class AppRoutes {
   static const forgotPassword = '/forgot-password';
   static const customerHome = '/customer/home';
   static const customerActivity = '/customer/activity';
-  static const customerMessages = '/customer/messages';
   static const customerCategories = '/customer/categories';
   static const customerSearch = '/customer/search';
   static const customerProfile = '/customer/profile';
@@ -105,10 +103,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.customerActivity,
         builder: (context, state) => const CustomerActivityScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.customerMessages,
-        builder: (context, state) => const CustomerMessagesScreen(),
       ),
       GoRoute(
         path: AppRoutes.customerCategories,

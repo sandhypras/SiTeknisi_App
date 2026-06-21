@@ -64,7 +64,7 @@ class _SearchServiceScreenState extends ConsumerState<SearchServiceScreen> {
             shared.SearchBar(
               controller: _controller,
               autofocus: true,
-              hintText: 'Contoh: LCD, baterai, mesin cuci',
+              hintText: 'Contoh: printer, laptop, komputer',
               onChanged: (value) => setState(() => _query = value),
               onClear: () => setState(() => _query = ''),
             ),

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/router/app_router.dart';
+import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../shared/widgets/primary_button.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/status_chip.dart';
+import '../../../../../shared/utils/whatsapp_launcher.dart';
 
 class LocationPickerScreen extends StatelessWidget {
   const LocationPickerScreen({super.key});
@@ -63,9 +65,28 @@ class OfferDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _FlowScaffold(
     title: 'Detail Penawaran',
-    bottom: PrimaryButton(
-      label: 'Pilih Penawaran',
-      onPressed: () => context.go(AppRoutes.customerPayment),
+    bottom: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PrimaryButton(
+          label: 'Pilih Penawaran',
+          onPressed: () => context.go(AppRoutes.customerPayment),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => openWhatsApp(
+              context,
+              phoneNumber: '6281234567890',
+              message:
+                  'Halo Pak Andi, saya ingin mengonfirmasi penawaran servis laptop Rp 175.000 dari SiTeknisi.',
+            ),
+            icon: const Icon(Icons.chat_rounded),
+            label: const Text('Hubungi Teknisi via WhatsApp'),
+          ),
+        ),
+      ],
     ),
     children: const [
       MobileFlowStepper(
@@ -74,9 +95,9 @@ class OfferDetailScreen extends StatelessWidget {
       ),
       SizedBox(height: AppSpacing.lg),
       _HeroSummary(
-        icon: Icons.engineering_rounded,
+        imageAsset: AppAssets.technicianAndi,
         title: 'Andi Kurniawan',
-        subtitle: 'Teknisi AC • Rating 4,9',
+        subtitle: 'Teknisi Laptop - Rating 4,9',
       ),
       SizedBox(height: AppSpacing.lg),
       _DetailCard(
@@ -91,7 +112,7 @@ class OfferDetailScreen extends StatelessWidget {
       _DetailCard(
         title: 'Catatan Teknisi',
         rows: {
-          'Pesan':
+          'Catatan':
               'Saya dapat tiba dalam 30 menit. Harga sparepart akan dikonfirmasi setelah pengecekan.',
         },
       ),
@@ -107,6 +128,7 @@ class OfferComparisonScreen extends StatelessWidget {
     children: const [
       _ComparisonTile(
         name: 'Andi',
+        imageAsset: AppAssets.technicianAndi,
         price: 'Rp 175k',
         rating: '4.9',
         eta: '30 menit',
@@ -115,6 +137,7 @@ class OfferComparisonScreen extends StatelessWidget {
       SizedBox(height: AppSpacing.sm),
       _ComparisonTile(
         name: 'Budi',
+        imageAsset: AppAssets.technicianBudi,
         price: 'Rp 150k',
         rating: '4.8',
         eta: '1 jam',
@@ -122,6 +145,7 @@ class OfferComparisonScreen extends StatelessWidget {
       SizedBox(height: AppSpacing.sm),
       _ComparisonTile(
         name: 'Rina',
+        imageAsset: AppAssets.technicianRina,
         price: 'Rp 190k',
         rating: '4.9',
         eta: '45 menit',
@@ -153,7 +177,7 @@ class BookingTrackingScreen extends StatelessWidget {
       ),
       SizedBox(height: AppSpacing.lg),
       _HeroSummary(
-        icon: Icons.local_shipping_rounded,
+        imageAsset: AppAssets.technicianAndi,
         title: 'Teknisi dalam perjalanan',
         subtitle: 'Estimasi tiba 10 menit',
       ),
@@ -174,8 +198,8 @@ class BookingDetailScreen extends StatelessWidget {
     title: 'Detail Booking',
     children: [
       _HeroSummary(
-        icon: Icons.ac_unit_rounded,
-        title: 'Servis AC',
+        imageAsset: AppAssets.laptop,
+        title: 'Servis Laptop',
         subtitle: 'Booking BKG-20260617-001',
       ),
       SizedBox(height: AppSpacing.lg),
@@ -198,10 +222,14 @@ class BookingHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) => const _FlowScaffold(
     title: 'Riwayat Booking',
     children: [
-      _HistoryRow(title: 'Servis HP', date: '12 Okt 2023', status: 'Selesai'),
+      _HistoryRow(
+        title: 'Servis Printer',
+        date: '12 Okt 2023',
+        status: 'Selesai',
+      ),
       SizedBox(height: AppSpacing.sm),
       _HistoryRow(
-        title: 'Servis Mesin Cuci',
+        title: 'Servis Komputer',
         date: '3 Sep 2023',
         status: 'Selesai',
       ),
@@ -300,11 +328,11 @@ class _SuccessFlow extends StatelessWidget {
 
 class _HeroSummary extends StatelessWidget {
   const _HeroSummary({
-    required this.icon,
+    required this.imageAsset,
     required this.title,
     required this.subtitle,
   });
-  final IconData icon;
+  final String imageAsset;
   final String title;
   final String subtitle;
   @override
@@ -316,7 +344,15 @@ class _HeroSummary extends StatelessWidget {
     ),
     child: Row(
       children: [
-        Icon(icon, color: AppColors.primary, size: 42),
+        ClipRRect(
+          borderRadius: AppRadius.medium,
+          child: Image.asset(
+            imageAsset,
+            width: 72,
+            height: 72,
+            fit: BoxFit.cover,
+          ),
+        ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
@@ -370,16 +406,26 @@ class _ComparisonTile extends StatelessWidget {
     required this.rating,
     required this.eta,
     this.best = false,
+    this.imageAsset,
   });
   final String name, price, rating, eta;
   final bool best;
+  final String? imageAsset;
   @override
   Widget build(BuildContext context) => Card(
     child: Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
         children: [
-          CircleAvatar(child: Text(name[0])),
+          ClipRRect(
+            borderRadius: AppRadius.medium,
+            child: Image.asset(
+              imageAsset ?? AppAssets.technicianAndi,
+              width: 52,
+              height: 52,
+              fit: BoxFit.cover,
+            ),
+          ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(

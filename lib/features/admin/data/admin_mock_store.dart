@@ -57,7 +57,7 @@ class AdminMockStore extends ChangeNotifier {
         id: 'TEC-021',
         values: {
           'name': 'Dimas Pratama',
-          'expertise': 'AC & Kulkas',
+          'expertise': 'Printer & Komputer',
           'experience': '5 tahun',
           'submitted': 'Hari ini',
           'bank': 'BCA • 7620192231',
@@ -70,7 +70,7 @@ class AdminMockStore extends ChangeNotifier {
         id: 'TEC-022',
         values: {
           'name': 'Sari Dewi',
-          'expertise': 'Laptop & HP',
+          'expertise': 'Laptop & Komputer',
           'experience': '3 tahun',
           'submitted': 'Kemarin',
           'bank': 'BRI • 11820094233',
@@ -83,7 +83,7 @@ class AdminMockStore extends ChangeNotifier {
         id: 'TEC-023',
         values: {
           'name': 'Agus Setiawan',
-          'expertise': 'TV & Audio',
+          'expertise': 'Printer & Laptop',
           'experience': '7 tahun',
           'submitted': '16 Jun 2026',
           'bank': 'Mandiri • 132001902182',
@@ -97,8 +97,8 @@ class AdminMockStore extends ChangeNotifier {
       AdminRecord(
         id: 'SRV-001',
         values: {
-          'name': 'Servis AC',
-          'description': 'Perawatan dan perbaikan AC',
+          'name': 'Servis Printer',
+          'description': 'Perawatan dan perbaikan printer',
           'technicians': '48',
           'created': '02 Mei 2026',
           'status': 'Aktif',
@@ -107,7 +107,7 @@ class AdminMockStore extends ChangeNotifier {
       AdminRecord(
         id: 'SRV-002',
         values: {
-          'name': 'Servis Mesin Cuci',
+          'name': 'Servis Komputer',
           'description': 'Perbaikan semua tipe mesin',
           'technicians': '32',
           'created': '02 Mei 2026',
@@ -131,7 +131,7 @@ class AdminMockStore extends ChangeNotifier {
         values: {
           'customer': 'Budi Santoso',
           'technician': 'Andi Kurniawan',
-          'service': 'Servis AC',
+          'service': 'Servis Laptop',
           'payment': 'Lunas',
           'status': 'Dikerjakan',
         },
@@ -151,7 +151,7 @@ class AdminMockStore extends ChangeNotifier {
         values: {
           'customer': 'Fajar Putra',
           'technician': 'Dimas Pratama',
-          'service': 'Servis TV',
+          'service': 'Servis Printer',
           'payment': 'Pending',
           'status': 'Menunggu',
         },

@@ -19,7 +19,7 @@ class TechnicianApplicationFormScreen extends StatelessWidget {
     flowStep: 0,
     onPressed: () => context.go(AppRoutes.technicianUploadKtp),
     children: const [
-      CustomTextField(label: 'Keahlian', hintText: 'AC, HP, TV, Mesin Cuci'),
+      CustomTextField(label: 'Keahlian', hintText: 'Printer, Komputer, Laptop'),
       SizedBox(height: AppSpacing.md),
       CustomTextField(
         label: 'Pengalaman',
@@ -141,12 +141,12 @@ class TechnicianRequestDetailScreen extends StatelessWidget {
     onPressed: () => context.go(AppRoutes.technicianCreateOffer),
     children: const [
       _InfoCard(
-        title: 'Servis AC Tidak Dingin',
+        title: 'Servis Laptop Tidak Menyala',
         lines: [
           'Customer: Budi Santoso',
           'Lokasi: Dago · 2.1 km',
           'Jadwal: Hari ini, 14:00',
-          'Keluhan: AC menyala tetapi tidak dingin',
+          'Keluhan: Laptop tidak menyala dan indikator berkedip',
         ],
       ),
     ],
@@ -168,7 +168,7 @@ class TechnicianCreateOfferScreen extends StatelessWidget {
       ),
       SizedBox(height: AppSpacing.md),
       CustomTextField(
-        label: 'Pesan untuk Customer',
+        label: 'Catatan Penawaran',
         hintText: 'Jelaskan estimasi dan cakupan jasa',
         maxLines: 4,
       ),
@@ -191,9 +191,9 @@ class TechnicianCompletedJobsScreen extends StatelessWidget {
   Widget build(BuildContext context) => const _SimpleTechList(
     title: 'Completed Jobs',
     items: [
-      'Servis HP · Rp 150.000',
-      'Servis AC · Rp 175.000',
-      'Mesin Cuci · Rp 225.000',
+      'Servis Printer · Rp 150.000',
+      'Servis Laptop · Rp 175.000',
+      'Servis Komputer · Rp 225.000',
     ],
   );
 }
@@ -227,7 +227,7 @@ class TechnicianProfileScreen extends StatelessWidget {
     title: 'Technician Profile',
     items: [
       'Andi Kurniawan · Verified',
-      'Keahlian: AC & Elektronik Rumah',
+      'Keahlian: Printer, Komputer & Laptop',
       'Rating: 4.9 · 184 pekerjaan',
       'Bank Account',
       'Keluar dari mode Teknisi',

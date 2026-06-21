@@ -53,17 +53,13 @@ class ServiceDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 66,
-                    height: 66,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface.withValues(alpha: 0.16),
-                      borderRadius: AppRadius.large,
-                    ),
-                    child: Icon(
-                      service.icon,
-                      color: AppColors.surface,
-                      size: 34,
+                  ClipRRect(
+                    borderRadius: AppRadius.large,
+                    child: Image.asset(
+                      service.imageAsset,
+                      width: double.infinity,
+                      height: 180,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -122,6 +118,7 @@ class ServiceDetailScreen extends ConsumerWidget {
                 rating: technician.rating,
                 completedJobs: technician.completedJobs,
                 distanceText: technician.distance,
+                avatarAsset: technician.imageAsset,
                 isVerified: true,
               ),
               const SizedBox(height: AppSpacing.sm),

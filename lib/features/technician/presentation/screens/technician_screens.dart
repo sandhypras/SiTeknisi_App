@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -9,6 +10,7 @@ import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/utils/whatsapp_launcher.dart';
 import '../widgets/technician_shell.dart';
 
 class JoinTechnicianScreen extends StatelessWidget {
@@ -37,7 +39,7 @@ class JoinTechnicianScreen extends StatelessWidget {
           SizedBox(height: AppSpacing.lg),
           CustomTextField(
             label: 'Keahlian',
-            hintText: 'AC, TV, HP, Mesin Cuci',
+            hintText: 'Printer, Komputer, Laptop',
           ),
           SizedBox(height: AppSpacing.md),
           CustomTextField(label: 'Nomor KTP', hintText: '320xxxxxxxxxxxxx'),
@@ -128,7 +130,7 @@ class TechnicianRequestsScreen extends StatelessWidget {
             _RequestCard(),
             SizedBox(height: AppSpacing.sm),
             _RequestCard(
-              title: 'Servis Mesin Cuci',
+              title: 'Servis Komputer Lambat',
               location: 'Antapani • 4,2 km',
             ),
           ],
@@ -168,12 +170,36 @@ class TechnicianJobsScreen extends StatelessWidget {
                     const StatusChip.info(label: 'Sedang dikerjakan'),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Servis AC - Budi Santoso',
+                      'Servis Laptop - Budi Santoso',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     const Text('Status: Teknisi dalam perjalanan'),
+                    const SizedBox(height: AppSpacing.md),
+                    ClipRRect(
+                      borderRadius: AppRadius.large,
+                      child: Image.asset(
+                        AppAssets.laptop,
+                        width: double.infinity,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.lg),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => openWhatsApp(
+                          context,
+                          phoneNumber: '6281234567800',
+                          message:
+                              'Halo Budi, saya Andi teknisi dari SiTeknisi. Penawaran servis laptop Anda sudah saya terima.',
+                        ),
+                        icon: const Icon(Icons.chat_rounded),
+                        label: const Text('Hubungi Customer via WhatsApp'),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
                     PrimaryButton(
                       label: 'Tandai Pekerjaan Selesai',
                       onPressed: () {
@@ -231,7 +257,7 @@ class TechnicianEarningsScreen extends StatelessWidget {
 
 class _RequestCard extends StatelessWidget {
   const _RequestCard({
-    this.title = 'Servis AC Tidak Dingin',
+    this.title = 'Servis Laptop Tidak Menyala',
     this.location = 'Dago • 2,1 km',
   });
 
@@ -286,7 +312,7 @@ class _RequestCard extends StatelessWidget {
                   SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(
-                      'AC menyala tetapi tidak dingin sejak kemarin.',
+                      'Laptop tidak menyala dan lampu indikator berkedip.',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

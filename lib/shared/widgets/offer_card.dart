@@ -12,6 +12,7 @@ class OfferCard extends StatelessWidget {
     required this.message,
     super.key,
     this.avatarUrl,
+    this.avatarAsset,
     this.rating,
     this.estimatedArrival,
     this.isVerified = false,
@@ -25,6 +26,7 @@ class OfferCard extends StatelessWidget {
   final String price;
   final String message;
   final String? avatarUrl;
+  final String? avatarAsset;
   final double? rating;
   final String? estimatedArrival;
   final bool isVerified;
@@ -48,14 +50,23 @@ class OfferCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.primaryLight,
-                    backgroundImage: avatarUrl == null
-                        ? null
-                        : NetworkImage(avatarUrl!),
-                    child: avatarUrl == null
-                        ? Text(technicianName.characters.first.toUpperCase())
-                        : null,
+                  ClipRRect(
+                    borderRadius: AppRadius.medium,
+                    child: SizedBox.square(
+                      dimension: 52,
+                      child: avatarAsset != null
+                          ? Image.asset(avatarAsset!, fit: BoxFit.cover)
+                          : avatarUrl != null
+                          ? Image.network(avatarUrl!, fit: BoxFit.cover)
+                          : ColoredBox(
+                              color: AppColors.primaryLight,
+                              child: Center(
+                                child: Text(
+                                  technicianName.characters.first.toUpperCase(),
+                                ),
+                              ),
+                            ),
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(

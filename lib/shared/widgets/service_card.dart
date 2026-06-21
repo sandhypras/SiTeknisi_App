@@ -11,6 +11,7 @@ class ServiceCard extends StatelessWidget {
     super.key,
     this.icon,
     this.imageUrl,
+    this.imageAsset,
     this.onTap,
     this.trailing,
   });
@@ -19,6 +20,7 @@ class ServiceCard extends StatelessWidget {
   final String description;
   final IconData? icon;
   final String? imageUrl;
+  final String? imageAsset;
   final VoidCallback? onTap;
   final Widget? trailing;
 
@@ -34,7 +36,11 @@ class ServiceCard extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.cardPadding),
           child: Row(
             children: [
-              _ServiceVisual(icon: icon, imageUrl: imageUrl),
+              _ServiceVisual(
+                icon: icon,
+                imageUrl: imageUrl,
+                imageAsset: imageAsset,
+              ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -63,10 +69,11 @@ class ServiceCard extends StatelessWidget {
 }
 
 class _ServiceVisual extends StatelessWidget {
-  const _ServiceVisual({this.icon, this.imageUrl});
+  const _ServiceVisual({this.icon, this.imageUrl, this.imageAsset});
 
   final IconData? icon;
   final String? imageUrl;
+  final String? imageAsset;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +83,9 @@ class _ServiceVisual extends StatelessWidget {
         color: AppColors.primaryLight,
         child: SizedBox.square(
           dimension: 52,
-          child: imageUrl == null
+          child: imageAsset != null
+              ? Image.asset(imageAsset!, fit: BoxFit.cover)
+              : imageUrl == null
               ? Icon(
                   icon ?? Icons.home_repair_service_rounded,
                   color: AppColors.primary,

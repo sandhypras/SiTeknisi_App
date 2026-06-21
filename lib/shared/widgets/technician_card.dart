@@ -11,6 +11,7 @@ class TechnicianCard extends StatelessWidget {
     required this.specialization,
     super.key,
     this.avatarUrl,
+    this.avatarAsset,
     this.rating,
     this.completedJobs,
     this.distanceText,
@@ -22,6 +23,7 @@ class TechnicianCard extends StatelessWidget {
   final String name;
   final String specialization;
   final String? avatarUrl;
+  final String? avatarAsset;
   final double? rating;
   final int? completedJobs;
   final String? distanceText;
@@ -42,15 +44,21 @@ class TechnicianCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: AppColors.primaryLight,
-                backgroundImage: avatarUrl == null
-                    ? null
-                    : NetworkImage(avatarUrl!),
-                child: avatarUrl == null
-                    ? Text(name.characters.first.toUpperCase())
-                    : null,
+              ClipRRect(
+                borderRadius: AppRadius.large,
+                child: SizedBox.square(
+                  dimension: 64,
+                  child: avatarAsset != null
+                      ? Image.asset(avatarAsset!, fit: BoxFit.cover)
+                      : avatarUrl != null
+                      ? Image.network(avatarUrl!, fit: BoxFit.cover)
+                      : ColoredBox(
+                          color: AppColors.primaryLight,
+                          child: Center(
+                            child: Text(name.characters.first.toUpperCase()),
+                          ),
+                        ),
+                ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(

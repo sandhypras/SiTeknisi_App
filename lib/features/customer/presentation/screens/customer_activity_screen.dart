@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../../../core/router/app_router.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/status_chip.dart';
+import '../../../../shared/utils/whatsapp_launcher.dart';
 import '../widgets/customer_shell.dart';
 import '../widgets/customer_widgets.dart';
 
@@ -35,15 +34,15 @@ class CustomerActivityScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             const _HistoryTile(
-              icon: Icons.phone_android_rounded,
-              title: 'Servis HP',
+              imageAsset: AppAssets.printer,
+              title: 'Servis Printer',
               subtitle: 'Selesai · 12 Okt 2023',
               chip: StatusChip.success(label: 'Selesai'),
             ),
             const SizedBox(height: AppSpacing.sm),
             const _HistoryTile(
-              icon: Icons.local_laundry_service_rounded,
-              title: 'Servis Mesin Cuci',
+              imageAsset: AppAssets.computer,
+              title: 'Servis Komputer',
               subtitle: 'Invoice INV-0921',
               chip: StatusChip.info(label: 'Invoice'),
             ),
@@ -100,7 +99,7 @@ class _OngoingActivityCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Servis AC - Bpk. Andi',
+                      'Servis Laptop - Bpk. Andi',
                       style: textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -129,9 +128,14 @@ class _OngoingActivityCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => context.go(AppRoutes.customerMessages),
+                  onPressed: () => openWhatsApp(
+                    context,
+                    phoneNumber: '6281234567890',
+                    message:
+                        'Halo Pak Andi, saya Budi dari booking SiTeknisi. Saya ingin menanyakan progres servis laptop saya.',
+                  ),
                   icon: const Icon(Icons.chat_rounded),
-                  label: const Text('Chat'),
+                  label: const Text('WhatsApp'),
                 ),
               ),
             ],
@@ -144,13 +148,13 @@ class _OngoingActivityCard extends StatelessWidget {
 
 class _HistoryTile extends StatelessWidget {
   const _HistoryTile({
-    required this.icon,
+    required this.imageAsset,
     required this.title,
     required this.subtitle,
     required this.chip,
   });
 
-  final IconData icon;
+  final String imageAsset;
   final String title;
   final String subtitle;
   final Widget chip;
@@ -161,9 +165,14 @@ class _HistoryTile extends StatelessWidget {
 
     return Card(
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.primaryLight.withValues(alpha: 0.54),
-          child: Icon(icon, color: AppColors.textPrimary),
+        leading: ClipRRect(
+          borderRadius: AppRadius.medium,
+          child: Image.asset(
+            imageAsset,
+            width: 48,
+            height: 48,
+            fit: BoxFit.cover,
+          ),
         ),
         title: Text(title, style: textTheme.titleMedium),
         subtitle: Text(subtitle),

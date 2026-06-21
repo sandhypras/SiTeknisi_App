@@ -83,7 +83,7 @@ class ServiceCategoryTile extends StatelessWidget {
           child: expanded
               ? Row(
                   children: [
-                    _CategoryIcon(category: category),
+                    _CategoryImage(category: category),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(child: _CategoryText(category: category)),
                     const Icon(Icons.chevron_right_rounded),
@@ -92,7 +92,7 @@ class ServiceCategoryTile extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _CategoryIcon(category: category),
+                    _CategoryImage(category: category),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       category.name,
@@ -140,14 +140,14 @@ class CustomerServiceTile extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: AppRadius.large,
+              ClipRRect(
+                borderRadius: AppRadius.large,
+                child: Image.asset(
+                  service.imageAsset,
+                  width: 72,
+                  height: 72,
+                  fit: BoxFit.cover,
                 ),
-                child: Icon(service.icon, color: AppColors.primary, size: 28),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -280,21 +280,21 @@ class ActiveBookingCard extends StatelessWidget {
   }
 }
 
-class _CategoryIcon extends StatelessWidget {
-  const _CategoryIcon({required this.category});
+class _CategoryImage extends StatelessWidget {
+  const _CategoryImage({required this.category});
 
   final CustomerServiceCategory category;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: category.color.withValues(alpha: 0.12),
-        borderRadius: AppRadius.large,
+    return ClipRRect(
+      borderRadius: AppRadius.large,
+      child: Image.asset(
+        category.imageAsset,
+        width: 64,
+        height: 64,
+        fit: BoxFit.cover,
       ),
-      child: Icon(category.icon, color: category.color, size: 26),
     );
   }
 }
