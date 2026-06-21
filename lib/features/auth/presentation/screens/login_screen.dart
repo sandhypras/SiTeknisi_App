@@ -22,6 +22,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _obscurePassword = true;
+  _LoginRole _selectedRole = _LoginRole.customer;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +84,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                'Masuk untuk lanjut servis elektronik Anda',
+                _selectedRole == _LoginRole.customer
+                    ? 'Masuk untuk memesan layanan servis'
+                    : 'Masuk untuk menerima pekerjaan servis',
                 textAlign: TextAlign.center,
                 style: textTheme.bodySmall?.copyWith(
                   color: AppColors.textSecondary,
@@ -92,6 +95,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
               const _TrustStrip(),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                'Masuk sebagai',
+                style: textTheme.labelLarge?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              SegmentedButton<_LoginRole>(
+                showSelectedIcon: false,
+                segments: const [
+                  ButtonSegment(
+                    value: _LoginRole.customer,
+                    icon: Icon(Icons.person_outline_rounded),
+                    label: Text('Customer'),
+                  ),
+                  ButtonSegment(
+                    value: _LoginRole.technician,
+                    icon: Icon(Icons.engineering_outlined),
+                    label: Text('Teknisi'),
+                  ),
+                ],
+                selected: {_selectedRole},
+                onSelectionChanged: (selection) {
+                  setState(() => _selectedRole = selection.first);
+                },
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                _selectedRole == _LoginRole.customer
+                    ? 'Akses pencarian layanan, penawaran, pembayaran, dan tracking.'
+                    : 'Akses permintaan masuk, penawaran, pekerjaan, dan pendapatan.',
+                style: textTheme.labelSmall?.copyWith(
+                  color: AppColors.textMuted,
+                  height: 1.35,
+                ),
+              ),
               const SizedBox(height: AppSpacing.lg),
               CustomTextField(
                 label: 'Email Address',
@@ -180,10 +220,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (context.mounted) {
       FocusScope.of(context).unfocus();
-      context.go(AppRoutes.customerHome);
+      context.go(
+        _selectedRole == _LoginRole.customer
+            ? AppRoutes.customerHome
+            : AppRoutes.technicianDashboard,
+      );
     }
   }
 }
+
+enum _LoginRole { customer, technician }
 
 class _LoginHeroBand extends StatelessWidget {
   const _LoginHeroBand();

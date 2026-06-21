@@ -262,7 +262,7 @@ class _TrackingCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 InkWell(
-                  onTap: () => context.go(AppRoutes.customerActivity),
+                  onTap: () => context.go(AppRoutes.customerTracking),
                   borderRadius: AppRadius.pill,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

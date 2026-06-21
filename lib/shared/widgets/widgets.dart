@@ -4,6 +4,7 @@ export 'empty_state.dart';
 export 'error_state.dart';
 export 'invoice_card.dart';
 export 'loading_state.dart';
+export 'mobile_flow_stepper.dart';
 export 'offer_card.dart';
 export 'primary_button.dart';
 export 'search_bar.dart';

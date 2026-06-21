@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
+import '../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
 import '../widgets/technician_shell.dart';
@@ -16,11 +17,11 @@ class JoinTechnicianScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Join As Technician')),
+      appBar: AppBar(title: const Text('Daftar Jadi Teknisi')),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(AppSpacing.screenPadding),
         child: PrimaryButton(
-          label: 'Kirim Pengajuan',
+          label: 'Mulai Pendaftaran',
           icon: Icons.verified_user_rounded,
           onPressed: () => context.go(AppRoutes.technicianApplication),
         ),
@@ -30,7 +31,7 @@ class JoinTechnicianScreen extends StatelessWidget {
         children: const [
           _HeroPanel(
             title: 'Gabung jadi teknisi SiTeknisi',
-            subtitle: 'Lengkapi data verifikasi dan mulai menerima request.',
+            subtitle: 'Lengkapi verifikasi untuk mulai menerima permintaan.',
             icon: Icons.engineering_rounded,
           ),
           SizedBox(height: AppSpacing.lg),
@@ -72,10 +73,17 @@ class TechnicianDashboardScreen extends StatelessWidget {
               subtitle: 'Halo, Andi. Ada request baru di sekitar Anda.',
             ),
             const SizedBox(height: AppSpacing.lg),
+            const MobileFlowStepper(
+              steps: ['Permintaan', 'Penawaran', 'Aktif', 'Selesai'],
+              currentStep: 0,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            const _AvailabilityCard(),
+            const SizedBox(height: AppSpacing.lg),
             Row(
               children: const [
                 Expanded(
-                  child: _MetricCard(value: '12', label: 'Request'),
+                  child: _MetricCard(value: '12', label: 'Permintaan'),
                 ),
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
@@ -83,7 +91,7 @@ class TechnicianDashboardScreen extends StatelessWidget {
                 ),
                 SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  child: _MetricCard(value: 'Rp 1,8 jt', label: 'Earning'),
+                  child: _MetricCard(value: 'Rp 1,8 jt', label: 'Pendapatan'),
                 ),
               ],
             ),
@@ -108,15 +116,20 @@ class TechnicianRequestsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: const [
             _TechnicianHeader(
-              title: 'Incoming Requests',
-              subtitle: 'Pilih request dan kirim penawaran harga.',
+              title: 'Permintaan Masuk',
+              subtitle: 'Pilih pekerjaan yang sesuai lalu kirim penawaran.',
+            ),
+            SizedBox(height: AppSpacing.lg),
+            MobileFlowStepper(
+              steps: ['Permintaan', 'Penawaran', 'Aktif', 'Selesai'],
+              currentStep: 0,
             ),
             SizedBox(height: AppSpacing.lg),
             _RequestCard(),
             SizedBox(height: AppSpacing.sm),
             _RequestCard(
               title: 'Servis Mesin Cuci',
-              location: 'Antapani · 4.2 km',
+              location: 'Antapani • 4,2 km',
             ),
           ],
         ),
@@ -137,8 +150,13 @@ class TechnicianJobsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: [
             const _TechnicianHeader(
-              title: 'Active Jobs',
-              subtitle: 'Update status pekerjaan Anda.',
+              title: 'Pekerjaan Aktif',
+              subtitle: 'Perbarui progres agar customer mengetahui status.',
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            const MobileFlowStepper(
+              steps: ['Permintaan', 'Penawaran', 'Aktif', 'Selesai'],
+              currentStep: 2,
             ),
             const SizedBox(height: AppSpacing.lg),
             Card(
@@ -147,7 +165,7 @@ class TechnicianJobsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const StatusChip.info(label: 'On progress'),
+                    const StatusChip.info(label: 'Sedang dikerjakan'),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
                       'Servis AC - Budi Santoso',
@@ -157,7 +175,7 @@ class TechnicianJobsScreen extends StatelessWidget {
                     const Text('Status: Teknisi dalam perjalanan'),
                     const SizedBox(height: AppSpacing.lg),
                     PrimaryButton(
-                      label: 'Update: Pekerjaan Selesai',
+                      label: 'Tandai Pekerjaan Selesai',
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -189,7 +207,7 @@ class TechnicianEarningsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: const [
             _TechnicianHeader(
-              title: 'Earnings',
+              title: 'Pendapatan',
               subtitle: 'Ringkasan pendapatan dan rekening teknisi.',
             ),
             SizedBox(height: AppSpacing.lg),
@@ -214,7 +232,7 @@ class TechnicianEarningsScreen extends StatelessWidget {
 class _RequestCard extends StatelessWidget {
   const _RequestCard({
     this.title = 'Servis AC Tidak Dingin',
-    this.location = 'Dago · 2.1 km',
+    this.location = 'Dago • 2,1 km',
   });
 
   final String title;
@@ -228,14 +246,57 @@ class _RequestCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const StatusChip.warning(label: 'Open request'),
+            const StatusChip.warning(label: 'Permintaan terbuka'),
             const SizedBox(height: AppSpacing.sm),
             Text(title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.xs),
-            Text(location),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on_outlined,
+                  size: 18,
+                  color: AppColors.textMuted,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(location),
+                const Spacer(),
+                const Icon(
+                  Icons.schedule_rounded,
+                  size: 18,
+                  color: AppColors.textMuted,
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                const Text('Hari ini'),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceMuted,
+                borderRadius: AppRadius.medium,
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.notes_rounded,
+                    size: 18,
+                    color: AppColors.textSecondary,
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      'AC menyala tetapi tidak dingin sejak kemarin.',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
             PrimaryButton(
-              label: 'Lihat Request',
+              label: 'Lihat Detail & Tawarkan Harga',
               icon: Icons.local_offer_rounded,
               onPressed: () => context.go(AppRoutes.technicianRequestDetail),
             ),
@@ -266,6 +327,52 @@ class _TechnicianHeader extends StatelessWidget {
         const SizedBox(height: AppSpacing.xs),
         Text(subtitle, style: const TextStyle(color: AppColors.textSecondary)),
       ],
+    );
+  }
+}
+
+class _AvailabilityCard extends StatelessWidget {
+  const _AvailabilityCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.successContainer,
+        borderRadius: AppRadius.large,
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
+      ),
+      child: const Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: AppColors.success,
+            foregroundColor: Colors.white,
+            child: Icon(Icons.wifi_tethering_rounded),
+          ),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Anda sedang online',
+                  style: TextStyle(
+                    color: AppColors.successText,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                SizedBox(height: AppSpacing.xxs),
+                Text(
+                  'Permintaan baru akan muncul secara otomatis.',
+                  style: TextStyle(color: AppColors.successText),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.toggle_on_rounded, size: 42, color: AppColors.successText),
+        ],
+      ),
     );
   }
 }

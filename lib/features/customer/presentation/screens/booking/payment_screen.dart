@@ -5,10 +5,18 @@ import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/primary_button.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
+
+  @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  int _selectedMethod = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +25,71 @@ class PaymentScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Pembayaran')),
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.all(AppSpacing.screenPadding),
-        child: PrimaryButton(
-          label: 'Bayar Sekarang',
-          icon: Icons.payment_rounded,
-          onPressed: () => context.go(AppRoutes.customerPaymentSuccess),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.screenPadding),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            border: const Border(top: BorderSide(color: AppColors.border)),
+          ),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total pembayaran',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      'Rp 192.500',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              PrimaryButton(
+                label: 'Bayar',
+                icon: Icons.arrow_forward_rounded,
+                fullWidth: false,
+                onPressed: () => context.go(AppRoutes.customerPaymentSuccess),
+              ),
+            ],
+          ),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.screenPadding),
         children: [
+          const MobileFlowStepper(
+            steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
+            currentStep: 2,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            'Selesaikan pembayaran',
+            style: textTheme.headlineLarge?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          const Text(
+            'Transaksi diproses dengan aman melalui Midtrans.',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.lg),
           Container(
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: AppRadius.large,
               border: Border.all(color: AppColors.border),
             ),
@@ -50,25 +109,51 @@ class PaymentScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text('Metode Pembayaran', style: textTheme.titleLarge),
+          Text('Pilih Metode Pembayaran', style: textTheme.titleLarge),
           const SizedBox(height: AppSpacing.md),
-          const _PaymentMethod(
+          _PaymentMethod(
             icon: Icons.qr_code_rounded,
             title: 'QRIS',
             subtitle: 'Simulasi Midtrans Sandbox',
-            selected: true,
+            selected: _selectedMethod == 0,
+            onTap: () => setState(() => _selectedMethod = 0),
           ),
           const SizedBox(height: AppSpacing.sm),
-          const _PaymentMethod(
+          _PaymentMethod(
             icon: Icons.account_balance_rounded,
             title: 'Virtual Account',
             subtitle: 'BCA, BNI, Mandiri, Permata',
+            selected: _selectedMethod == 1,
+            onTap: () => setState(() => _selectedMethod = 1),
           ),
           const SizedBox(height: AppSpacing.sm),
-          const _PaymentMethod(
+          _PaymentMethod(
             icon: Icons.wallet_rounded,
             title: 'E-Wallet',
             subtitle: 'GoPay, ShopeePay, DANA',
+            selected: _selectedMethod == 2,
+            onTap: () => setState(() => _selectedMethod = 2),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.lock_outline_rounded,
+                color: AppColors.successText,
+                size: 18,
+              ),
+              SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  'Data pembayaran dienkripsi dan tidak disimpan di aplikasi.',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -87,13 +172,18 @@ class _RowItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
       fontWeight: bold ? FontWeight.w900 : FontWeight.w500,
+      color: bold ? AppColors.primary : null,
     );
-
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
         children: [
-          Expanded(child: Text(label)),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
           Text(value, style: style),
         ],
       ),
@@ -106,40 +196,79 @@ class _PaymentMethod extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.selected = false,
+    required this.selected,
+    required this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
   final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: selected
-            ? AppColors.primaryLight.withValues(alpha: 0.5)
-            : AppColors.surface,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: AppRadius.large,
-        border: Border.all(
-          color: selected ? AppColors.primary : AppColors.border,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.primary),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(title), Text(subtitle)],
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primaryLight.withValues(alpha: 0.5)
+                : Theme.of(context).colorScheme.surface,
+            borderRadius: AppRadius.large,
+            border: Border.all(
+              color: selected ? AppColors.primary : AppColors.border,
+              width: selected ? 1.5 : 1,
             ),
           ),
-          if (selected)
-            const Icon(Icons.check_circle_rounded, color: AppColors.primary),
-        ],
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: selected ? AppColors.primary : AppColors.primaryLight,
+                  borderRadius: AppRadius.medium,
+                ),
+                child: Icon(
+                  icon,
+                  color: selected ? Colors.white : AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                selected
+                    ? Icons.radio_button_checked_rounded
+                    : Icons.radio_button_off_rounded,
+                color: selected ? AppColors.primary : AppColors.textMuted,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

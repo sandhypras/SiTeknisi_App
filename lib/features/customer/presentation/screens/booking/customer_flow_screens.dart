@@ -6,6 +6,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../shared/widgets/primary_button.dart';
+import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/status_chip.dart';
 
 class LocationPickerScreen extends StatelessWidget {
@@ -61,16 +62,21 @@ class OfferDetailScreen extends StatelessWidget {
   const OfferDetailScreen({super.key});
   @override
   Widget build(BuildContext context) => _FlowScaffold(
-    title: 'Detail Offer',
+    title: 'Detail Penawaran',
     bottom: PrimaryButton(
-      label: 'Pilih Offer',
+      label: 'Pilih Penawaran',
       onPressed: () => context.go(AppRoutes.customerPayment),
     ),
     children: const [
+      MobileFlowStepper(
+        steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
+        currentStep: 1,
+      ),
+      SizedBox(height: AppSpacing.lg),
       _HeroSummary(
         icon: Icons.engineering_rounded,
         title: 'Andi Kurniawan',
-        subtitle: 'Teknisi AC · Rating 4.9',
+        subtitle: 'Teknisi AC • Rating 4,9',
       ),
       SizedBox(height: AppSpacing.lg),
       _DetailCard(
@@ -141,6 +147,11 @@ class BookingTrackingScreen extends StatelessWidget {
   Widget build(BuildContext context) => _FlowScaffold(
     title: 'Tracking Booking',
     children: const [
+      MobileFlowStepper(
+        steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
+        currentStep: 3,
+      ),
+      SizedBox(height: AppSpacing.lg),
       _HeroSummary(
         icon: Icons.local_shipping_rounded,
         title: 'Teknisi dalam perjalanan',
@@ -375,7 +386,7 @@ class _ComparisonTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name, style: Theme.of(context).textTheme.titleMedium),
-                Text('$rating ★ · $eta'),
+                Text('$rating ★ • $eta'),
               ],
             ),
           ),

@@ -6,6 +6,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
 import '../../../../../shared/widgets/primary_button.dart';
+import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/status_chip.dart';
 
 class TechnicianOffersScreen extends StatelessWidget {
@@ -26,27 +27,87 @@ class TechnicianOffersScreen extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.screenPadding),
-        children: const [
-          _OfferCard(
+        children: [
+          const MobileFlowStepper(
+            steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
+            currentStep: 1,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            '3 teknisi mengirim penawaran',
+            style: Theme.of(
+              context,
+            ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          const Text(
+            'Bandingkan harga, rating, dan waktu kedatangan sebelum memilih.',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          const _RequestSummary(),
+          const SizedBox(height: AppSpacing.lg),
+          const _OfferCard(
             name: 'Andi Kurniawan',
             rating: '4.9',
             price: 'Rp 175.000',
             eta: 'Datang 30 menit',
             recommended: true,
           ),
-          SizedBox(height: AppSpacing.md),
-          _OfferCard(
+          const SizedBox(height: AppSpacing.md),
+          const _OfferCard(
             name: 'Budi Santoso',
             rating: '4.8',
             price: 'Rp 150.000',
             eta: 'Datang 1 jam',
           ),
-          SizedBox(height: AppSpacing.md),
-          _OfferCard(
+          const SizedBox(height: AppSpacing.md),
+          const _OfferCard(
             name: 'Rina Wijaya',
             rating: '4.9',
             price: 'Rp 190.000',
             eta: 'Datang 45 menit',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RequestSummary extends StatelessWidget {
+  const _RequestSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight.withValues(alpha: 0.55),
+        borderRadius: AppRadius.large,
+      ),
+      child: const Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            child: Icon(Icons.ac_unit_rounded),
+          ),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Servis AC Tidak Dingin',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
+                SizedBox(height: AppSpacing.xxs),
+                Text(
+                  'Dago, Bandung • Hari ini',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
+import '../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
 
@@ -13,8 +14,9 @@ class TechnicianApplicationFormScreen extends StatelessWidget {
   const TechnicianApplicationFormScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Application Form',
-    button: 'Lanjut Upload KTP',
+    title: 'Data Keahlian',
+    button: 'Lanjut ke KTP',
+    flowStep: 0,
     onPressed: () => context.go(AppRoutes.technicianUploadKtp),
     children: const [
       CustomTextField(label: 'Keahlian', hintText: 'AC, HP, TV, Mesin Cuci'),
@@ -35,6 +37,7 @@ class TechnicianUploadDocumentScreen extends StatelessWidget {
   Widget build(BuildContext context) => _TechForm(
     title: profilePhoto ? 'Upload Foto Profil' : 'Upload KTP',
     button: profilePhoto ? 'Lanjut Data Bank' : 'Lanjut Foto Profil',
+    flowStep: profilePhoto ? 2 : 1,
     onPressed: () => context.go(
       profilePhoto
           ? AppRoutes.technicianBankInfo
@@ -75,8 +78,9 @@ class TechnicianBankInformationScreen extends StatelessWidget {
   const TechnicianBankInformationScreen({super.key});
   @override
   Widget build(BuildContext context) => _TechForm(
-    title: 'Bank Information',
+    title: 'Informasi Rekening',
     button: 'Kirim Pengajuan',
+    flowStep: 3,
     onPressed: () => context.go(AppRoutes.technicianVerification),
     children: const [
       CustomTextField(label: 'Nama Bank', hintText: 'BCA'),
@@ -237,10 +241,12 @@ class _TechForm extends StatelessWidget {
     required this.children,
     required this.button,
     required this.onPressed,
+    this.flowStep,
   });
   final String title, button;
   final List<Widget> children;
   final VoidCallback onPressed;
+  final int? flowStep;
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(title)),
@@ -250,7 +256,16 @@ class _TechForm extends StatelessWidget {
     ),
     body: ListView(
       padding: const EdgeInsets.all(AppSpacing.screenPadding),
-      children: children,
+      children: [
+        if (flowStep != null) ...[
+          MobileFlowStepper(
+            steps: const ['Data', 'KTP', 'Profil', 'Rekening'],
+            currentStep: flowStep!,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+        ...children,
+      ],
     ),
   );
 }
