@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
 import '../../features/admin/presentation/screens/admin_login_screen.dart';
+import '../../features/auth/domain/auth_user.dart';
+import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
@@ -72,9 +74,16 @@ class AppRoutes {
 final appRouterProvider = Provider<GoRouter>((ref) {
   const appMode = String.fromEnvironment('APP_MODE');
   final useAdminWeb = kIsWeb && appMode != 'mobile';
+  final supabaseEnabled = ref.watch(supabaseEnabledProvider);
 
   return GoRouter(
     initialLocation: useAdminWeb ? AppRoutes.adminLogin : AppRoutes.splash,
+    refreshListenable: supabaseEnabled
+        ? GoRouterRefreshStream(ref)
+        : null,
+    redirect: supabaseEnabled
+        ? (context, state) => _guard(ref, state)
+        : null,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -260,3 +269,83 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+/// Public routes reachable without a session.
+const _publicRoutes = {
+  AppRoutes.splash,
+  AppRoutes.onboarding,
+  AppRoutes.login,
+  AppRoutes.register,
+  AppRoutes.forgotPassword,
+  AppRoutes.adminLogin,
+};
+
+/// Technician onboarding routes a signed-in customer may also reach in order
+/// to convert into a technician.
+const _technicianOnboardingRoutes = {
+  AppRoutes.technicianJoin,
+  AppRoutes.technicianApplication,
+  AppRoutes.technicianUploadKtp,
+  AppRoutes.technicianUploadProfile,
+  AppRoutes.technicianBankInfo,
+  AppRoutes.technicianVerification,
+};
+
+String _homeFor(UserRole role) {
+  switch (role) {
+    case UserRole.technician:
+      return AppRoutes.technicianDashboard;
+    case UserRole.admin:
+      return AppRoutes.adminDashboard;
+    case UserRole.customer:
+      return AppRoutes.customerHome;
+  }
+}
+
+/// Session-aware redirect. Only installed when Supabase is configured.
+String? _guard(Ref ref, GoRouterState state) {
+  final authState = ref.read(authUserProvider);
+  if (authState.isLoading) return null;
+
+  final user = authState.value;
+  final location = state.matchedLocation;
+  final isPublic = _publicRoutes.contains(location);
+  final isAdminPath = location.startsWith('/admin');
+
+  if (user == null) {
+    if (isPublic) return null;
+    return isAdminPath ? AppRoutes.adminLogin : AppRoutes.login;
+  }
+
+  final home = _homeFor(user.role);
+  if (isPublic) return home;
+
+  switch (user.role) {
+    case UserRole.admin:
+      return isAdminPath ? null : AppRoutes.adminDashboard;
+    case UserRole.technician:
+      return location.startsWith('/technician') ? null : home;
+    case UserRole.customer:
+      if (location.startsWith('/customer')) return null;
+      if (_technicianOnboardingRoutes.contains(location)) return null;
+      return home;
+  }
+}
+
+/// Bridges Riverpod auth changes to GoRouter so guards re-run on sign-in/out.
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Ref ref) {
+    _subscription = ref.listen<AsyncValue<AuthUser?>>(
+      authUserProvider,
+      (_, _) => notifyListeners(),
+    );
+  }
+
+  late final ProviderSubscription<AsyncValue<AuthUser?>> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.close();
+    super.dispose();
+  }
+}

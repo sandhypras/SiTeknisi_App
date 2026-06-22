@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_assets.dart';
@@ -6,16 +7,62 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../auth/data/auth_repository.dart';
+import '../../../auth/domain/auth_user.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 
-class AdminLoginScreen extends StatefulWidget {
+class AdminLoginScreen extends ConsumerStatefulWidget {
   const AdminLoginScreen({super.key});
 
   @override
-  State<AdminLoginScreen> createState() => _AdminLoginScreenState();
+  ConsumerState<AdminLoginScreen> createState() => _AdminLoginScreenState();
 }
 
-class _AdminLoginScreenState extends State<AdminLoginScreen> {
+class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  String? _errorText;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final repository = ref.read(authRepositoryProvider);
+
+    // Mock fallback: Supabase not configured, keep prototype behavior.
+    if (repository == null) {
+      context.go(AppRoutes.adminDashboard);
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
+    try {
+      final user = await repository.signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      if (!mounted) return;
+      if (user.role != UserRole.admin) {
+        setState(() => _errorText = 'Akun ini bukan administrator.');
+        return;
+      }
+      context.go(AppRoutes.adminDashboard);
+    } on AuthFailure catch (failure) {
+      if (mounted) setState(() => _errorText = failure.message);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +137,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      const TextField(
-                        decoration: InputDecoration(
+                      TextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
                           labelText: 'Email admin',
                           hintText: 'admin@siteknisi.id',
                           prefixIcon: Icon(Icons.mail_outline),
@@ -99,9 +147,12 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                       ),
                       const SizedBox(height: 16),
                       TextField(
+                        controller: _passwordController,
                         obscureText: _obscurePassword,
+                        onSubmitted: (_) => _submit(),
                         decoration: InputDecoration(
                           labelText: 'Password',
+                          errorText: _errorText,
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             tooltip: _obscurePassword
@@ -128,8 +179,16 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                       ),
                       const SizedBox(height: 12),
                       FilledButton.icon(
-                        onPressed: () => context.go(AppRoutes.adminDashboard),
-                        icon: const Icon(Icons.login),
+                        onPressed: _isLoading ? null : _submit,
+                        icon: _isLoading
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(Icons.login),
                         label: const Text('Masuk ke Dashboard'),
                       ),
                       const SizedBox(height: 24),

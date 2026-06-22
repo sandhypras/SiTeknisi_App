@@ -8,15 +8,38 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../data/auth_repository.dart';
+import '../../domain/auth_user.dart';
 import '../providers/auth_mock_providers.dart';
+import '../providers/auth_providers.dart';
 import '../widgets/auth_logo.dart';
 import '../widgets/auth_scaffold.dart';
 
-class RegisterScreen extends ConsumerWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  UserRole _selectedRole = UserRole.customer;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isLoading = ref.watch(authLoadingProvider);
     final textTheme = Theme.of(context).textTheme;
 
@@ -61,36 +84,43 @@ class RegisterScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              const _RoleChoice(),
+              _RoleChoice(
+                selected: _selectedRole,
+                onChanged: (role) => setState(() => _selectedRole = role),
+              ),
               const SizedBox(height: AppSpacing.lg),
-              const CustomTextField(
+              CustomTextField(
+                controller: _nameController,
                 label: 'Nama Lengkap',
                 hintText: 'Contoh: Sandhy Prasetyo',
-                prefixIcon: Icon(Icons.person_outline_rounded),
+                prefixIcon: const Icon(Icons.person_outline_rounded),
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.md),
-              const CustomTextField(
+              CustomTextField(
+                controller: _phoneController,
                 label: 'Nomor HP',
                 hintText: '08xxxxxxxxxx',
-                prefixIcon: Icon(Icons.phone_android_rounded),
+                prefixIcon: const Icon(Icons.phone_android_rounded),
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.md),
-              const CustomTextField(
+              CustomTextField(
+                controller: _emailController,
                 label: 'Email',
                 hintText: 'nama@email.com',
-                prefixIcon: Icon(Icons.mail_outline_rounded),
+                prefixIcon: const Icon(Icons.mail_outline_rounded),
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.md),
-              const CustomTextField(
+              CustomTextField(
+                controller: _passwordController,
                 label: 'Password',
                 helperText: 'Minimal 8 karakter dengan kombinasi angka.',
-                prefixIcon: Icon(Icons.lock_outline_rounded),
-                suffixIcon: Icon(Icons.visibility_off_rounded),
+                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                suffixIcon: const Icon(Icons.visibility_off_rounded),
                 obscureText: true,
                 textInputAction: TextInputAction.done,
               ),
@@ -103,7 +133,7 @@ class RegisterScreen extends ConsumerWidget {
                 label: 'Buat Akun',
                 icon: Icons.arrow_forward_rounded,
                 isLoading: isLoading,
-                onPressed: () => _mockSubmit(context, ref),
+                onPressed: () => _submit(context, ref),
               ),
             ],
           ),
@@ -129,20 +159,55 @@ class RegisterScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _mockSubmit(BuildContext context, WidgetRef ref) async {
-    ref.read(authLoadingProvider.notifier).setLoading(true);
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    ref.read(authLoadingProvider.notifier).setLoading(false);
+  Future<void> _submit(BuildContext context, WidgetRef ref) async {
+    final repository = ref.read(authRepositoryProvider);
 
-    if (context.mounted) {
+    // Mock fallback: Supabase not configured, keep prototype behavior.
+    if (repository == null) {
+      ref.read(authLoadingProvider.notifier).setLoading(true);
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      ref.read(authLoadingProvider.notifier).setLoading(false);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Mock register berhasil. Integrasi Supabase belum aktif.',
+            ),
+          ),
+        );
+        context.go(AppRoutes.login);
+      }
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    ref.read(authLoadingProvider.notifier).setLoading(true);
+    try {
+      await repository.signUp(
+        email: _emailController.text,
+        password: _passwordController.text,
+        fullName: _nameController.text,
+        role: _selectedRole,
+        phone: _phoneController.text,
+      );
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Mock register berhasil. Integrasi Supabase belum aktif.',
-          ),
+          content: Text('Akun berhasil dibuat. Silakan masuk.'),
         ),
       );
       context.go(AppRoutes.login);
+    } on AuthFailure catch (failure) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(failure.message)),
+        );
+      }
+    } finally {
+      if (context.mounted) {
+        ref.read(authLoadingProvider.notifier).setLoading(false);
+      }
     }
   }
 }
@@ -203,7 +268,10 @@ class _RegisterHeader extends StatelessWidget {
 }
 
 class _RoleChoice extends StatelessWidget {
-  const _RoleChoice();
+  const _RoleChoice({required this.selected, required this.onChanged});
+
+  final UserRole selected;
+  final ValueChanged<UserRole> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -214,20 +282,22 @@ class _RoleChoice extends StatelessWidget {
         borderRadius: AppRadius.large,
       ),
       child: Row(
-        children: const [
+        children: [
           Expanded(
             child: _RoleOption(
               icon: Icons.shopping_bag_rounded,
               title: 'Customer',
-              selected: true,
+              selected: selected == UserRole.customer,
+              onTap: () => onChanged(UserRole.customer),
             ),
           ),
-          SizedBox(width: AppSpacing.xs),
+          const SizedBox(width: AppSpacing.xs),
           Expanded(
             child: _RoleOption(
               icon: Icons.engineering_rounded,
               title: 'Teknisi',
-              selected: false,
+              selected: selected == UserRole.technician,
+              onTap: () => onChanged(UserRole.technician),
             ),
           ),
         ],
@@ -241,54 +311,60 @@ class _RoleOption extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.selected,
+    required this.onTap,
   });
 
   final IconData icon;
   final String title;
   final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xs,
-        vertical: AppSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: selected ? AppColors.surface : Colors.transparent,
-        borderRadius: AppRadius.medium,
-        boxShadow: selected
-            ? [
-                BoxShadow(
-                  color: AppColors.textPrimary.withValues(alpha: 0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: AppRadius.medium,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.surface : Colors.transparent,
+          borderRadius: AppRadius.medium,
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.textPrimary.withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: selected ? AppColors.primary : AppColors.textMuted,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Flexible(
+              child: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.labelMedium?.copyWith(
+                  color: selected ? AppColors.primary : AppColors.textSecondary,
+                  fontWeight: FontWeight.w900,
                 ),
-              ]
-            : null,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 18,
-            color: selected ? AppColors.primary : AppColors.textMuted,
-          ),
-          const SizedBox(width: AppSpacing.xs),
-          Flexible(
-            child: Text(
-              title,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.labelMedium?.copyWith(
-                color: selected ? AppColors.primary : AppColors.textSecondary,
-                fontWeight: FontWeight.w900,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -8,7 +8,10 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../data/auth_repository.dart';
+import '../../domain/auth_user.dart';
 import '../providers/auth_mock_providers.dart';
+import '../providers/auth_providers.dart';
 import '../widgets/auth_illustrations.dart';
 import '../widgets/auth_logo.dart';
 import '../widgets/auth_scaffold.dart';
@@ -21,8 +24,17 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   _LoginRole _selectedRole = _LoginRole.customer;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +146,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
               CustomTextField(
+                controller: _emailController,
                 label: 'Email Address',
                 hintText: 'user@example.com',
                 prefixIcon: const Icon(Icons.mail_outline_rounded),
@@ -147,6 +160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
               CustomTextField(
+                controller: _passwordController,
                 label: 'Password',
                 hintText: 'Masukkan password',
                 errorText: hasError ? 'Email atau password tidak sesuai' : null,
@@ -184,7 +198,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 label: 'Masuk',
                 icon: Icons.arrow_forward_rounded,
                 isLoading: isLoading,
-                onPressed: () => _mockSubmit(context),
+                onPressed: () => _submit(context),
               ),
               const SizedBox(height: AppSpacing.md),
               const _SecurityNotice(),
@@ -212,19 +226,54 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Future<void> _mockSubmit(BuildContext context) async {
-    ref.read(authLoadingProvider.notifier).setLoading(true);
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    ref.read(authLoadingProvider.notifier).setLoading(false);
-    ref.read(loginErrorProvider.notifier).setError(false);
+  Future<void> _submit(BuildContext context) async {
+    final repository = ref.read(authRepositoryProvider);
 
-    if (context.mounted) {
-      FocusScope.of(context).unfocus();
-      context.go(
-        _selectedRole == _LoginRole.customer
-            ? AppRoutes.customerHome
-            : AppRoutes.technicianDashboard,
+    // Mock fallback: Supabase not configured, keep prototype behavior.
+    if (repository == null) {
+      ref.read(authLoadingProvider.notifier).setLoading(true);
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      ref.read(authLoadingProvider.notifier).setLoading(false);
+      ref.read(loginErrorProvider.notifier).setError(false);
+
+      if (context.mounted) {
+        FocusScope.of(context).unfocus();
+        context.go(
+          _selectedRole == _LoginRole.customer
+              ? AppRoutes.customerHome
+              : AppRoutes.technicianDashboard,
+        );
+      }
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    ref.read(loginErrorProvider.notifier).setError(false);
+    ref.read(authLoadingProvider.notifier).setLoading(true);
+    try {
+      final user = await repository.signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
       );
+      if (!context.mounted) return;
+      context.go(_homeRouteFor(user.role));
+    } on AuthFailure {
+      ref.read(loginErrorProvider.notifier).setError(true);
+    } finally {
+      if (context.mounted) {
+        ref.read(authLoadingProvider.notifier).setLoading(false);
+      }
+    }
+  }
+
+  String _homeRouteFor(UserRole role) {
+    switch (role) {
+      case UserRole.technician:
+        return AppRoutes.technicianDashboard;
+      case UserRole.admin:
+        return AppRoutes.adminDashboard;
+      case UserRole.customer:
+        return AppRoutes.customerHome;
     }
   }
 }
