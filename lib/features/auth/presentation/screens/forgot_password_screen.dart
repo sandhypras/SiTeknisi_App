@@ -10,11 +10,38 @@ import '../../../../shared/widgets/primary_button.dart';
 import '../providers/auth_mock_providers.dart';
 import '../widgets/auth_scaffold.dart';
 
-class ForgotPasswordScreen extends ConsumerWidget {
-  const ForgotPasswordScreen({super.key});
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
+  const ForgotPasswordScreen({super.key, this.isAdmin = false});
+
+  final bool isAdmin;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(forgotPasswordSentProvider.notifier).setSent(false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isLoading = ref.watch(authLoadingProvider);
     final isSent = ref.watch(forgotPasswordSentProvider);
     final textTheme = Theme.of(context).textTheme;
@@ -39,7 +66,9 @@ class ForgotPasswordScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Silakan cek email Anda untuk melanjutkan proses reset password.',
+            widget.isAdmin
+                ? 'Silakan cek email admin Anda untuk melanjutkan proses reset password.'
+                : 'Silakan cek email Anda untuk melanjutkan proses reset password.',
             textAlign: TextAlign.center,
             style: textTheme.bodyMedium?.copyWith(
               color: AppColors.textSecondary,
@@ -50,41 +79,56 @@ class ForgotPasswordScreen extends ConsumerWidget {
             label: 'Kembali ke Login',
             onPressed: () {
               ref.read(forgotPasswordSentProvider.notifier).setSent(false);
-              context.go(AppRoutes.login);
+              context.go(
+                widget.isAdmin ? AppRoutes.adminLogin : AppRoutes.login,
+              );
             },
           ),
         ] else ...[
           Text(
-            'Lupa Password',
+            widget.isAdmin ? 'Lupa Password Admin' : 'Lupa Password',
             style: textTheme.headlineLarge?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Masukkan email akun Anda. Kami akan mengirim link reset password.',
+            widget.isAdmin
+                ? 'Masukkan email admin. Kami akan mengirim link reset password.'
+                : 'Masukkan email akun Anda. Kami akan mengirim link reset password.',
             style: textTheme.bodyMedium?.copyWith(
               color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: AppSpacing.xl),
-          const CustomTextField(
-            label: 'Email',
-            hintText: 'nama@email.com',
-            prefixIcon: Icon(Icons.email_rounded),
-            keyboardType: TextInputType.emailAddress,
+          Form(
+            key: _formKey,
+            child: CustomTextField(
+              controller: _emailController,
+              label: widget.isAdmin ? 'Email admin' : 'Email',
+              hintText: widget.isAdmin
+                  ? 'admin@siteknisi.id'
+                  : 'nama@email.com',
+              prefixIcon: const Icon(Icons.email_rounded),
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+              validator: _validateEmail,
+            ),
           ),
           const SizedBox(height: AppSpacing.xl),
           PrimaryButton(
             label: 'Kirim Link Reset',
             isLoading: isLoading,
-            onPressed: () => _mockSubmit(ref),
+            onPressed: _mockSubmit,
           ),
           const SizedBox(height: AppSpacing.md),
           Center(
             child: TextButton(
-              onPressed: () => context.go(AppRoutes.login),
-              child: const Text('Kembali ke Login'),
+              onPressed: () =>
+                  context.go(widget.isAdmin ? AppRoutes.adminLogin : AppRoutes.login),
+              child: Text(
+                widget.isAdmin ? 'Kembali ke Login Admin' : 'Kembali ke Login',
+              ),
             ),
           ),
         ],
@@ -92,9 +136,28 @@ class ForgotPasswordScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _mockSubmit(WidgetRef ref) async {
+  String? _validateEmail(String? value) {
+    final email = value?.trim() ?? '';
+    if (email.isEmpty) {
+      return widget.isAdmin ? 'Email admin wajib diisi' : 'Email wajib diisi';
+    }
+
+    final isValidEmail = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
+    if (!isValidEmail) {
+      return 'Format email tidak valid';
+    }
+
+    return null;
+  }
+
+  Future<void> _mockSubmit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
     ref.read(authLoadingProvider.notifier).setLoading(true);
     await Future<void>.delayed(const Duration(milliseconds: 700));
+    if (!mounted) return;
     ref.read(authLoadingProvider.notifier).setLoading(false);
     ref.read(forgotPasswordSentProvider.notifier).setSent(true);
   }

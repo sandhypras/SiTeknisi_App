@@ -122,7 +122,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () => context.go(
+                            '${AppRoutes.forgotPassword}?from=admin',
+                          ),
                           child: const Text('Lupa password?'),
                         ),
                       ),
