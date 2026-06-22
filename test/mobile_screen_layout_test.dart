@@ -97,4 +97,24 @@ void main() {
     expect(find.text('Profil'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('technician earnings follows payout workflow without overflow', (
+    tester,
+  ) async {
+    await pumpMobileScreen(
+      tester,
+      const TechnicianEarningsScreen(),
+      size: const Size(360, 800),
+    );
+
+    expect(find.text('Saldo dapat dicairkan'), findsOneWidget);
+    expect(find.text('Tarik Saldo'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.scrollUntilVisible(find.text('Transaksi Terbaru'), 420);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Servis Laptop'), findsOneWidget);
+    expect(find.text('Lihat Semua'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -241,8 +241,17 @@ class TechnicianJobsScreen extends StatelessWidget {
   }
 }
 
-class TechnicianEarningsScreen extends StatelessWidget {
+class TechnicianEarningsScreen extends StatefulWidget {
   const TechnicianEarningsScreen({super.key});
+
+  @override
+  State<TechnicianEarningsScreen> createState() =>
+      _TechnicianEarningsScreenState();
+}
+
+class _TechnicianEarningsScreenState extends State<TechnicianEarningsScreen> {
+  bool _showBalance = true;
+  int _periodIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -250,26 +259,753 @@ class TechnicianEarningsScreen extends StatelessWidget {
       currentIndex: 3,
       child: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.screenPadding),
-          children: const [
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screenPadding,
+            AppSpacing.md,
+            AppSpacing.screenPadding,
+            AppSpacing.xl,
+          ),
+          children: [
             _TechnicianHeader(
               title: 'Pendapatan',
-              subtitle: 'Ringkasan pendapatan dan rekening teknisi.',
+              subtitle: 'Pantau hasil kerja dan pencairan dana Anda.',
+              trailing: IconButton.filledTonal(
+                tooltip: _showBalance ? 'Sembunyikan saldo' : 'Tampilkan saldo',
+                onPressed: () => setState(() => _showBalance = !_showBalance),
+                icon: Icon(
+                  _showBalance
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                ),
+              ),
             ),
-            SizedBox(height: AppSpacing.lg),
-            _HeroPanel(
-              title: 'Rp 1.800.000',
-              subtitle: 'Pendapatan bulan ini setelah komisi platform 10%.',
-              icon: Icons.account_balance_wallet_rounded,
+            const SizedBox(height: AppSpacing.lg),
+            _EarningsBalanceCard(
+              showBalance: _showBalance,
+              onWithdraw: () => _showWithdrawSheet(context),
             ),
-            SizedBox(height: AppSpacing.lg),
-            CustomTextField(label: 'Bank', hintText: 'BCA'),
-            SizedBox(height: AppSpacing.md),
-            CustomTextField(label: 'Nomor Rekening', hintText: '1234567890'),
-            SizedBox(height: AppSpacing.md),
-            CustomTextField(label: 'Nama Pemilik', hintText: 'Andi Kurniawan'),
+            const SizedBox(height: AppSpacing.md),
+            _PayoutAccountCard(
+              onTap: () => context.push(AppRoutes.technicianBankAccount),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Performa Pendapatan',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                const StatusChip.success(label: '+18,5%'),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            const Text(
+              'Dibandingkan periode sebelumnya',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _PeriodSelector(
+              selectedIndex: _periodIndex,
+              onSelected: (index) => setState(() => _periodIndex = index),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _EarningsChart(periodIndex: _periodIndex),
+            const SizedBox(height: AppSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Transaksi Terbaru',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () =>
+                      context.push(AppRoutes.technicianCompletedJobs),
+                  child: const Text('Lihat Semua'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _TransactionList(
+              onTransactionTap: (transaction) =>
+                  _showTransactionDetail(context, transaction),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showWithdrawSheet(BuildContext context) {
+    final amountController = TextEditingController(text: '1000000');
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          0,
+          AppSpacing.lg,
+          MediaQuery.viewInsetsOf(sheetContext).bottom + AppSpacing.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Tarik Saldo',
+              style: Theme.of(
+                sheetContext,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: AppSpacing.xxs),
+            const Text(
+              'Saldo tersedia Rp 1.450.000',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Nominal pencairan',
+                prefixText: 'Rp ',
+                prefixIcon: Icon(Icons.payments_outlined),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const _WithdrawDestination(),
+            const SizedBox(height: AppSpacing.sm),
+            const Row(
+              children: [
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 17,
+                  color: AppColors.textMuted,
+                ),
+                SizedBox(width: AppSpacing.xs),
+                Expanded(
+                  child: Text(
+                    'Dana masuk dalam 1-2 hari kerja tanpa biaya admin.',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            PrimaryButton(
+              label: 'Konfirmasi Pencairan',
+              icon: Icons.arrow_outward_rounded,
+              onPressed: () {
+                Navigator.pop(sheetContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Permintaan pencairan berhasil dibuat.'),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ).whenComplete(amountController.dispose);
+  }
+
+  void _showTransactionDetail(
+    BuildContext context,
+    _EarningsTransaction transaction,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Detail Pendapatan',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _EarningsDetailRow(label: 'Pekerjaan', value: transaction.title),
+              _EarningsDetailRow(label: 'Booking', value: transaction.booking),
+              _EarningsDetailRow(label: 'Tanggal', value: transaction.date),
+              const _EarningsDetailRow(
+                label: 'Harga servis',
+                value: 'Rp 500.000',
+              ),
+              const _EarningsDetailRow(
+                label: 'Komisi platform',
+                value: '- Rp 50.000',
+              ),
+              const Divider(height: AppSpacing.xl),
+              _EarningsDetailRow(
+                label: 'Pendapatan bersih',
+                value: transaction.amount,
+                emphasized: true,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EarningsBalanceCard extends StatelessWidget {
+  const _EarningsBalanceCard({
+    required this.showBalance,
+    required this.onWithdraw,
+  });
+
+  final bool showBalance;
+  final VoidCallback onWithdraw;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.primaryDark,
+        borderRadius: AppRadius.extraLarge,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.24),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(
+                Icons.account_balance_wallet_outlined,
+                color: AppColors.primaryLight,
+                size: 20,
+              ),
+              SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  'Saldo dapat dicairkan',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.primaryLight,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 180),
+            child: Text(
+              showBalance ? 'Rp 1.450.000' : 'Rp ••••••••',
+              key: ValueKey(showBalance),
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                color: AppColors.surface,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.surface.withValues(alpha: 0.08),
+              borderRadius: AppRadius.medium,
+              border: Border.all(
+                color: AppColors.surface.withValues(alpha: 0.12),
+              ),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.schedule_rounded,
+                      color: AppColors.primaryLight,
+                      size: 18,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    const Expanded(
+                      child: Text(
+                        'Pendapatan sedang diproses',
+                        style: TextStyle(
+                          color: AppColors.primaryLight,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      showBalance ? 'Rp 350.000' : 'Rp ••••••',
+                      style: const TextStyle(
+                        color: AppColors.surface,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.secondary,
+                      foregroundColor: AppColors.surface,
+                    ),
+                    onPressed: onWithdraw,
+                    icon: const Icon(Icons.arrow_outward_rounded, size: 18),
+                    label: const Text('Tarik Saldo'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PayoutAccountCard extends StatelessWidget {
+  const _PayoutAccountCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: AppRadius.large,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.large,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.large,
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: AppRadius.medium,
+                ),
+                child: const Icon(
+                  Icons.account_balance_rounded,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Rekening Pencairan',
+                      style: TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      'BCA •••• 7890 · Andi Kurniawan',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const StatusChip.success(label: 'Aktif'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PeriodSelector extends StatelessWidget {
+  const _PeriodSelector({
+    required this.selectedIndex,
+    required this.onSelected,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    const labels = ['Minggu', 'Bulan', 'Tahun'];
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.xxs),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: AppRadius.medium,
+      ),
+      child: Row(
+        children: [
+          for (var index = 0; index < labels.length; index++)
+            Expanded(
+              child: InkWell(
+                borderRadius: AppRadius.small,
+                onTap: () => onSelected(index),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                  decoration: BoxDecoration(
+                    color: selectedIndex == index
+                        ? AppColors.surface
+                        : Colors.transparent,
+                    borderRadius: AppRadius.small,
+                    boxShadow: selectedIndex == index
+                        ? [
+                            BoxShadow(
+                              color: AppColors.textPrimary.withValues(
+                                alpha: 0.08,
+                              ),
+                              blurRadius: 8,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Text(
+                    labels[index],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: selectedIndex == index
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontSize: 12,
+                      fontWeight: selectedIndex == index
+                          ? FontWeight.w900
+                          : FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EarningsChart extends StatelessWidget {
+  const _EarningsChart({required this.periodIndex});
+
+  final int periodIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final values = switch (periodIndex) {
+      0 => const [0.42, 0.68, 0.5, 0.82, 0.64, 0.95, 0.74],
+      1 => const [0.5, 0.72, 0.64, 0.92],
+      _ => const [0.34, 0.48, 0.66, 0.74, 0.92, 0.82],
+    };
+    final labels = switch (periodIndex) {
+      0 => const ['S', 'S', 'R', 'K', 'J', 'S', 'M'],
+      1 => const ['M1', 'M2', 'M3', 'M4'],
+      _ => const ['Jan', 'Mar', 'Mei', 'Jul', 'Sep', 'Nov'],
+    };
+
+    return Container(
+      height: 196,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.large,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (var index = 0; index < values.length; index++) ...[
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: FractionallySizedBox(
+                        heightFactor: values[index],
+                        widthFactor: 0.56,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: index == values.length - 1
+                                ? AppColors.secondary
+                                : AppColors.primary,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    labels[index],
+                    style: const TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (index < values.length - 1)
+              const SizedBox(width: AppSpacing.xxs),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _TransactionList extends StatelessWidget {
+  const _TransactionList({required this.onTransactionTap});
+
+  final ValueChanged<_EarningsTransaction> onTransactionTap;
+
+  static const _transactions = [
+    _EarningsTransaction(
+      title: 'Servis Laptop',
+      booking: 'BKG-260621-018',
+      date: '21 Jun 2026',
+      amount: 'Rp 450.000',
+      icon: Icons.laptop_rounded,
+      status: 'Tersedia',
+    ),
+    _EarningsTransaction(
+      title: 'Servis Printer',
+      booking: 'BKG-260620-011',
+      date: '20 Jun 2026',
+      amount: 'Rp 225.000',
+      icon: Icons.print_rounded,
+      status: 'Tersedia',
+    ),
+    _EarningsTransaction(
+      title: 'Servis Komputer',
+      booking: 'BKG-260619-006',
+      date: '19 Jun 2026',
+      amount: 'Rp 350.000',
+      icon: Icons.computer_rounded,
+      status: 'Diproses',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.large,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          for (var index = 0; index < _transactions.length; index++) ...[
+            _TransactionTile(
+              transaction: _transactions[index],
+              onTap: () => onTransactionTap(_transactions[index]),
+            ),
+            if (index < _transactions.length - 1)
+              const Divider(height: 1, indent: 68),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _TransactionTile extends StatelessWidget {
+  const _TransactionTile({required this.transaction, required this.onTap});
+
+  final _EarningsTransaction transaction;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isPending = transaction.status == 'Diproses';
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
+      onTap: onTap,
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: AppColors.primaryLight,
+          borderRadius: AppRadius.medium,
+        ),
+        child: Icon(transaction.icon, color: AppColors.primary, size: 21),
+      ),
+      title: Text(
+        transaction.title,
+        style: const TextStyle(fontWeight: FontWeight.w800),
+      ),
+      subtitle: Text(
+        '${transaction.date} · ${transaction.status}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            transaction.amount,
+            style: const TextStyle(
+              color: AppColors.successText,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(
+            isPending ? 'Menunggu selesai' : 'Masuk saldo',
+            style: TextStyle(
+              color: isPending ? AppColors.warningText : AppColors.textMuted,
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EarningsTransaction {
+  const _EarningsTransaction({
+    required this.title,
+    required this.booking,
+    required this.date,
+    required this.amount,
+    required this.icon,
+    required this.status,
+  });
+
+  final String title;
+  final String booking;
+  final String date;
+  final String amount;
+  final IconData icon;
+  final String status;
+}
+
+class _WithdrawDestination extends StatelessWidget {
+  const _WithdrawDestination();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: AppRadius.medium,
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.account_balance_rounded, color: AppColors.primary),
+          SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Bank BCA', style: TextStyle(fontWeight: FontWeight.w800)),
+                Text(
+                  '•••• 7890 · Andi Kurniawan',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.verified_rounded, color: AppColors.success),
+        ],
+      ),
+    );
+  }
+}
+
+class _EarningsDetailRow extends StatelessWidget {
+  const _EarningsDetailRow({
+    required this.label,
+    required this.value,
+    this.emphasized = false,
+  });
+
+  final String label;
+  final String value;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: emphasized ? AppColors.successText : null,
+                fontWeight: emphasized ? FontWeight.w900 : FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
