@@ -343,11 +343,15 @@ class _MetaPill extends StatelessWidget {
       children: [
         Icon(icon, size: 15, color: AppColors.textMuted),
         const SizedBox(width: AppSpacing.xxs),
-        Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.labelMedium?.copyWith(color: AppColors.textMuted),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(
+              context,
+            ).textTheme.labelMedium?.copyWith(color: AppColors.textMuted),
+          ),
         ),
       ],
     );

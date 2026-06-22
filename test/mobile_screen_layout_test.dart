@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siteknisi_apps/features/customer/presentation/screens/customer_home_screen.dart';
 import 'package:siteknisi_apps/features/customer/presentation/screens/customer_profile_screen.dart';
+import 'package:siteknisi_apps/features/customer/presentation/screens/search_service_screen.dart';
 import 'package:siteknisi_apps/features/technician/presentation/screens/technician_screens.dart';
 import 'package:siteknisi_apps/features/technician/presentation/screens/technician_detail_screens.dart';
 
@@ -77,6 +78,23 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Identitas terverifikasi'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('search screen keeps customer bottom navigation visible', (
+    tester,
+  ) async {
+    await pumpMobileScreen(
+      tester,
+      const SearchServiceScreen(),
+      size: const Size(360, 800),
+    );
+
+    expect(find.text('Cari Layanan'), findsOneWidget);
+    expect(find.text('Beranda'), findsOneWidget);
+    expect(find.text('Aktivitas'), findsOneWidget);
+    expect(find.text('Cari'), findsOneWidget);
+    expect(find.text('Profil'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
