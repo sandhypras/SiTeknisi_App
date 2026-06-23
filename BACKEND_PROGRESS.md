@@ -1,6 +1,6 @@
 # Backend Implementation Progress
 
-Branch: `feature/backend-implementation`
+Branch: `feature/backend-service-request`
 
 ## ✅ TAHAP 1: Service Catalog Management (SELESAI)
 
@@ -30,47 +30,100 @@ Branch: `feature/backend-implementation`
 - ✅ Admin providers: create/update/delete categories & services
 - ✅ Parameter classes untuk type-safe operations
 
+---
+
+## ✅ TAHAP 2: Service Request System (SELESAI)
+
+## ✅ TAHAP 2: Service Request System (SELESAI)
+
+### Supabase Storage
+- ✅ 3 buckets: `request-photos`, `technician-documents`, `avatars`
+- ✅ Storage RLS policies:
+  - Customer: upload/view own photos
+  - Technician: view photos dari request yang di-offer
+  - Admin: view all
+- ✅ Folder structure: `{user_id}/file_name`
+
+### Database Enhancements
+- ✅ Enhanced `service_requests` table:
+  - `photo_urls[]` - support multiple photos
+  - `budget_min/max` - customer budget range
+  - `urgency` - normal/urgent
+  - `notes` - catatan tambahan
+- ✅ RLS policies untuk service_requests:
+  - Customer: CRUD own requests
+  - Technician: view open + offered requests
+  - Admin: view all
+- ✅ Functions:
+  - `publish_service_request()` - draft → open
+  - `cancel_service_request()` - cancel with reason
+- ✅ Trigger: `notify_new_request()` - pg_notify untuk realtime
+- ✅ View: `service_request_stats` - dashboard analytics
+
+### Dart Models & Repository
+- ✅ `ServiceRequest` model dengan enums
+- ✅ `RequestStatus` enum (draft, open, offered, etc)
+- ✅ `RequestUrgency` enum (normal, urgent)
+- ✅ `ServiceRequestRepository`:
+  - ✅ Create request + multi-photo upload
+  - ✅ Add photos to existing request
+  - ✅ Get requests (my, open, offered, all)
+  - ✅ Update, publish, cancel, delete
+  - ✅ Realtime subscriptions
+  - ✅ Distance filter (Haversine formula)
+
+### Riverpod Providers
+- ✅ Read providers:
+  - `myRequestsProvider` - customer requests
+  - `openRequestsProvider` - untuk teknisi (with filters)
+  - `requestsIOfferedProvider` - requests teknisi offered
+  - `requestByIdProvider` - single request
+  - `allRequestsProvider` - admin view
+- ✅ Action providers:
+  - `createRequestProvider` - create + upload photos
+  - `addPhotosToRequestProvider` - add more photos
+  - `updateRequestProvider` - update draft/open
+  - `publishRequestProvider` - publish draft
+  - `cancelRequestProvider` - cancel request
+  - `deleteRequestProvider` - delete draft
+
 ### Files Created
 ```
 supabase/migrations/
-  - 20260623000000_service_categories_and_products.sql
-  - 20260623000100_service_catalog_rls.sql
+  - 20260623010000_storage_buckets.sql
+  - 20260623010100_service_request_system.sql
 
-lib/features/services/
+lib/features/service_request/
   - domain/models.dart
-  - data/service_repository.dart
-  - presentation/providers/service_providers.dart
+  - data/service_request_repository.dart
+  - presentation/providers/service_request_providers.dart
 ```
 
 ---
 
-## 🚧 TAHAP 2: Service Request System (NEXT)
+## 🚧 TAHAP 3: Offer Management System (NEXT)
 
 ### Yang Akan Dibuat:
-1. **Service Request Repository**
-   - Create request dengan foto upload
-   - List requests untuk customer
-   - List open requests untuk technician
-   - Update request status
+1. **Offer Repository**
+   - Teknisi kirim penawaran dengan harga custom
+   - Upload foto pendukung offer (optional)
+   - View offers untuk customer
+   - Compare multiple offers
+   - Accept/reject offer
 
-2. **Storage Integration**
-   - Upload foto perangkat rusak
-   - Generate signed URLs
-   - Storage RLS policies
+2. **Auto-create Booking**
+   - Saat customer accept offer → auto create booking
+   - Update request status → 'booked'
+   - Update offer status → 'accepted'
+   - Reject other offers → 'rejected'
 
 3. **Realtime Notifications**
-   - Notify teknisi saat ada request baru
-   - Update status realtime
+   - Customer notif saat ada offer baru
+   - Teknisi notif saat offer accepted/rejected
 
 ---
 
-## 📋 TAHAP 3-7 (Planned)
-
-### Tahap 3: Offer Management System
-- Teknisi kirim penawaran
-- Customer view & compare offers
-- Accept/reject offers
-- Auto-create booking
+## 📋 TAHAP 4-7 (Planned)
 
 ### Tahap 4: Booking & Tracking System
 - Booking lifecycle management
