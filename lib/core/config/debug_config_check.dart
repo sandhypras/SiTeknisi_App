@@ -4,8 +4,7 @@ import 'supabase_config.dart';
 /// Helper untuk debug konfigurasi Supabase
 void checkSupabaseConfig() {
   if (kDebugMode) {
-    print('\n' + '='*50);
-    print('SUPABASE CONFIG CHECK');
+    print('\n=== SUPABASE CONFIG CHECK ===');
     print('='*50);
     
     final url = SupabaseConfig.url;
@@ -13,7 +12,7 @@ void checkSupabaseConfig() {
     
     print('URL: ${url.isEmpty ? "❌ KOSONG" : "✓ $url"}');
     print('Key: ${key.isEmpty ? "❌ KOSONG" : "✓ ${key.substring(0, 30)}..."}');
-    print('Key Length: ${key.length} chars ${key.length > 0 ? "✓" : "❌"}');
+    print('Key Length: ${key.length} chars ${key.isNotEmpty ? "✓" : "❌"}');
     print('Configured: ${SupabaseConfig.isConfigured ? "✓ TRUE" : "❌ FALSE"}');
     
     // Verify key format
