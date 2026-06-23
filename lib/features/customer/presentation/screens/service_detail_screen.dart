@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/auth_guard.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/status_chip.dart';
 import '../../../../shared/widgets/safe_image.dart';
@@ -34,7 +35,12 @@ class ServiceDetailScreen extends ConsumerWidget {
         child: PrimaryButton(
           label: 'Request Service',
           icon: Icons.add_task_rounded,
-          onPressed: () => context.go('/customer/request/${service.id}'),
+          onPressed: () => ref.checkAuthBeforeAction(
+            context,
+            returnUrl: '/customer/services/${service.id}',
+            onAuthenticated: () =>
+                context.go('/customer/request/${service.id}'),
+          ),
         ),
       ),
       body: SafeArea(

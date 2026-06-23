@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'debug_config_check.dart';
 import 'supabase_config.dart';
 
 /// Initializes app-level services before `runApp`.
@@ -10,6 +11,9 @@ import 'supabase_config.dart';
 /// `--dart-define` credentials are supplied.
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Debug: cek konfigurasi Supabase
+  checkSupabaseConfig();
 
   if (SupabaseConfig.isConfigured) {
     await Supabase.initialize(

@@ -17,7 +17,10 @@ import '../widgets/auth_logo.dart';
 import '../widgets/auth_scaffold.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.returnUrl});
+
+  /// Halaman asal yang dituju setelah login berhasil (dipakai mode Guest).
+  final String? returnUrl;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -238,6 +241,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (context.mounted) {
         FocusScope.of(context).unfocus();
+        final returnUrl = widget.returnUrl;
+        if (returnUrl != null && returnUrl.isNotEmpty) {
+          context.go(returnUrl);
+          return;
+        }
         context.go(
           _selectedRole == _LoginRole.customer
               ? AppRoutes.customerHome
@@ -256,7 +264,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         password: _passwordController.text,
       );
       if (!context.mounted) return;
-      context.go(_homeRouteFor(user.role));
+      final returnUrl = widget.returnUrl;
+      if (returnUrl != null && returnUrl.isNotEmpty) {
+        context.go(returnUrl);
+      } else {
+        context.go(_homeRouteFor(user.role));
+      }
     } on AuthFailure {
       ref.read(loginErrorProvider.notifier).setError(true);
     } finally {

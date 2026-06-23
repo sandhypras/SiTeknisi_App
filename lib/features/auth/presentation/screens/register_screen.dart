@@ -41,6 +41,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authLoadingProvider);
+    final pendingEmail = ref.watch(pendingVerificationEmailProvider);
+
+    if (pendingEmail != null) {
+      return _VerificationSentView(email: pendingEmail);
+    }
+
     final textTheme = Theme.of(context).textTheme;
 
     return AuthScaffold(
@@ -160,6 +166,52 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _submit(BuildContext context, WidgetRef ref) async {
+    // Validasi input
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    final name = _nameController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nama lengkap harus diisi'),
+          backgroundColor: AppColors.errorText,
+        ),
+      );
+      return;
+    }
+
+    if (phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nomor HP harus diisi'),
+          backgroundColor: AppColors.errorText,
+        ),
+      );
+      return;
+    }
+
+    if (email.isEmpty || !email.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email tidak valid'),
+          backgroundColor: AppColors.errorText,
+        ),
+      );
+      return;
+    }
+
+    if (password.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password minimal 8 karakter'),
+          backgroundColor: AppColors.errorText,
+        ),
+      );
+      return;
+    }
+
     final repository = ref.read(authRepositoryProvider);
 
     // Mock fallback: Supabase not configured, keep prototype behavior.
@@ -184,25 +236,46 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     FocusScope.of(context).unfocus();
     ref.read(authLoadingProvider.notifier).setLoading(true);
     try {
-      await repository.signUp(
-        email: _emailController.text,
-        password: _passwordController.text,
-        fullName: _nameController.text,
+      final result = await repository.signUp(
+        email: email,
+        password: password,
+        fullName: name,
         role: _selectedRole,
-        phone: _phoneController.text,
+        phone: phone,
       );
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Akun berhasil dibuat. Silakan masuk.'),
-        ),
-      );
-      context.go(AppRoutes.login);
+      if (result.needsEmailVerification) {
+        ref
+            .read(pendingVerificationEmailProvider.notifier)
+            .setEmail(email);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Akun berhasil dibuat. Silakan masuk.')),
+        );
+        context.go(AppRoutes.login);
+      }
     } on AuthFailure catch (failure) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(failure.message)),
+          SnackBar(
+            content: Text(failure.message),
+            backgroundColor: AppColors.errorText,
+            duration: const Duration(seconds: 5),
+          ),
         );
+      }
+    } catch (error, stackTrace) {
+      // Tangkap error tak terduga
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error tidak terduga: $error'),
+            backgroundColor: AppColors.errorText,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        debugPrint('Register error: $error');
+        debugPrint('Stack trace: $stackTrace');
       }
     } finally {
       if (context.mounted) {
@@ -264,6 +337,106 @@ class _RegisterHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Tampil setelah Supabase membuat akun dengan mode "Confirm email" aktif.
+/// Meminta user cek inbox dan menawarkan kirim ulang link verifikasi.
+class _VerificationSentView extends ConsumerStatefulWidget {
+  const _VerificationSentView({required this.email});
+
+  final String email;
+
+  @override
+  ConsumerState<_VerificationSentView> createState() =>
+      _VerificationSentViewState();
+}
+
+class _VerificationSentViewState extends ConsumerState<_VerificationSentView> {
+  bool _isResending = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final isLoading = ref.watch(authLoadingProvider);
+
+    return AuthScaffold(
+      backgroundColor: const Color(0xFFFAF8FF),
+      appBar: AppBar(backgroundColor: const Color(0xFFFAF8FF)),
+      children: [
+        const SizedBox(height: AppSpacing.xl),
+        const Icon(
+          Icons.mark_email_read_rounded,
+          size: 96,
+          color: AppColors.primary,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'Cek Email Anda',
+          textAlign: TextAlign.center,
+          style: textTheme.headlineLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Link verifikasi sudah dikirim ke ${widget.email}. Buka email tersebut dan klik tautan untuk mengaktifkan akun Anda.',
+          textAlign: TextAlign.center,
+          style: textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        PrimaryButton(
+          label: _isResending ? 'Mengirim...' : 'Kirim Ulang Link',
+          icon: Icons.refresh_rounded,
+          isLoading: _isResending,
+          onPressed: _isResending ? null : _resend,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Center(
+          child: TextButton(
+            onPressed: () {
+              ref
+                  .read(pendingVerificationEmailProvider.notifier)
+                  .setEmail(null);
+              if (isLoading) {
+                ref.read(authLoadingProvider.notifier).setLoading(false);
+              }
+              context.go(AppRoutes.login);
+            },
+            child: const Text('Kembali ke Login'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _resend() async {
+    final repository = ref.read(authRepositoryProvider);
+    if (repository == null) return;
+
+    setState(() => _isResending = true);
+    try {
+      await repository.resendVerification(widget.email);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Link verifikasi baru sudah dikirim.'),
+        ),
+      );
+    } on AuthFailure catch (failure) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(failure.message),
+          backgroundColor: AppColors.errorText,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isResending = false);
+    }
   }
 }
 

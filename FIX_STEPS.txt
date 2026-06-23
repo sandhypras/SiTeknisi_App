@@ -1,0 +1,52 @@
+==============================================
+  🚨 ANDA DAPAT ERROR "Invalid API Key"
+==============================================
+
+IKUTI LANGKAH INI PERSIS:
+
+┌─────────────────────────────────────────┐
+│  STEP 1: STOP App (Ctrl+C)              │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│  STEP 2: Double-click file ini:         │
+│                                          │
+│    fix_invalid_api_key.bat              │
+│                                          │
+│  Tunggu sampai selesai clean.           │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│  STEP 3: Double-click file ini:         │
+│                                          │
+│    run_supabase_verified.bat            │
+│                                          │
+│  JANGAN gunakan cara lain!              │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│  STEP 4: CEK Console Output              │
+│                                          │
+│  HARUS muncul:                           │
+│    ✓ Supabase Integration Active        │
+│                                          │
+│  JANGAN lanjut kalau masih:              │
+│    ❌ MOCK MODE                          │
+│    ❌ KOSONG                             │
+└─────────────────────────────────────────┘
+
+┌─────────────────────────────────────────┐
+│  STEP 5: Test Register                   │
+│                                          │
+│  Email: test123@example.com             │
+│  Password: password123                  │
+│                                          │
+│  Expected: "Akun berhasil dibuat"       │
+└─────────────────────────────────────────┘
+
+==============================================
+
+MASIH ERROR?
+Baca file: EMERGENCY_FIX.md
+
+==============================================

@@ -82,6 +82,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     },
                   ),
                   SizedBox(
+                    height: isCompactHeight ? AppSpacing.xxs : AppSpacing.xs,
+                  ),
+                  TextButton.icon(
+                    onPressed: () => context.go(AppRoutes.customerHome),
+                    icon: const Icon(Icons.explore_outlined),
+                    label: const Text('Lanjut sebagai Guest'),
+                  ),
+                  SizedBox(
                     height: isCompactHeight ? AppSpacing.xs : AppSpacing.md,
                   ),
                 ],

@@ -8,6 +8,7 @@ import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/utils/auth_guard.dart';
 import '../../../../../shared/widgets/custom_text_field.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/primary_button.dart';
@@ -45,7 +46,12 @@ class _CreateServiceRequestScreenState
         child: PrimaryButton(
           label: 'Kirim Request',
           icon: Icons.send_rounded,
-          onPressed: () => context.go(AppRoutes.customerRequestSuccess),
+          onPressed: () => ref.checkAuthBeforeAction(
+            context,
+            returnUrl: '/customer/request/${widget.serviceId}',
+            onAuthenticated: () =>
+                context.go(AppRoutes.customerRequestSuccess),
+          ),
         ),
       ),
       body: ListView(

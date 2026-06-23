@@ -73,7 +73,8 @@ class AppRoutes {
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   const appMode = String.fromEnvironment('APP_MODE');
-  final useAdminWeb = kIsWeb && appMode != 'mobile';
+  // Only use admin web when explicitly set to 'admin'
+  final useAdminWeb = kIsWeb && appMode == 'admin';
   final supabaseEnabled = ref.watch(supabaseEnabledProvider);
 
   return GoRouter(
@@ -95,7 +96,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) => const LoginScreen(),
+        builder: (context, state) =>
+            LoginScreen(returnUrl: state.uri.queryParameters['returnUrl']),
       ),
       GoRoute(
         path: AppRoutes.register,
@@ -280,6 +282,24 @@ const _publicRoutes = {
   AppRoutes.adminLogin,
 };
 
+/// Katalog yang boleh ditelusuri Guest tanpa login (beranda, daftar layanan,
+/// daftar/detail teknisi). Aksi transaksional di luar set ini butuh login.
+const _customerPublicRoutes = {
+  AppRoutes.customerHome,
+  AppRoutes.customerCategories,
+  AppRoutes.customerSearch,
+  AppRoutes.customerOffers,
+};
+
+/// Apakah [location] dapat diakses tanpa sesi login.
+bool _isPublic(String location) {
+  if (_publicRoutes.contains(location)) return true;
+  if (_customerPublicRoutes.contains(location)) return true;
+  // Detail layanan publik: /customer/services/:id
+  if (location.startsWith('/customer/services/')) return true;
+  return false;
+}
+
 /// Technician onboarding routes a signed-in customer may also reach in order
 /// to convert into a technician.
 const _technicianOnboardingRoutes = {
@@ -309,16 +329,25 @@ String? _guard(Ref ref, GoRouterState state) {
 
   final user = authState.value;
   final location = state.matchedLocation;
-  final isPublic = _publicRoutes.contains(location);
+  final isPublic = _isPublic(location);
   final isAdminPath = location.startsWith('/admin');
 
   if (user == null) {
     if (isPublic) return null;
-    return isAdminPath ? AppRoutes.adminLogin : AppRoutes.login;
+    if (isAdminPath) return AppRoutes.adminLogin;
+    return '${AppRoutes.login}?returnUrl=${Uri.encodeComponent(location)}';
   }
 
   final home = _homeFor(user.role);
-  if (isPublic) return home;
+  if (isPublic) {
+    // Pengguna sudah login tidak perlu lagi melihat halaman auth/onboarding,
+    // tapi katalog customer tetap boleh diakses.
+    if (_customerPublicRoutes.contains(location) ||
+        location.startsWith('/customer/services/')) {
+      return null;
+    }
+    return home;
+  }
 
   switch (user.role) {
     case UserRole.admin:
