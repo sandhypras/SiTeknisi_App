@@ -16,6 +16,7 @@ import '../../../../../shared/widgets/image_upload_field.dart';
 import '../../../../../shared/widgets/safe_image.dart';
 import '../../../data/customer_dummy_data.dart';
 import '../../../data/service_request_repository.dart';
+import '../../../data/service_mapper.dart';
 import '../../providers/service_request_providers.dart';
 
 class CreateServiceRequestScreen extends ConsumerStatefulWidget {
@@ -243,6 +244,18 @@ class _CreateServiceRequestScreenState
     ref.read(serviceRequestLoadingProvider.notifier).setLoading(true);
 
     try {
+      // Get real service ID from database
+      final serviceMapper = ServiceMapper(repository.client);
+      final realServiceId = await serviceMapper.getServiceIdByDummyId(
+        widget.serviceId,
+      );
+
+      if (realServiceId == null) {
+        throw ServiceRequestException(
+          'Layanan tidak ditemukan di database. Pastikan services sudah di-seed.',
+        );
+      }
+
       // Upload photo if exists
       String? photoUrl;
       if (_damagePhoto != null && storageService != null) {
@@ -254,7 +267,7 @@ class _CreateServiceRequestScreenState
 
       // Create service request
       final request = await repository.createRequest(
-        serviceId: widget.serviceId,
+        serviceId: realServiceId,
         title: service.title,
         description: _descriptionController.text.trim(),
         address: _locationController.text.trim(),

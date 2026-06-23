@@ -90,6 +90,9 @@ class ServiceRequestRepository {
   ServiceRequestRepository(this._client);
 
   final SupabaseClient _client;
+  
+  /// Expose client for ServiceMapper access
+  SupabaseClient get client => _client;
 
   /// Create a new service request
   Future<ServiceRequest> createRequest({
