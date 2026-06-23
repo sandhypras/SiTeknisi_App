@@ -9,6 +9,7 @@ import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/utils/auth_guard.dart';
 import '../../../../../shared/widgets/primary_button.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/status_chip.dart';
@@ -136,7 +137,7 @@ class _RequestSummary extends StatelessWidget {
   }
 }
 
-class _OfferCard extends StatelessWidget {
+class _OfferCard extends ConsumerWidget {
   const _OfferCard({
     required this.name,
     required this.rating,
@@ -160,7 +161,7 @@ class _OfferCard extends StatelessWidget {
   final bool recommended;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
@@ -248,7 +249,12 @@ class _OfferCard extends StatelessWidget {
                   PrimaryButton(
                     label: 'Pilih',
                     fullWidth: false,
-                    onPressed: () => context.go(AppRoutes.customerOfferDetail),
+                    onPressed: () => ref.checkAuthBeforeAction(
+                      context,
+                      returnUrl: AppRoutes.customerOffers,
+                      onAuthenticated: () =>
+                          context.go(AppRoutes.customerOfferDetail),
+                    ),
                   ),
                 ],
               ),
@@ -257,11 +263,15 @@ class _OfferCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => openWhatsApp(
+                onPressed: () => ref.checkAuthBeforeAction(
                   context,
-                  phoneNumber: phoneNumber,
-                  message:
-                      'Halo $name, saya tertarik dengan penawaran servis laptop sebesar $price di SiTeknisi.',
+                  returnUrl: AppRoutes.customerOffers,
+                  onAuthenticated: () => openWhatsApp(
+                    context,
+                    phoneNumber: phoneNumber,
+                    message:
+                        'Halo $name, saya tertarik dengan penawaran servis laptop sebesar $price di SiTeknisi.',
+                  ),
                 ),
                 icon: const Icon(Icons.chat_rounded),
                 label: const Text('Hubungi via WhatsApp'),

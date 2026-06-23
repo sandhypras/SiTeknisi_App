@@ -48,7 +48,7 @@ SiTeknisi dirancang untuk menyelesaikan masalah tersebut melalui sistem marketpl
 
 ### Customer
 
-Pengguna yang membutuhkan jasa perbaikan elektronik seperti TV, kulkas, mesin cuci, AC, laptop, handphone, atau perangkat elektronik rumah tangga lainnya.
+Pengguna yang membutuhkan jasa diagnosis, perawatan, atau perbaikan perangkat teknologi, dengan fokus layanan pada printer, komputer desktop, dan laptop beserta perangkat pendukungnya.
 
 ### Teknisi
 
@@ -263,4 +263,3 @@ MVP untuk UAS berfokus pada alur utama marketplace:
 - Teknisi dapat melihat dashboard, mengirim offer, dan memperbarui status pekerjaan.
 - Admin dapat login, memverifikasi Teknisi, dan memonitor booking serta pembayaran.
 - Supabase Auth, Database, Storage, Realtime, dan Midtrans digunakan sebagai integrasi utama.
-

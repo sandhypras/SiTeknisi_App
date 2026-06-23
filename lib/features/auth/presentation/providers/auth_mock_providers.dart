@@ -48,6 +48,13 @@ final forgotPasswordSentProvider =
       ForgotPasswordSentNotifier.new,
     );
 
+/// Email yang sedang menunggu verifikasi setelah register. Null saat tidak ada
+/// pendaftaran yang perlu konfirmasi email.
+final pendingVerificationEmailProvider =
+    NotifierProvider<PendingVerificationEmailNotifier, String?>(
+      PendingVerificationEmailNotifier.new,
+    );
+
 class AuthLoadingNotifier extends Notifier<bool> {
   @override
   bool build() => false;
@@ -71,6 +78,15 @@ class ForgotPasswordSentNotifier extends Notifier<bool> {
   bool build() => false;
 
   void setSent(bool value) {
+    state = value;
+  }
+}
+
+class PendingVerificationEmailNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setEmail(String? value) {
     state = value;
   }
 }

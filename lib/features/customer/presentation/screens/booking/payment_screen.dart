@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/app_radius.dart';
 import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/utils/auth_guard.dart';
 import '../../../../../shared/widgets/mobile_flow_stepper.dart';
 import '../../../../../shared/widgets/primary_button.dart';
 
-class PaymentScreen extends StatefulWidget {
+class PaymentScreen extends ConsumerStatefulWidget {
   const PaymentScreen({super.key});
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   int _selectedMethod = 0;
 
   @override
@@ -60,7 +62,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 label: 'Bayar',
                 icon: Icons.arrow_forward_rounded,
                 fullWidth: false,
-                onPressed: () => context.go(AppRoutes.customerPaymentSuccess),
+                onPressed: () => ref.checkAuthBeforeAction(
+                  context,
+                  returnUrl: AppRoutes.customerPayment,
+                  onAuthenticated: () =>
+                      context.go(AppRoutes.customerPaymentSuccess),
+                ),
               ),
             ],
           ),

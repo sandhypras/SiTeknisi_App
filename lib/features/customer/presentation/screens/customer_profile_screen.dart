@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../auth/data/auth_repository.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../widgets/customer_shell.dart';
 
-class CustomerProfileScreen extends StatefulWidget {
+class CustomerProfileScreen extends ConsumerStatefulWidget {
   const CustomerProfileScreen({super.key});
 
   @override
-  State<CustomerProfileScreen> createState() => _CustomerProfileScreenState();
+  ConsumerState<CustomerProfileScreen> createState() => _CustomerProfileScreenState();
 }
 
-class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
+class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
   String _name = 'Sandhy Prasetyo';
   String _phone = '+62 812 3456 7890';
 
@@ -377,8 +380,62 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
         ],
       ),
     );
+    
     if (shouldLogout == true && context.mounted) {
-      context.go(AppRoutes.login);
+      // Show loading
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 12),
+              Text('Keluar dari akun...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Perform logout
+      final repository = ref.read(authRepositoryProvider);
+      
+      if (repository != null) {
+        // Real Supabase logout
+        try {
+          await repository.signOut();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Berhasil keluar dari akun'),
+                backgroundColor: AppColors.success,
+              ),
+            );
+            context.go(AppRoutes.splash);
+          }
+        } on AuthFailure catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Gagal logout: ${e.message}'),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+        }
+      } else {
+        // Mock mode - just redirect
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (context.mounted) {
+          context.go(AppRoutes.splash);
+        }
+      }
     }
   }
 }
