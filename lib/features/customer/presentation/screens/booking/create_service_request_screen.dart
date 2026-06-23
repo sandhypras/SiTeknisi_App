@@ -35,7 +35,6 @@ class _CreateServiceRequestScreenState
   final _scheduleController = TextEditingController();
   final _descriptionController = TextEditingController();
   Uint8List? _damagePhoto;
-  String? _uploadedPhotoUrl;
 
   @override
   void dispose() {
@@ -69,8 +68,8 @@ class _CreateServiceRequestScreenState
       body: Form(
         key: _formKey,
         child: ListView(
-        padding: const EdgeInsets.all(AppSpacing.screenPadding),
-        children: [
+          padding: const EdgeInsets.all(AppSpacing.screenPadding),
+          children: [
           const MobileFlowStepper(
             steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
             currentStep: 0,
@@ -201,6 +200,7 @@ class _CreateServiceRequestScreenState
               ],
             ),
           ),
+        ],
         ),
       ),
     );
@@ -215,14 +215,14 @@ class _CreateServiceRequestScreenState
       return;
     }
 
-    // Check authentication
-    final shouldProceed = await ref.checkAuthBeforeAction(
+    // Check authentication - simplified
+    ref.checkAuthBeforeAction(
       context,
       returnUrl: '/customer/request/${widget.serviceId}',
-      onAuthenticated: () => true,
+      onAuthenticated: () {},
     );
 
-    if (shouldProceed != true || !context.mounted) return;
+    if (!context.mounted) return;
 
     final storageService = ref.read(storageServiceProvider);
     final repository = ref.read(serviceRequestRepositoryProvider);
@@ -240,7 +240,7 @@ class _CreateServiceRequestScreenState
     }
 
     // Start loading
-    ref.read(serviceRequestLoadingProvider.notifier).state = true;
+    ref.read(serviceRequestLoadingProvider.notifier).setLoading(true);
 
     try {
       // Upload photo if exists
@@ -250,7 +250,6 @@ class _CreateServiceRequestScreenState
           bytes: _damagePhoto!,
           fileName: 'damage_${DateTime.now().millisecondsSinceEpoch}.jpg',
         );
-        _uploadedPhotoUrl = photoUrl;
       }
 
       // Create service request
@@ -300,7 +299,7 @@ class _CreateServiceRequestScreenState
       }
     } finally {
       if (mounted) {
-        ref.read(serviceRequestLoadingProvider.notifier).state = false;
+        ref.read(serviceRequestLoadingProvider.notifier).setLoading(false);
       }
     }
   }

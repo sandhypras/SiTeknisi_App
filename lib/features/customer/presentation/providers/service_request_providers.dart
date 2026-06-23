@@ -22,14 +22,23 @@ final storageServiceProvider = Provider<StorageService?>((ref) {
   return StorageService(client);
 });
 
-/// Provider for loading state during request creation
-final serviceRequestLoadingProvider = StateProvider<bool>((ref) => false);
+/// Notifier for loading state
+class ServiceRequestLoadingNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
 
-/// Provider for error message
-final serviceRequestErrorProvider = StateProvider<String?>((ref) => null);
+  void setLoading(bool value) {
+    state = value;
+  }
+}
+
+/// Provider for loading state
+final serviceRequestLoadingProvider = NotifierProvider.autoDispose<ServiceRequestLoadingNotifier, bool>(
+  ServiceRequestLoadingNotifier.new,
+);
 
 /// Provider for customer's service requests
-final customerServiceRequestsProvider = FutureProvider<List<ServiceRequest>>((ref) async {
+final customerServiceRequestsProvider = FutureProvider.autoDispose<List<ServiceRequest>>((ref) async {
   final repository = ref.watch(serviceRequestRepositoryProvider);
   if (repository == null) {
     return [];
