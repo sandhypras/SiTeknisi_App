@@ -15,6 +15,9 @@ import '../../../../../shared/widgets/primary_button.dart';
 import '../../../../../shared/widgets/image_upload_field.dart';
 import '../../../../../shared/widgets/safe_image.dart';
 import '../../../data/customer_dummy_data.dart';
+import '../../../data/service_request_repository.dart';
+import '../../../data/service_mapper.dart';
+import '../../providers/service_request_providers.dart';
 
 class CreateServiceRequestScreen extends ConsumerStatefulWidget {
   const CreateServiceRequestScreen({required this.serviceId, super.key});
@@ -28,7 +31,19 @@ class CreateServiceRequestScreen extends ConsumerStatefulWidget {
 
 class _CreateServiceRequestScreenState
     extends ConsumerState<CreateServiceRequestScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _locationController = TextEditingController();
+  final _scheduleController = TextEditingController();
+  final _descriptionController = TextEditingController();
   Uint8List? _damagePhoto;
+
+  @override
+  void dispose() {
+    _locationController.dispose();
+    _scheduleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +53,7 @@ class _CreateServiceRequestScreenState
       orElse: () => services.first,
     );
     final textTheme = Theme.of(context).textTheme;
+    final isLoading = ref.watch(serviceRequestLoadingProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Buat Permintaan')),
@@ -46,17 +62,15 @@ class _CreateServiceRequestScreenState
         child: PrimaryButton(
           label: 'Kirim Request',
           icon: Icons.send_rounded,
-          onPressed: () => ref.checkAuthBeforeAction(
-            context,
-            returnUrl: '/customer/request/${widget.serviceId}',
-            onAuthenticated: () =>
-                context.go(AppRoutes.customerRequestSuccess),
-          ),
+          isLoading: isLoading,
+          onPressed: isLoading ? null : () => _submitRequest(context, service),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.screenPadding),
-        children: [
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(AppSpacing.screenPadding),
+          children: [
           const MobileFlowStepper(
             steps: ['Detail', 'Penawaran', 'Bayar', 'Lacak'],
             currentStep: 0,
@@ -115,6 +129,7 @@ class _CreateServiceRequestScreenState
           ),
           const SizedBox(height: AppSpacing.lg),
           CustomTextField(
+            controller: _locationController,
             label: 'Lokasi Servis',
             hintText: 'Jl. Merdeka No. 12, Bandung',
             prefixIcon: const Icon(Icons.location_on_outlined),
@@ -124,21 +139,38 @@ class _CreateServiceRequestScreenState
               icon: const Icon(Icons.map_outlined),
             ),
             textInputAction: TextInputAction.next,
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Lokasi servis harus diisi';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: AppSpacing.md),
-          const CustomTextField(
+          CustomTextField(
+            controller: _scheduleController,
             label: 'Jadwal Kunjungan',
             hintText: 'Hari ini, 14:00',
-            prefixIcon: Icon(Icons.event_rounded),
+            prefixIcon: const Icon(Icons.event_rounded),
             textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: AppSpacing.md),
-          const CustomTextField(
+          CustomTextField(
+            controller: _descriptionController,
             label: 'Deskripsi Masalah',
             hintText: 'Ceritakan kerusakan perangkat secara singkat',
-            prefixIcon: Icon(Icons.notes_rounded),
+            prefixIcon: const Icon(Icons.notes_rounded),
             maxLines: 4,
             textInputAction: TextInputAction.done,
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Deskripsi masalah harus diisi';
+              }
+              if (value.trim().length < 10) {
+                return 'Deskripsi minimal 10 karakter';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: AppSpacing.lg),
           ImageUploadField(
@@ -170,7 +202,118 @@ class _CreateServiceRequestScreenState
             ),
           ),
         ],
+        ),
       ),
     );
+  }
+
+  Future<void> _submitRequest(
+    BuildContext context,
+    CustomerService service,
+  ) async {
+    // Validate form
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Check authentication - simplified
+    ref.checkAuthBeforeAction(
+      context,
+      returnUrl: '/customer/request/${widget.serviceId}',
+      onAuthenticated: () {},
+    );
+
+    if (!context.mounted) return;
+
+    final storageService = ref.read(storageServiceProvider);
+    final repository = ref.read(serviceRequestRepositoryProvider);
+
+    if (repository == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Harap login terlebih dahulu'),
+            backgroundColor: AppColors.errorText,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Start loading
+    ref.read(serviceRequestLoadingProvider.notifier).setLoading(true);
+
+    try {
+      // Get real service ID from database
+      final serviceMapper = ServiceMapper(repository.client);
+      final realServiceId = await serviceMapper.getServiceIdByDummyId(
+        widget.serviceId,
+      );
+
+      if (realServiceId == null) {
+        throw ServiceRequestException(
+          'Layanan tidak ditemukan di database. Pastikan services sudah di-seed.',
+        );
+      }
+
+      // Upload photo if exists
+      String? photoUrl;
+      if (_damagePhoto != null && storageService != null) {
+        photoUrl = await storageService.uploadRequestPhoto(
+          bytes: _damagePhoto!,
+          fileName: 'damage_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+      }
+
+      // Create service request
+      final request = await repository.createRequest(
+        serviceId: realServiceId,
+        title: service.title,
+        description: _descriptionController.text.trim(),
+        address: _locationController.text.trim(),
+        photoUrl: photoUrl,
+        preferredSchedule: _scheduleController.text.isNotEmpty
+            ? DateTime.now() // TODO: Parse schedule properly
+            : null,
+      );
+
+      // Success
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Permintaan servis berhasil dibuat!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        // Navigate to success screen with request ID
+        context.go(
+          '${AppRoutes.customerRequestSuccess}?requestId=${request.id}',
+        );
+      }
+    } on ServiceRequestException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: AppColors.errorText,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Terjadi kesalahan: $e'),
+            backgroundColor: AppColors.errorText,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        ref.read(serviceRequestLoadingProvider.notifier).setLoading(false);
+      }
+    }
   }
 }
