@@ -94,7 +94,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
-        builder: (context, state) => const ForgotPasswordScreen(),
+        builder: (context, state) => ForgotPasswordScreen(
+          isAdmin: state.uri.queryParameters['from'] == 'admin',
+        ),
       ),
       GoRoute(
         path: AppRoutes.customerHome,

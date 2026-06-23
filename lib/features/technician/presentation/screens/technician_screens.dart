@@ -20,8 +20,14 @@ class JoinTechnicianScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Daftar Jadi Teknisi')),
+      backgroundColor: const Color(0xFFF5F7FF),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F7FF),
+        title: const Text('Daftar Jadi Teknisi'),
+        elevation: 0,
+      ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(AppSpacing.screenPadding),
         child: PrimaryButton(
@@ -32,31 +38,398 @@ class JoinTechnicianScreen extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.screenPadding),
-        children: const [
-          _HeroPanel(
-            title: 'Gabung jadi teknisi SiTeknisi',
-            subtitle: 'Lengkapi verifikasi untuk mulai menerima permintaan.',
-            icon: Icons.engineering_rounded,
+        children: [
+          // Hero gradient banner
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF0F4FD9), AppColors.primary, Color(0xFF3B82F6)],
+              ),
+              borderRadius: AppRadius.extraLarge,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 28,
+                  offset: const Offset(0, 14),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                // Background pattern
+                Positioned(
+                  right: -20,
+                  top: -20,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.07),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 30,
+                  bottom: -30,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.07),
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary,
+                        borderRadius: AppRadius.pill,
+                      ),
+                      child: Text(
+                        'Bergabung Sekarang',
+                        style: textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      'Wujudkan Penghasilan\nDari Keahlianmu',
+                      style: textTheme.headlineMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      'Ribuan customer menunggu teknisi handal seperti Anda. Daftar gratis, mulai terima job hari ini.',
+                      style: textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.88),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Row(
+                      children: [
+                        _HeroBadge(icon: Icons.verified_rounded, label: 'Terverifikasi'),
+                        const SizedBox(width: AppSpacing.sm),
+                        _HeroBadge(icon: Icons.payments_rounded, label: 'Bayar Cepat'),
+                        const SizedBox(width: AppSpacing.sm),
+                        _HeroBadge(icon: Icons.stars_rounded, label: 'Rating Terbuka'),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: AppSpacing.lg),
-          CustomTextField(
-            label: 'Keahlian',
-            hintText: 'Printer, Komputer, Laptop',
+          const SizedBox(height: AppSpacing.lg),
+          // Benefit section
+          Text(
+            'Keuntungan Bergabung',
+            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
           ),
-          SizedBox(height: AppSpacing.md),
-          CustomTextField(label: 'Nomor KTP', hintText: '320xxxxxxxxxxxxx'),
-          SizedBox(height: AppSpacing.md),
-          CustomTextField(
-            label: 'Pengalaman',
-            hintText: 'Contoh: 3 tahun',
-            maxLines: 3,
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: AppRadius.extraLarge,
+              border: Border.all(color: const Color(0xFFE0E7FF)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: const [
+                _BenefitTile(
+                  icon: Icons.money_rounded,
+                  color: Color(0xFF059669),
+                  title: 'Pendapatan Fleksibel',
+                  subtitle: 'Terima job kapan saja, pencairan dana mingguan.',
+                  isFirst: true,
+                ),
+                Divider(height: 1, indent: 64),
+                _BenefitTile(
+                  icon: Icons.location_on_rounded,
+                  color: Color(0xFF2563EB),
+                  title: 'Job di Sekitar Kamu',
+                  subtitle: 'Prioritas permintaan berdasarkan jarak terdekat.',
+                ),
+                Divider(height: 1, indent: 64),
+                _BenefitTile(
+                  icon: Icons.shield_rounded,
+                  color: Color(0xFF7C3AED),
+                  title: 'Perlindungan Transaksi',
+                  subtitle: 'Pembayaran aman melalui platform, anti penipuan.',
+                ),
+                Divider(height: 1, indent: 64),
+                _BenefitTile(
+                  icon: Icons.trending_up_rounded,
+                  color: Color(0xFFD97706),
+                  title: 'Bangun Reputasi',
+                  subtitle: 'Rating bintang dari customer meningkatkan kepercayaan.',
+                  isLast: true,
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: AppSpacing.md),
-          _UploadBox(label: 'Upload KTP'),
-          SizedBox(height: AppSpacing.md),
-          _UploadBox(label: 'Upload Foto Profil'),
+          const SizedBox(height: AppSpacing.lg),
+          // Step indicator
+          Text(
+            'Proses Pendaftaran',
+            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: AppRadius.extraLarge,
+              border: Border.all(color: const Color(0xFFE0E7FF)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: const [
+                _StepTile(step: '1', title: 'Isi Data Diri & Keahlian',
+                    subtitle: 'Nama, nomor HP, kota, dan bidang keahlian.'),
+                _StepTile(step: '2', title: 'Upload Foto KTP',
+                    subtitle: 'Untuk verifikasi identitas oleh admin.'),
+                _StepTile(step: '3', title: 'Upload Foto Profil',
+                    subtitle: 'Foto yang tampil ke customer saat penawaran.'),
+                _StepTile(step: '4', title: 'Data Rekening Bank',
+                    subtitle: 'Untuk pencairan pendapatan setiap minggu.',
+                    isLast: true),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.successContainer,
+              borderRadius: AppRadius.large,
+              border: Border.all(
+                  color: AppColors.success.withValues(alpha: 0.35)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.timer_outlined,
+                    color: AppColors.successText, size: 18),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'Proses verifikasi admin 1×24 jam setelah pengajuan lengkap.',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: AppColors.successText,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
         ],
       ),
+    );
+  }
+}
+
+class _HeroBadge extends StatelessWidget {
+  const _HeroBadge({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: AppRadius.pill,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 13),
+          const SizedBox(width: AppSpacing.xxs),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BenefitTile extends StatelessWidget {
+  const _BenefitTile({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+    this.isFirst = false,
+    this.isLast = false,
+  });
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+  final bool isFirst;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppSpacing.md,
+        right: AppSpacing.md,
+        top: isFirst ? AppSpacing.md : AppSpacing.sm,
+        bottom: isLast ? AppSpacing.md : AppSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: AppRadius.medium,
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StepTile extends StatelessWidget {
+  const _StepTile({
+    required this.step,
+    required this.title,
+    required this.subtitle,
+    this.isLast = false,
+  });
+  final String step;
+  final String title;
+  final String subtitle;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  step,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 36,
+                color: AppColors.border,
+              ),
+          ],
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xxs),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Padding(
+                  padding: EdgeInsets.only(
+                      bottom: isLast ? 0 : AppSpacing.md),
+                  child: Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -73,47 +446,51 @@ class TechnicianDashboardScreen extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.screenPadding),
           children: [
             _TechnicianHeader(
-              title: 'Dashboard Teknisi',
-              subtitle: 'Halo, Andi. Ada request baru di sekitar Anda.',
-              trailing: IconButton.filledTonal(
+              title: 'Selamat pagi, Andi',
+              subtitle: 'Siap membantu perangkat kembali bekerja?',
+              trailing: _TechnicianAvatarButton(
                 onPressed: () => context.push(AppRoutes.technicianProfile),
-                icon: const Icon(Icons.person_rounded),
-                tooltip: 'Profil teknisi',
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const MobileFlowStepper(
-              steps: ['Permintaan', 'Penawaran', 'Aktif', 'Selesai'],
-              currentStep: 0,
-            ),
-            const SizedBox(height: AppSpacing.lg),
             const _AvailabilityCard(),
+            const SizedBox(height: AppSpacing.md),
+            _PerformanceCard(
+              onTap: () => context.go(AppRoutes.technicianEarnings),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _DashboardQuickActions(
+              onRequests: () => context.go(AppRoutes.technicianRequests),
+              onJobs: () => context.go(AppRoutes.technicianJobs),
+              onEarnings: () => context.go(AppRoutes.technicianEarnings),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Permintaan Terdekat',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.go(AppRoutes.technicianRequests),
+                  child: const Text('Lihat Semua'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            const _RequestCard(),
             const SizedBox(height: AppSpacing.lg),
             SloganBanner(
               imageAsset: AppAssets.technicianEarningsPromo,
               title: 'Keahlian yang dipercaya, pekerjaan yang berarti.',
-              subtitle: 'Tetap terhubung dan bantu perangkat kembali bekerja.',
-              buttonLabel: 'Lihat Aktivitas',
+              subtitle: 'Jaga kualitas servis dan bangun reputasi terbaik.',
+              buttonLabel: 'Lihat Performa',
               onPressed: () => context.go(AppRoutes.technicianEarnings),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            Row(
-              children: const [
-                Expanded(
-                  child: _MetricCard(value: '12', label: 'Permintaan'),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _MetricCard(value: '8', label: 'Selesai'),
-                ),
-                SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _MetricCard(value: 'Rp 1,8 jt', label: 'Pendapatan'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            const _RequestCard(),
           ],
         ),
       ),
@@ -404,6 +781,39 @@ class _TechnicianHeader extends StatelessWidget {
   }
 }
 
+class _TechnicianAvatarButton extends StatelessWidget {
+  const _TechnicianAvatarButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Buka profil teknisi',
+      child: Material(
+        color: AppColors.primaryLight,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onPressed,
+          child: const Padding(
+            padding: EdgeInsets.all(3),
+            child: ClipOval(
+              child: SafeImage(
+                assetPath: AppAssets.technicianAndi,
+                width: 48,
+                height: 48,
+                fallbackIcon: Icons.person_rounded,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _AvailabilityCard extends StatefulWidget {
   const _AvailabilityCard();
 
@@ -464,23 +874,214 @@ class _AvailabilityCardState extends State<_AvailabilityCard> {
   }
 }
 
-class _MetricCard extends StatelessWidget {
-  const _MetricCard({required this.value, required this.label});
+class _PerformanceCard extends StatelessWidget {
+  const _PerformanceCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.primaryDark,
+        borderRadius: AppRadius.extraLarge,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.22),
+            blurRadius: 20,
+            offset: const Offset(0, 9),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Pendapatan Bulan Ini',
+                      style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      'Rp 1.850.000',
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: AppColors.surface,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: 'Lihat pendapatan',
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.surface,
+                  backgroundColor: Colors.white.withValues(alpha: 0.13),
+                ),
+                onPressed: onTap,
+                icon: const Icon(Icons.arrow_forward_rounded),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          const Row(
+            children: [
+              Expanded(
+                child: _PerformanceMetric(value: '12', label: 'Permintaan'),
+              ),
+              _PerformanceDivider(),
+              Expanded(
+                child: _PerformanceMetric(value: '3', label: 'Job Aktif'),
+              ),
+              _PerformanceDivider(),
+              Expanded(
+                child: _PerformanceMetric(value: '8', label: 'Selesai'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PerformanceMetric extends StatelessWidget {
+  const _PerformanceMetric({required this.value, required this.label});
+
   final String value;
   final String label;
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: AppColors.surface,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: AppColors.primaryLight, fontSize: 11),
+        ),
+      ],
+    );
+  }
+}
+
+class _PerformanceDivider extends StatelessWidget {
+  const _PerformanceDivider();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      width: 1,
+      height: 38,
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      color: Colors.white.withValues(alpha: 0.2),
+    );
+  }
+}
+
+class _DashboardQuickActions extends StatelessWidget {
+  const _DashboardQuickActions({
+    required this.onRequests,
+    required this.onJobs,
+    required this.onEarnings,
+  });
+
+  final VoidCallback onRequests;
+  final VoidCallback onJobs;
+  final VoidCallback onEarnings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
         borderRadius: AppRadius.large,
       ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _QuickAction(
+              icon: Icons.inbox_outlined,
+              label: 'Request',
+              onTap: onRequests,
+            ),
+          ),
+          Expanded(
+            child: _QuickAction(
+              icon: Icons.build_circle_outlined,
+              label: 'Job Aktif',
+              onTap: onJobs,
+            ),
+          ),
+          Expanded(
+            child: _QuickAction(
+              icon: Icons.account_balance_wallet_outlined,
+              label: 'Pendapatan',
+              onTap: onEarnings,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickAction extends StatelessWidget {
+  const _QuickAction({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
       child: Column(
         children: [
-          Text(value, style: Theme.of(context).textTheme.titleLarge),
-          Text(label),
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight,
+              borderRadius: AppRadius.medium,
+            ),
+            child: Icon(icon, color: AppColors.primary),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(
+              context,
+            ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
+          ),
         ],
       ),
     );
@@ -535,19 +1136,4 @@ class _HeroPanel extends StatelessWidget {
   }
 }
 
-class _UploadBox extends StatelessWidget {
-  const _UploadBox({required this.label});
-  final String label;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 96,
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: AppRadius.large,
-      ),
-      child: Center(child: Text(label)),
-    );
-  }
-}

@@ -205,6 +205,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: AppSpacing.xs),
+              OutlinedButton.icon(
+                onPressed: () => context.go(AppRoutes.customerHome),
+                icon: const Icon(Icons.person_outline_rounded),
+                label: const Text('Lanjut sebagai Tamu'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                ),
+              ),
             ],
           ),
         ),
