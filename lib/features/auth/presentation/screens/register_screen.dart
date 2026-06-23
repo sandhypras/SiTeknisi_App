@@ -216,9 +216,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     // Mock fallback: Supabase not configured, keep prototype behavior.
     if (repository == null) {
-      ref.read(authLoadingProvider.notifier).setLoading(true);
+      ref.read(authLoadingProvider.notifier).set(true);
       await Future<void>.delayed(const Duration(milliseconds: 700));
-      ref.read(authLoadingProvider.notifier).setLoading(false);
+      ref.read(authLoadingProvider.notifier).set(false);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -234,7 +234,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
 
     FocusScope.of(context).unfocus();
-    ref.read(authLoadingProvider.notifier).setLoading(true);
+    ref.read(authLoadingProvider.notifier).set(true);
     try {
       final result = await repository.signUp(
         email: email,
@@ -247,7 +247,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (result.needsEmailVerification) {
         ref
             .read(pendingVerificationEmailProvider.notifier)
-            .setEmail(email);
+            .set(email);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Akun berhasil dibuat. Silakan masuk.')),
@@ -279,7 +279,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       }
     } finally {
       if (context.mounted) {
-        ref.read(authLoadingProvider.notifier).setLoading(false);
+        ref.read(authLoadingProvider.notifier).set(false);
       }
     }
   }
@@ -400,9 +400,9 @@ class _VerificationSentViewState extends ConsumerState<_VerificationSentView> {
             onPressed: () {
               ref
                   .read(pendingVerificationEmailProvider.notifier)
-                  .setEmail(null);
+                  .set(null);
               if (isLoading) {
-                ref.read(authLoadingProvider.notifier).setLoading(false);
+                ref.read(authLoadingProvider.notifier).set(false);
               }
               context.go(AppRoutes.login);
             },

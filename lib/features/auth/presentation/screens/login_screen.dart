@@ -51,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ? ErrorToastCard(
               message: 'Login gagal, silakan coba lagi',
               onDismiss: () =>
-                  ref.read(loginErrorProvider.notifier).setError(false),
+                  ref.read(loginErrorProvider.notifier).set(false),
             )
           : null,
       children: [
@@ -157,7 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 textInputAction: TextInputAction.next,
                 onChanged: (_) {
                   if (hasError) {
-                    ref.read(loginErrorProvider.notifier).setError(false);
+                    ref.read(loginErrorProvider.notifier).set(false);
                   }
                 },
               ),
@@ -185,7 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 textInputAction: TextInputAction.done,
                 onChanged: (_) {
                   if (hasError) {
-                    ref.read(loginErrorProvider.notifier).setError(false);
+                    ref.read(loginErrorProvider.notifier).set(false);
                   }
                 },
               ),
@@ -243,10 +243,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // Mock fallback: Supabase not configured, keep prototype behavior.
     if (repository == null) {
-      ref.read(authLoadingProvider.notifier).setLoading(true);
+      ref.read(authLoadingProvider.notifier).set(true);
       await Future<void>.delayed(const Duration(milliseconds: 700));
-      ref.read(authLoadingProvider.notifier).setLoading(false);
-      ref.read(loginErrorProvider.notifier).setError(false);
+      ref.read(authLoadingProvider.notifier).set(false);
+      ref.read(loginErrorProvider.notifier).set(false);
 
       if (context.mounted) {
         FocusScope.of(context).unfocus();
@@ -265,8 +265,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     FocusScope.of(context).unfocus();
-    ref.read(loginErrorProvider.notifier).setError(false);
-    ref.read(authLoadingProvider.notifier).setLoading(true);
+    ref.read(loginErrorProvider.notifier).set(false);
+    ref.read(authLoadingProvider.notifier).set(true);
     try {
       final user = await repository.signIn(
         email: _emailController.text,
@@ -280,10 +280,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.go(_homeRouteFor(user.role));
       }
     } on AuthFailure {
-      ref.read(loginErrorProvider.notifier).setError(true);
+      ref.read(loginErrorProvider.notifier).set(true);
     } finally {
       if (context.mounted) {
-        ref.read(authLoadingProvider.notifier).setLoading(false);
+        ref.read(authLoadingProvider.notifier).set(false);
       }
     }
   }

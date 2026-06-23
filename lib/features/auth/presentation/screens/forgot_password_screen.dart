@@ -29,7 +29,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     super.initState();
     Future.microtask(() {
       if (mounted) {
-        ref.read(forgotPasswordSentProvider.notifier).setSent(false);
+        ref.read(forgotPasswordSentProvider.notifier).set(false);
       }
     });
   }
@@ -78,7 +78,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           PrimaryButton(
             label: 'Kembali ke Login',
             onPressed: () {
-              ref.read(forgotPasswordSentProvider.notifier).setSent(false);
+              ref.read(forgotPasswordSentProvider.notifier).set(false);
               context.go(
                 widget.isAdmin ? AppRoutes.adminLogin : AppRoutes.login,
               );
@@ -155,10 +155,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       return;
     }
 
-    ref.read(authLoadingProvider.notifier).setLoading(true);
+    ref.read(authLoadingProvider.notifier).set(true);
     await Future<void>.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
-    ref.read(authLoadingProvider.notifier).setLoading(false);
-    ref.read(forgotPasswordSentProvider.notifier).setSent(true);
+    ref.read(authLoadingProvider.notifier).set(false);
+    ref.read(forgotPasswordSentProvider.notifier).set(true);
   }
 }

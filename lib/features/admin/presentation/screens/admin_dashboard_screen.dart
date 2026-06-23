@@ -50,16 +50,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 Expanded(
                   child: ColoredBox(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    child: AnimatedBuilder(
-                      animation: _store,
-                      builder: (context, _) => SingleChildScrollView(
-                        padding: EdgeInsets.all(compact ? 20 : 32),
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 1440),
-                            child: _buildSection(),
-                          ),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(compact ? 20 : 32),
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1440),
+                          child: _buildSection(),
                         ),
                       ),
                     ),
