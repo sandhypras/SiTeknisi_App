@@ -3,12 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/primary_button.dart';
-import '../providers/auth_mock_providers.dart';
-import '../widgets/auth_illustrations.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -21,6 +17,42 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _pageController = PageController();
   int _currentIndex = 0;
 
+  static const _pages = [
+    _OnboardingData(
+      gradient: [Color(0xFF1E40AF), Color(0xFF2563EB), Color(0xFF3B82F6)],
+      icon: Icons.verified_rounded,
+      iconBg: Color(0xFF1D4ED8),
+      tag: 'Teknisi Terverifikasi',
+      title: 'Servis Elektronik\nJadi Lebih Pasti',
+      description:
+          'Pilih teknisi terverifikasi di sekitar kamu. Rating terbuka, harga transparan.',
+      illustrationCircle1: Color(0x1AFFFFFF),
+      illustrationCircle2: Color(0x0DFFFFFF),
+    ),
+    _OnboardingData(
+      gradient: [Color(0xFF065F46), Color(0xFF059669), Color(0xFF34D399)],
+      icon: Icons.price_check_rounded,
+      iconBg: Color(0xFF047857),
+      tag: 'Penawaran Terbaik',
+      title: 'Bandingkan Harga,\nPilih yang Cocok',
+      description:
+          'Terima beberapa penawaran sekaligus. Lihat estimasi waktu dan biaya sebelum memutuskan.',
+      illustrationCircle1: Color(0x1AFFFFFF),
+      illustrationCircle2: Color(0x0DFFFFFF),
+    ),
+    _OnboardingData(
+      gradient: [Color(0xFF4C1D95), Color(0xFF7C3AED), Color(0xFFA78BFA)],
+      icon: Icons.receipt_long_rounded,
+      iconBg: Color(0xFF6D28D9),
+      tag: 'Aman & Terpercaya',
+      title: 'Bayar Aman,\nInvoice Otomatis',
+      description:
+          'Pembayaran via Midtrans, invoice tersimpan otomatis, dan status servis bisa dipantau realtime.',
+      illustrationCircle1: Color(0x1AFFFFFF),
+      illustrationCircle2: Color(0x0DFFFFFF),
+    ),
+  ];
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -29,218 +61,317 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final items = ref.watch(onboardingItemsProvider);
-    final isLastPage = _currentIndex == items.length - 1;
+    final isLast = _currentIndex == _pages.length - 1;
+    final page = _pages[_currentIndex];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF8FF),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isCompactHeight = constraints.maxHeight < 720;
+      body: Stack(
+        children: [
+          // ── Animated gradient background ─────────────────────────
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: page.gradient,
+              ),
+            ),
+          ),
 
-            return Padding(
-              padding: const EdgeInsets.all(AppSpacing.screenPadding),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
+          // ── Decorative circles ───────────────────────────────────
+          Positioned(
+            right: -60,
+            top: -60,
+            child: Container(
+              width: 260,
+              height: 260,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: page.illustrationCircle1,
+              ),
+            ),
+          ),
+          Positioned(
+            left: -40,
+            bottom: 120,
+            child: Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: page.illustrationCircle2,
+              ),
+            ),
+          ),
+
+          // ── Content ──────────────────────────────────────────────
+          SafeArea(
+            child: Column(
+              children: [
+                // Skip button
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        right: AppSpacing.md, top: AppSpacing.xs),
                     child: TextButton(
                       onPressed: () => context.go(AppRoutes.login),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white.withValues(alpha: 0.8),
+                      ),
                       child: const Text('Lewati'),
                     ),
                   ),
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: items.length,
-                      onPageChanged: (index) {
-                        setState(() => _currentIndex = index);
-                      },
-                      itemBuilder: (context, index) {
-                        return _OnboardingPage(item: items[index]);
-                      },
-                    ),
-                  ),
-                  _PageDots(count: items.length, currentIndex: _currentIndex),
-                  SizedBox(
-                    height: isCompactHeight ? AppSpacing.md : AppSpacing.xl,
-                  ),
-                  PrimaryButton(
-                    label: isLastPage ? 'Mulai Sekarang' : 'Lanjut',
-                    icon: Icons.arrow_forward_rounded,
-                    onPressed: () {
-                      if (isLastPage) {
-                        context.go(AppRoutes.login);
-                        return;
-                      }
+                ),
 
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 260),
-                        curve: Curves.easeOut,
-                      );
-                    },
+                // Page content
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: _pages.length,
+                    onPageChanged: (i) => setState(() => _currentIndex = i),
+                    itemBuilder: (context, index) =>
+                        _PageContent(data: _pages[index]),
                   ),
-                  SizedBox(
-                    height: isCompactHeight ? AppSpacing.xs : AppSpacing.md,
+                ),
+
+                // Bottom section
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    0,
+                    AppSpacing.lg,
+                    AppSpacing.xl,
                   ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _OnboardingPage extends StatelessWidget {
-  const _OnboardingPage({required this.item});
-
-  final OnboardingItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final kind = switch (item.icon) {
-      'compare' => AuthIllustrationKind.compare,
-      'invoice' => AuthIllustrationKind.payment,
-      _ => AuthIllustrationKind.technician,
-    };
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isCompactHeight = constraints.maxHeight < 510;
-        final visualScale = isCompactHeight ? 0.82 : 1.0;
-        final sectionGap = isCompactHeight ? AppSpacing.lg : AppSpacing.xxl;
-
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: 246 * visualScale,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: OnboardingVisual(kind: kind),
-                    ),
-                  ),
-                  SizedBox(height: sectionGap),
-                  Text(
-                    item.title,
-                    textAlign: TextAlign.center,
-                    style: textTheme.headlineLarge?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
-                      height: 1.16,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    item.description,
-                    textAlign: TextAlign.center,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                      height: 1.55,
-                    ),
-                  ),
-                  if (item.icon == 'compare') ...[
-                    const SizedBox(height: AppSpacing.md),
-                    const Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: [
-                        _FeaturePill(
-                          icon: Icons.price_check_rounded,
-                          label: 'Harga Jelas',
+                  child: Column(
+                    children: [
+                      // Dots
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          _pages.length,
+                          (i) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeOutCubic,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xxs),
+                            width: _currentIndex == i ? 28 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _currentIndex == i
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.35),
+                              borderRadius: AppRadius.pill,
+                            ),
+                          ),
                         ),
-                        _FeaturePill(
-                          icon: Icons.star_rounded,
-                          label: 'Rating Terlihat',
-                        ),
-                        _FeaturePill(
-                          icon: Icons.touch_app_rounded,
-                          label: 'Pilih Sendiri',
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
 
-class _PageDots extends StatelessWidget {
-  const _PageDots({required this.count, required this.currentIndex});
+                      // Buttons
+                      Row(
+                        children: [
+                          if (_currentIndex > 0) ...[
+                            OutlinedButton(
+                              onPressed: () => _pageController.previousPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeOut,
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                side: BorderSide(
+                                    color:
+                                        Colors.white.withValues(alpha: 0.5)),
+                                minimumSize: const Size(56, 52),
+                                padding: EdgeInsets.zero,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: AppRadius.large),
+                              ),
+                              child: const Icon(Icons.arrow_back_rounded),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                          ],
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: () {
+                                if (isLast) {
+                                  context.go(AppRoutes.login);
+                                  return;
+                                }
+                                _pageController.nextPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeOut,
+                                );
+                              },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: page.gradient.first,
+                                minimumSize: const Size.fromHeight(52),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: AppRadius.large),
+                              ),
+                              icon: Icon(isLast
+                                  ? Icons.rocket_launch_rounded
+                                  : Icons.arrow_forward_rounded),
+                              label: Text(
+                                isLast ? 'Mulai Sekarang' : 'Lanjut',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w800),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.md),
 
-  final int count;
-  final int currentIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (var index = 0; index < count; index++)
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 220),
-            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
-            width: currentIndex == index ? 24 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: currentIndex == index
-                  ? AppColors.primary
-                  : AppColors.border,
-              borderRadius: AppRadius.pill,
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _FeaturePill extends StatelessWidget {
-  const _FeaturePill({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.pill,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: AppColors.primary),
-          const SizedBox(width: AppSpacing.xxs),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
+                      // Login link
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sudah punya akun?',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 13,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => context.go(AppRoutes.login),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text(
+                              'Masuk',
+                              style: TextStyle(fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
+}
+
+class _PageContent extends StatelessWidget {
+  const _PageContent({required this.data});
+
+  final _OnboardingData data;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Illustration
+          Container(
+            width: size.width * 0.55,
+            height: size.width * 0.55,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Container(
+                width: size.width * 0.38,
+                height: size.width * 0.38,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  data.icon,
+                  size: size.width * 0.2,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Tag
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xxs,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: AppRadius.pill,
+              border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.3)),
+            ),
+            child: Text(
+              data.tag,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+
+          // Title
+          Text(
+            data.title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+              height: 1.15,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+
+          // Description
+          Text(
+            data.description,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.82),
+              fontSize: 15,
+              height: 1.55,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OnboardingData {
+  const _OnboardingData({
+    required this.gradient,
+    required this.icon,
+    required this.iconBg,
+    required this.tag,
+    required this.title,
+    required this.description,
+    required this.illustrationCircle1,
+    required this.illustrationCircle2,
+  });
+
+  final List<Color> gradient;
+  final IconData icon;
+  final Color iconBg;
+  final String tag;
+  final String title;
+  final String description;
+  final Color illustrationCircle1;
+  final Color illustrationCircle2;
 }
