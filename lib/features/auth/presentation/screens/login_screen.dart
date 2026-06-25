@@ -2,390 +2,365 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../data/auth_repository.dart';
+import '../../domain/auth_user.dart';
 import '../providers/auth_mock_providers.dart';
+import '../providers/auth_providers.dart';
 import '../widgets/auth_illustrations.dart';
-import '../widgets/auth_logo.dart';
-import '../widgets/auth_scaffold.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.returnUrl});
+
+  final String? returnUrl;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  _LoginRole _selectedRole = _LoginRole.customer;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authLoadingProvider);
     final hasError = ref.watch(loginErrorProvider);
-    final textTheme = Theme.of(context).textTheme;
+    final size = MediaQuery.sizeOf(context);
 
-    return AuthScaffold(
-      backgroundColor: const Color(0xFFFAF8FF),
-      bottom: hasError
-          ? ErrorToastCard(
-              message: 'Login gagal, silakan coba lagi',
-              onDismiss: () =>
-                  ref.read(loginErrorProvider.notifier).setError(false),
-            )
-          : null,
-      children: [
-        const SizedBox(height: AppSpacing.xs),
-        const _LoginHeroBand(),
-        const SizedBox(height: AppSpacing.md),
-        Container(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.lg,
-            AppSpacing.lg,
-            AppSpacing.md,
+    return Scaffold(
+      backgroundColor: AppColors.primary,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          // ── Hero background ──────────────────────────────────────
+          SizedBox(
+            height: size.height * 0.48,
+            width: double.infinity,
+            child: CustomPaint(painter: _HeroBgPainter()),
           ),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: AppRadius.extraLarge,
-            border: Border.all(color: const Color(0xFFD8DCEF)),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                blurRadius: 34,
-                offset: const Offset(0, 18),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Center(
-                child: AuthLogo(
-                  size: 48,
-                  cardSize: 78,
-                  showText: false,
-                  logoMode: AuthLogoMode.mark,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'SiTeknisi',
-                textAlign: TextAlign.center,
-                style: textTheme.headlineMedium?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'Masuk untuk lanjut servis elektronik Anda',
-                textAlign: TextAlign.center,
-                style: textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              const _TrustStrip(),
-              const SizedBox(height: AppSpacing.lg),
-              CustomTextField(
-                label: 'Email Address',
-                hintText: 'user@example.com',
-                prefixIcon: const Icon(Icons.mail_outline_rounded),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                onChanged: (_) {
-                  if (hasError) {
-                    ref.read(loginErrorProvider.notifier).setError(false);
-                  }
-                },
-              ),
-              const SizedBox(height: AppSpacing.md),
-              CustomTextField(
-                label: 'Password',
-                hintText: 'Masukkan password',
-                errorText: hasError ? 'Email atau password tidak sesuai' : null,
-                prefixIcon: const Icon(Icons.lock_outline_rounded),
-                suffixIcon: IconButton(
-                  tooltip: _obscurePassword
-                      ? 'Tampilkan password'
-                      : 'Sembunyikan password',
-                  onPressed: () {
-                    setState(() => _obscurePassword = !_obscurePassword);
-                  },
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_off_rounded
-                        : Icons.visibility_rounded,
-                  ),
-                ),
-                obscureText: _obscurePassword,
-                textInputAction: TextInputAction.done,
-                onChanged: (_) {
-                  if (hasError) {
-                    ref.read(loginErrorProvider.notifier).setError(false);
-                  }
-                },
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => context.go(AppRoutes.forgotPassword),
-                  child: const Text('Lupa Password?'),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              PrimaryButton(
-                label: 'Masuk',
-                icon: Icons.arrow_forward_rounded,
-                isLoading: isLoading,
-                onPressed: () => _mockSubmit(context),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              const _SecurityNotice(),
-              const SizedBox(height: AppSpacing.sm),
-              Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
+
+          // ── Hero content ─────────────────────────────────────────
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Belum punya akun?',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
+                  const SizedBox(height: AppSpacing.lg),
+                  // Logo + app name row
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: AppRadius.medium,
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        child: Image.asset(
+                          AppAssets.siteknisiLogo,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      const Text(
+                        'SiTeknisi',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  const Text(
+                    'Selamat\nDatang Kembali!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      height: 1.15,
+                      letterSpacing: -0.8,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => context.go(AppRoutes.register),
-                    child: const Text('Daftar sekarang'),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    _selectedRole == _LoginRole.customer
+                        ? 'Masuk untuk memesan layanan servis elektronik.'
+                        : 'Masuk untuk menerima pekerjaan servis.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+
+          // ── Form card (slides up) ─────────────────────────────────
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            top: size.height * 0.32,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Role selector
+                    _RoleSelector(
+                      selected: _selectedRole,
+                      onChanged: (role) =>
+                          setState(() => _selectedRole = role),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+
+                    // Email
+                    CustomTextField(
+                      controller: _emailController,
+                      label: 'Email',
+                      hintText: 'user@example.com',
+                      prefixIcon: const Icon(Icons.mail_outline_rounded),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      onChanged: (_) {
+                        if (hasError) {
+                          ref
+                              .read(loginErrorProvider.notifier)
+                              .setError(false);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Password
+                    CustomTextField(
+                      controller: _passwordController,
+                      label: 'Password',
+                      hintText: 'Masukkan password',
+                      errorText: hasError
+                          ? 'Email atau password tidak sesuai'
+                          : null,
+                      prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      suffixIcon: IconButton(
+                        tooltip: _obscurePassword
+                            ? 'Tampilkan password'
+                            : 'Sembunyikan password',
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded,
+                        ),
+                      ),
+                      obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      onChanged: (_) {
+                        if (hasError) {
+                          ref
+                              .read(loginErrorProvider.notifier)
+                              .setError(false);
+                        }
+                      },
+                    ),
+
+                    // Forgot password
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => context.go(AppRoutes.forgotPassword),
+                        child: const Text('Lupa Password?'),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+
+                    // Login button
+                    PrimaryButton(
+                      label: 'Masuk',
+                      icon: Icons.arrow_forward_rounded,
+                      isLoading: isLoading,
+                      onPressed: () => _submit(context),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Register link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Belum punya akun?',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => context.go(AppRoutes.register),
+                          child: const Text('Daftar sekarang'),
+                        ),
+                      ],
+                    ),
+
+                    // Guest button
+                    OutlinedButton.icon(
+                      onPressed: () => context.go(AppRoutes.customerHome),
+                      icon: const Icon(Icons.person_outline_rounded),
+                      label: const Text('Lanjut sebagai Tamu'),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                    ),
+
+                    // Error toast
+                    if (hasError) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      ErrorToastCard(
+                        message: 'Login gagal, silakan coba lagi',
+                        onDismiss: () =>
+                            ref
+                                .read(loginErrorProvider.notifier)
+                                .setError(false),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Future<void> _mockSubmit(BuildContext context) async {
-    ref.read(authLoadingProvider.notifier).setLoading(true);
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    ref.read(authLoadingProvider.notifier).setLoading(false);
-    ref.read(loginErrorProvider.notifier).setError(false);
+  Future<void> _submit(BuildContext context) async {
+    final repository = ref.read(authRepositoryProvider);
 
-    if (context.mounted) {
-      FocusScope.of(context).unfocus();
-      context.go(AppRoutes.customerHome);
+    if (repository == null) {
+      ref.read(authLoadingProvider.notifier).setLoading(true);
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      ref.read(authLoadingProvider.notifier).setLoading(false);
+      ref.read(loginErrorProvider.notifier).setError(false);
+
+      if (context.mounted) {
+        FocusScope.of(context).unfocus();
+        final returnUrl = widget.returnUrl;
+        if (returnUrl != null && returnUrl.isNotEmpty) {
+          context.go(returnUrl);
+          return;
+        }
+        context.go(
+          _selectedRole == _LoginRole.customer
+              ? AppRoutes.customerHome
+              : AppRoutes.technicianDashboard,
+        );
+      }
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    ref.read(loginErrorProvider.notifier).setError(false);
+    ref.read(authLoadingProvider.notifier).setLoading(true);
+    try {
+      final user = await repository.signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      if (!context.mounted) return;
+      final returnUrl = widget.returnUrl;
+      if (returnUrl != null && returnUrl.isNotEmpty) {
+        context.go(returnUrl);
+      } else {
+        context.go(_homeRouteFor(user.role));
+      }
+    } on AuthFailure {
+      ref.read(loginErrorProvider.notifier).setError(true);
+    } finally {
+      if (context.mounted) {
+        ref.read(authLoadingProvider.notifier).setLoading(false);
+      }
+    }
+  }
+
+  String _homeRouteFor(UserRole role) {
+    switch (role) {
+      case UserRole.technician:
+        return AppRoutes.technicianDashboard;
+      case UserRole.admin:
+        return AppRoutes.adminDashboard;
+      case UserRole.customer:
+        return AppRoutes.customerHome;
     }
   }
 }
 
-class _LoginHeroBand extends StatelessWidget {
-  const _LoginHeroBand();
+enum _LoginRole { customer, technician }
+
+// ── Role selector ────────────────────────────────────────────────────────────
+
+class _RoleSelector extends StatelessWidget {
+  const _RoleSelector({required this.selected, required this.onChanged});
+
+  final _LoginRole selected;
+  final ValueChanged<_LoginRole> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isNarrow = constraints.maxWidth < 360;
-
-        return Container(
-          constraints: const BoxConstraints(minHeight: 172),
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.extraLarge,
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF0F4FD9), AppColors.primary],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.22),
-                blurRadius: 28,
-                offset: const Offset(0, 16),
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: CustomPaint(painter: _LoginPatternPainter()),
-              ),
-              Padding(
-                padding: EdgeInsets.all(
-                  isNarrow ? AppSpacing.md : AppSpacing.lg,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
-                              vertical: AppSpacing.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.surface.withValues(alpha: 0.16),
-                              borderRadius: AppRadius.pill,
-                              border: Border.all(
-                                color: AppColors.surface.withValues(
-                                  alpha: 0.24,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              'SiTeknisi Verified',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: textTheme.labelSmall?.copyWith(
-                                color: AppColors.surface,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            'Servis elektronik jadi lebih pasti.',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.titleMedium?.copyWith(
-                              color: AppColors.surface,
-                              fontWeight: FontWeight.w800,
-                              height: 1.18,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            'Teknisi terverifikasi, penawaran transparan, invoice otomatis.',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.labelSmall?.copyWith(
-                              color: AppColors.surface.withValues(alpha: 0.86),
-                              height: 1.25,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: isNarrow ? AppSpacing.sm : AppSpacing.md),
-                    Container(
-                      width: isNarrow ? 64 : 78,
-                      height: isNarrow ? 76 : 92,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface.withValues(alpha: 0.14),
-                        borderRadius: AppRadius.large,
-                        border: Border.all(
-                          color: AppColors.surface.withValues(alpha: 0.22),
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.handyman_rounded,
-                        color: AppColors.surface,
-                        size: isNarrow ? 34 : 42,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _TrustStrip extends StatelessWidget {
-  const _TrustStrip();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: const [
-        Expanded(
-          child: _TrustMetric(
-            icon: Icons.verified_user_rounded,
-            value: 'Aman',
-            label: 'Akun',
-          ),
-        ),
-        SizedBox(width: AppSpacing.xs),
-        Expanded(
-          child: _TrustMetric(
-            icon: Icons.receipt_long_rounded,
-            value: 'Invoice',
-            label: 'Otomatis',
-          ),
-        ),
-        SizedBox(width: AppSpacing.xs),
-        Expanded(
-          child: _TrustMetric(
-            icon: Icons.support_agent_rounded,
-            value: 'Bantuan',
-            label: 'Aktif',
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TrustMetric extends StatelessWidget {
-  const _TrustMetric({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xs,
-        vertical: AppSpacing.sm,
-      ),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withValues(alpha: 0.52),
-        borderRadius: AppRadius.medium,
+        color: AppColors.surfaceMuted,
+        borderRadius: AppRadius.large,
       ),
-      child: Column(
+      child: Row(
         children: [
-          Icon(icon, color: AppColors.primary, size: 18),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.labelMedium?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
+          _RoleTab(
+            icon: Icons.person_rounded,
+            label: 'Customer',
+            selected: selected == _LoginRole.customer,
+            onTap: () => onChanged(_LoginRole.customer),
           ),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+          _RoleTab(
+            icon: Icons.engineering_rounded,
+            label: 'Teknisi',
+            selected: selected == _LoginRole.technician,
+            onTap: () => onChanged(_LoginRole.technician),
           ),
         ],
       ),
@@ -393,67 +368,121 @@ class _TrustMetric extends StatelessWidget {
   }
 }
 
-class _SecurityNotice extends StatelessWidget {
-  const _SecurityNotice();
+class _RoleTab extends StatelessWidget {
+  const _RoleTab({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.lock_rounded, size: 15, color: AppColors.successText),
-        const SizedBox(width: AppSpacing.xs),
-        Flexible(
-          child: Text(
-            'Data akun dilindungi dan hanya digunakan untuk transaksi servis.',
-            textAlign: TextAlign.center,
-            style: textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-              height: 1.35,
-            ),
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.primary : Colors.transparent,
+            borderRadius: AppRadius.medium,
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.25),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: selected ? Colors.white : AppColors.textMuted,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: selected ? Colors.white : AppColors.textMuted,
+                  fontWeight:
+                      selected ? FontWeight.w800 : FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
 
-class _LoginPatternPainter extends CustomPainter {
+// ── Hero background painter ──────────────────────────────────────────────────
+
+class _HeroBgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..color = AppColors.surface.withValues(alpha: 0.14);
-
-    for (var i = -2; i < 8; i++) {
-      final startX = i * 54.0;
-      canvas.drawLine(
-        Offset(startX, size.height + 10),
-        Offset(startX + 118, -10),
-        paint,
-      );
-    }
-
-    final blockPaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = AppColors.surface.withValues(alpha: 0.1);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width - 86, 18, 104, 44),
-        const Radius.circular(14),
-      ),
-      blockPaint,
+    // Gradient base
+    final rect = Offset.zero & size;
+    final gradient = const LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF1E40AF), Color(0xFF2563EB), Color(0xFF3B82F6)],
     );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width - 124, size.height - 54, 96, 30),
-        const Radius.circular(12),
-      ),
-      blockPaint,
+    canvas.drawRect(
+      rect,
+      Paint()..shader = gradient.createShader(rect),
     );
+
+    // Decorative circles
+    final circlePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.07)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(
+      Offset(size.width * 0.85, size.height * 0.18),
+      size.width * 0.38,
+      circlePaint,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.1, size.height * 0.75),
+      size.width * 0.28,
+      circlePaint,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.6, size.height * 0.9),
+      size.width * 0.18,
+      Paint()..color = Colors.white.withValues(alpha: 0.05),
+    );
+
+    // Bottom curve cutout (white)
+    final curvePaint = Paint()
+      ..color = AppColors.surface
+      ..style = PaintingStyle.fill;
+    final path = Path()
+      ..moveTo(0, size.height - 40)
+      ..quadraticBezierTo(
+        size.width / 2,
+        size.height + 20,
+        size.width,
+        size.height - 40,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(path, curvePaint);
   }
 
   @override
