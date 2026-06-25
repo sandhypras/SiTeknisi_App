@@ -35,6 +35,18 @@ final onboardingItemsProvider = Provider<List<OnboardingItem>>((ref) {
   ];
 });
 
+/// Menyimpan nama user di mock mode (tidak ada Supabase session)
+final mockUserNameProvider = NotifierProvider<MockUserNameNotifier, String>(
+  MockUserNameNotifier.new,
+);
+
+class MockUserNameNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void setName(String name) => state = name;
+}
+
 final authLoadingProvider = NotifierProvider<AuthLoadingNotifier, bool>(
   AuthLoadingNotifier.new,
 );

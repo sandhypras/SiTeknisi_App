@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../auth/data/auth_repository.dart';
+import '../../../auth/presentation/providers/auth_mock_providers.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../widgets/customer_shell.dart';
 
@@ -26,7 +27,8 @@ class _CustomerProfileScreenState
   @override
   Widget build(BuildContext context) {
     final authUser = ref.watch(authUserProvider).value;
-    final fullName = _nameOverride ?? authUser?.fullName ?? 'Pengguna';
+    final mockName = ref.watch(mockUserNameProvider);
+    final fullName = _nameOverride ?? authUser?.fullName ?? (mockName.isNotEmpty ? mockName : 'Pengguna');
     final name = fullName.trim().split(' ').first;
     final phone = _phoneOverride ?? authUser?.phone ?? '-';
     final email = authUser?.email ?? '-';

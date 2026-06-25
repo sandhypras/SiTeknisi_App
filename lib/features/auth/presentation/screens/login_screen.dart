@@ -278,6 +278,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.read(authLoadingProvider.notifier).setLoading(false);
       ref.read(loginErrorProvider.notifier).setError(false);
 
+      // Simpan nama mock dari email (bagian sebelum @)
+      final mockName = _emailController.text.trim().split('@').first;
+      if (mockName.isNotEmpty) {
+        ref.read(mockUserNameProvider.notifier).setName(
+          mockName[0].toUpperCase() + mockName.substring(1),
+        );
+      }
+
       if (context.mounted) {
         FocusScope.of(context).unfocus();
         final returnUrl = widget.returnUrl;
