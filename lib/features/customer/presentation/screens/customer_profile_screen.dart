@@ -26,7 +26,8 @@ class _CustomerProfileScreenState
   @override
   Widget build(BuildContext context) {
     final authUser = ref.watch(authUserProvider).value;
-    final name = _nameOverride ?? authUser?.fullName ?? 'Pengguna';
+    final fullName = _nameOverride ?? authUser?.fullName ?? 'Pengguna';
+    final name = fullName.trim().split(' ').first;
     final phone = _phoneOverride ?? authUser?.phone ?? '-';
     final email = authUser?.email ?? '-';
     final initial = name.trim().isEmpty ? 'P' : name.trim()[0].toUpperCase();
@@ -154,7 +155,7 @@ class _CustomerProfileScreenState
                           foregroundColor: AppColors.surface,
                         ),
                         onPressed: () =>
-                            _showEditDialog(context, name, phone),
+                            _showEditDialog(context, fullName, phone),
                         icon: const Icon(Icons.edit_outlined),
                       ),
                     ],
