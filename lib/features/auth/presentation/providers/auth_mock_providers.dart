@@ -47,6 +47,18 @@ class MockUserNameNotifier extends Notifier<String> {
   void setName(String name) => state = name;
 }
 
+/// Status tamu — true kalau user pilih "Lanjut sebagai Tamu"
+final guestModeProvider = NotifierProvider<GuestModeNotifier, bool>(
+  GuestModeNotifier.new,
+);
+
+class GuestModeNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void setGuest(bool value) => state = value;
+}
+
 final authLoadingProvider = NotifierProvider<AuthLoadingNotifier, bool>(
   AuthLoadingNotifier.new,
 );

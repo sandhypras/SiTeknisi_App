@@ -13,7 +13,6 @@ import '../../data/auth_repository.dart';
 import '../../domain/auth_user.dart';
 import '../providers/auth_mock_providers.dart';
 import '../providers/auth_providers.dart';
-import '../widgets/auth_illustrations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.returnUrl});
@@ -240,7 +239,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Guest button
                     OutlinedButton.icon(
-                      onPressed: () => context.go(AppRoutes.customerHome),
+                      onPressed: () {
+                        ref.read(guestModeProvider.notifier).setGuest(true);
+                        context.go(AppRoutes.customerHome);
+                      },
                       icon: const Icon(Icons.person_outline_rounded),
                       label: const Text('Lanjut sebagai Tamu'),
                       style: OutlinedButton.styleFrom(
@@ -251,12 +253,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Error toast
                     if (hasError) ...[
                       const SizedBox(height: AppSpacing.md),
-                      ErrorToastCard(
-                        message: 'Login gagal, silakan coba lagi',
-                        onDismiss: () =>
-                            ref
-                                .read(loginErrorProvider.notifier)
-                                .setError(false),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEE2E2),
+                          borderRadius: AppRadius.medium,
+                          border: Border.all(color: const Color(0xFFFCA5A5)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded,
+                                color: Color(0xFFDC2626), size: 20),
+                            const SizedBox(width: AppSpacing.sm),
+                            const Expanded(
+                              child: Text(
+                                'Login gagal, silakan coba lagi',
+                                style: TextStyle(
+                                  color: Color(0xFF991B1B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () => ref
+                                  .read(loginErrorProvider.notifier)
+                                  .setError(false),
+                              icon: const Icon(Icons.close_rounded,
+                                  color: Color(0xFFDC2626), size: 18),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ],
@@ -285,6 +317,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           mockName[0].toUpperCase() + mockName.substring(1),
         );
       }
+      ref.read(guestModeProvider.notifier).setGuest(false);
 
       if (context.mounted) {
         FocusScope.of(context).unfocus();

@@ -7,6 +7,8 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../features/auth/presentation/providers/auth_mock_providers.dart';
+import '../../../../features/auth/presentation/providers/auth_providers.dart';
 import '../../data/customer_dummy_data.dart';
 import '../widgets/customer_shell.dart';
 
@@ -17,6 +19,13 @@ class CustomerHomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(customerCategoriesProvider);
     final textTheme = Theme.of(context).textTheme;
+
+    final isGuest = ref.watch(guestModeProvider);
+    final mockName = ref.watch(mockUserNameProvider);
+    final authUser = ref.watch(authUserProvider).value;
+    final displayName = isGuest
+        ? 'Tamu'
+        : (authUser?.fullName ?? (mockName.isNotEmpty ? mockName : 'Pengguna'));
 
     return CustomerShell(
       currentIndex: 0,
@@ -36,7 +45,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Halo, Budi!',
+                    'Halo, $displayName!',
                     style: textTheme.displayLarge?.copyWith(
                       fontSize: 29,
                       fontWeight: FontWeight.w800,

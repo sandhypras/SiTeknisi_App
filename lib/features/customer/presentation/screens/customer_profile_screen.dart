@@ -28,10 +28,13 @@ class _CustomerProfileScreenState
   Widget build(BuildContext context) {
     final authUser = ref.watch(authUserProvider).value;
     final mockName = ref.watch(mockUserNameProvider);
-    final fullName = _nameOverride ?? authUser?.fullName ?? (mockName.isNotEmpty ? mockName : 'Pengguna');
+    final isGuest = ref.watch(guestModeProvider);
+    final fullName = isGuest
+        ? 'Tamu'
+        : (_nameOverride ?? authUser?.fullName ?? (mockName.isNotEmpty ? mockName : 'Pengguna'));
     final name = fullName.trim().split(' ').first;
-    final phone = _phoneOverride ?? authUser?.phone ?? '-';
-    final email = authUser?.email ?? '-';
+    final phone = isGuest ? '-' : (_phoneOverride ?? authUser?.phone ?? '-');
+    final email = isGuest ? '-' : (authUser?.email ?? '-');
     final initial = name.trim().isEmpty ? 'P' : name.trim()[0].toUpperCase();
     final textTheme = Theme.of(context).textTheme;
 
@@ -57,6 +60,7 @@ class _CustomerProfileScreenState
                     ),
                   ),
                 ),
+                if (!isGuest)
                 IconButton.filledTonal(
                   tooltip: 'Pengaturan',
                   onPressed: () => _showSettings(context),
@@ -65,6 +69,43 @@ class _CustomerProfileScreenState
               ],
             ),
             const SizedBox(height: AppSpacing.md),
+
+            // Banner tamu
+            if (isGuest) ...[
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: AppRadius.large,
+                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline_rounded, color: AppColors.primaryDark),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        'Masuk atau daftar untuk mengakses fitur lengkap.',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: AppColors.primaryDark,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              FilledButton.icon(
+                onPressed: () => context.go(AppRoutes.login),
+                icon: const Icon(Icons.login_rounded),
+                label: const Text('Masuk / Daftar'),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+            ],
 
             // Profile hero card
             Container(
@@ -331,7 +372,14 @@ class _CustomerProfileScreenState
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            // Logout
+            // Logout / Login
+            if (isGuest)
+              OutlinedButton.icon(
+                onPressed: () => context.go(AppRoutes.login),
+                icon: const Icon(Icons.login_rounded),
+                label: const Text('Masuk ke akun'),
+              )
+            else
             OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.errorText,
