@@ -13,8 +13,7 @@ import '../../data/auth_repository.dart';
 import '../../domain/auth_user.dart';
 import '../providers/auth_mock_providers.dart';
 import '../providers/auth_providers.dart';
-import '../widgets/auth_logo.dart';
-import '../widgets/auth_scaffold.dart';
+import '../widgets/auth_illustrations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.returnUrl});
