@@ -72,8 +72,12 @@ class AppRoutes {
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  const appMode = String.fromEnvironment('APP_MODE');
+  // Only use admin web when explicitly set to 'admin'
+  final useAdminWeb = kIsWeb && appMode == 'admin';
+
   return GoRouter(
-    initialLocation: kIsWeb ? AppRoutes.adminLogin : AppRoutes.splash,
+    initialLocation: useAdminWeb ? AppRoutes.adminLogin : AppRoutes.splash,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
