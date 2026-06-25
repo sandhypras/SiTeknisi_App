@@ -4,13 +4,17 @@ publish_to: 'none'
 version: 0.1.0+1
 
 environment:
-  sdk: ">=3.11.1 <4.0.0"
+  sdk: ^3.11.5
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.3.2
   go_router: ^17.3.0
+  image_picker: ^1.2.1
+  shared_preferences: ^2.5.4
+  supabase_flutter: ^2.8.0
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +25,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/siteknisi_logo.png
+    - assets/images/categories/printer.jpg
+    - assets/images/categories/computer.jpg
+    - assets/images/categories/laptop.jpg
+    - assets/images/technicians/andi.jpg
+    - assets/images/technicians/budi.jpg
+    - assets/images/technicians/rina.jpg
+    - assets/images/promotions/customer_service_promo.jpg
+    - assets/images/promotions/technician_earnings_promo.jpg
+    - assets/images/banners/join_technician_banner.jpg
