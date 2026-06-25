@@ -27,7 +27,7 @@ class SignUpResult {
 ///
 /// All methods assume Supabase has been initialized (see
 /// lib/core/config/bootstrap.dart). The screens only call into this when
-/// [SupabaseConfig.isConfigured] is true; otherwise they keep the mock flow.
+/// Supabase is configured; otherwise they keep the mock flow.
 class AuthRepository {
   AuthRepository(this._client);
 
@@ -72,12 +72,12 @@ class AuthRepository {
     String? phone,
   }) async {
     if (kDebugMode) {
-      print('\n🔐 SIGNUP ATTEMPT:');
-      print('  Email: $email');
-      print('  Role: ${role.name}');
-      print('  Name: $fullName');
+      debugPrint('\nSIGNUP ATTEMPT:');
+      debugPrint('  Email: $email');
+      debugPrint('  Role: ${role.name}');
+      debugPrint('  Name: $fullName');
     }
-    
+
     try {
       final response = await _client.auth.signUp(
         email: email.trim(),
@@ -88,25 +88,27 @@ class AuthRepository {
           if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
         },
       );
-      
+
       if (kDebugMode) {
-        print('✅ Signup response received');
-        print('  Session: ${response.session != null ? "Active" : "Null (needs verification)"}');
+        debugPrint('Signup response received');
+        debugPrint(
+          '  Session: ${response.session != null ? "Active" : "Null (needs verification)"}',
+        );
       }
-      
+
       // No session means the project requires email confirmation before login.
       return SignUpResult(needsEmailVerification: response.session == null);
     } on AuthException catch (error) {
       if (kDebugMode) {
-        print('❌ AuthException during signup:');
-        print('  Status: ${error.statusCode}');
-        print('  Code: ${error.code}');
-        print('  Message: ${error.message}');
+        debugPrint('AuthException during signup:');
+        debugPrint('  Status: ${error.statusCode}');
+        debugPrint('  Code: ${error.code}');
+        debugPrint('  Message: ${error.message}');
       }
       throw AuthFailure(_mapAuthError(error));
     } catch (error) {
       if (kDebugMode) {
-        print('❌ Unexpected error during signup: $error');
+        debugPrint('Unexpected error during signup: $error');
       }
       throw AuthFailure('Gagal mendaftar: $error');
     }
@@ -117,10 +119,7 @@ class AuthRepository {
   /// Re-sends the sign-up confirmation email.
   Future<void> resendVerification(String email) async {
     try {
-      await _client.auth.resend(
-        type: OtpType.signup,
-        email: email.trim(),
-      );
+      await _client.auth.resend(type: OtpType.signup, email: email.trim());
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthError(error));
     }
@@ -161,23 +160,22 @@ class AuthRepository {
   String _mapAuthError(AuthException error) {
     if (kDebugMode) {
       debugPrint(
-        '\n🚨 AuthException Details:\n'
+        '\nAuthException Details:\n'
         '  Status Code: ${error.statusCode}\n'
         '  Error Code: ${error.code}\n'
         '  Message: "${error.message}"\n',
       );
     }
     final message = error.message.toLowerCase();
-    
-    // Check for invalid API key first
-    if (message.contains('invalid api key') || 
+
+    if (message.contains('invalid api key') ||
         message.contains('invalid key') ||
         message.contains('jwt') && message.contains('invalid')) {
       return 'Kredensial Supabase tidak valid. Pastikan app dijalankan dengan:\n'
-             '  • run_with_supabase.bat\n'
-             '  • Atau F5 > "Supabase Mode"';
+          '  - run_with_supabase.bat\n'
+          '  - Atau F5 > "Supabase Mode"';
     }
-    
+
     if (message.contains('invalid login')) {
       return 'Email atau password tidak sesuai.';
     }
@@ -208,6 +206,7 @@ class AuthRepository {
     if (message.contains('rate limit') || message.contains('too many')) {
       return 'Terlalu banyak percobaan. Tunggu beberapa saat lalu coba lagi.';
     }
+
     // Sertakan pesan asli agar penyebab tak terduga tetap terlihat.
     return 'Terjadi kesalahan autentikasi: ${error.message}';
   }

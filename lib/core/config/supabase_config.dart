@@ -9,7 +9,7 @@
 /// ```
 ///
 /// When the values are absent the app stays in its mock/prototype mode and no
-/// Supabase client is initialized — see `bootstrap.dart`.
+/// Supabase client is initialized; see `bootstrap.dart`.
 class SupabaseConfig {
   const SupabaseConfig._();
 

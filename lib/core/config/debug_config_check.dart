@@ -1,41 +1,37 @@
 import 'package:flutter/foundation.dart';
+
 import 'supabase_config.dart';
 
-/// Helper untuk debug konfigurasi Supabase
+/// Logs Supabase configuration status in debug builds.
 void checkSupabaseConfig() {
-  if (kDebugMode) {
-    print('\n=== SUPABASE CONFIG CHECK ===');
-    print('='*50);
-    
-    final url = SupabaseConfig.url;
-    final key = SupabaseConfig.publishableKey;
-    
-    print('URL: ${url.isEmpty ? "❌ KOSONG" : "✓ $url"}');
-    print('Key: ${key.isEmpty ? "❌ KOSONG" : "✓ ${key.substring(0, 30)}..."}');
-    print('Key Length: ${key.length} chars ${key.isNotEmpty ? "✓" : "❌"}');
-    print('Configured: ${SupabaseConfig.isConfigured ? "✓ TRUE" : "❌ FALSE"}');
-    
-    // Verify key format
-    if (key.isNotEmpty) {
-      if (key.startsWith('eyJ')) {
-        print('Key Format: ✓ Valid JWT format');
-      } else {
-        print('Key Format: ❌ INVALID! Must start with eyJ');
-      }
-    }
-    
-    if (!SupabaseConfig.isConfigured) {
-      print('');
-      print('⚠️  APP RUNNING IN MOCK MODE (No Backend)');
-      print('To use Supabase, run with:');
-      print('  run_supabase_verified.bat  ← USE THIS!');
-      print('  OR run_with_supabase.bat');
-      print('  OR press F5 and select "Supabase Mode"');
-    } else {
-      print('');
-      print('✓ Supabase Integration Active');
-      print('✓ Ready for production mode');
-    }
-    print('='*50 + '\n');
+  if (!kDebugMode) return;
+
+  final url = SupabaseConfig.url;
+  final key = SupabaseConfig.publishableKey;
+  final hasValidKeyPrefix = key.startsWith('eyJ');
+
+  debugPrint('\n=== SUPABASE CONFIG CHECK ===');
+  debugPrint('=' * 50);
+  debugPrint('URL: ${url.isEmpty ? "EMPTY" : url}');
+  debugPrint('Key: ${key.isEmpty ? "EMPTY" : "${key.substring(0, 30)}..."}');
+  debugPrint('Key Length: ${key.length} chars');
+  debugPrint('Configured: ${SupabaseConfig.isConfigured}');
+
+  if (key.isNotEmpty) {
+    debugPrint(
+      'Key Format: ${hasValidKeyPrefix ? "Valid JWT prefix" : "Invalid, must start with eyJ"}',
+    );
   }
+
+  if (!SupabaseConfig.isConfigured) {
+    debugPrint('');
+    debugPrint('App running in mock mode because Supabase is not configured.');
+    debugPrint('Run with --dart-define=SUPABASE_URL=...');
+    debugPrint('Run with --dart-define=SUPABASE_PUBLISHABLE_KEY=...');
+  } else {
+    debugPrint('');
+    debugPrint('Supabase integration active.');
+  }
+
+  debugPrint('${'=' * 50}\n');
 }
